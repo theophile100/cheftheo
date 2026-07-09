@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { buttonClasses } from "@/lib/button-styles";
+import { filiereColor } from "@/lib/filiere-style";
 import { deleteLecon } from "./actions";
 
 export default async function AdminHome() {
@@ -23,10 +25,7 @@ export default async function AdminHome() {
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Filières &amp; leçons
         </h1>
-        <Link
-          href="/admin/lecons/new"
-          className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
-        >
+        <Link href="/admin/lecons/new" className={buttonClasses("primary", "text-sm px-5 py-2.5")}>
           + Nouvelle leçon
         </Link>
       </div>
@@ -40,10 +39,15 @@ export default async function AdminHome() {
           return (
             <div
               key={filiere.id}
-              className="rounded-2xl bg-white p-5 shadow-sm dark:bg-zinc-900"
+              className="rounded-3xl bg-white p-5 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
             >
-              <h2 className="font-bold text-zinc-900 dark:text-zinc-50">
-                {filiere.icon} {filiere.name}
+              <h2 className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50">
+                <span
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-extrabold text-white ${filiereColor(filiere.position)}`}
+                >
+                  {filiere.name.charAt(0)}
+                </span>
+                {filiere.name}
               </h2>
 
               <div className="mt-3 flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">

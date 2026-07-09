@@ -15,7 +15,7 @@ export default async function Profil() {
 
   return (
     <main className="mx-auto max-w-md px-6 py-10">
-      <h1 className="text-center text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+      <h1 className="text-center text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
         Profil
       </h1>
 
@@ -23,7 +23,7 @@ export default async function Profil() {
         <ProfileStats />
       </div>
 
-      <h2 className="mt-8 text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <h2 className="mt-9 text-xs font-bold uppercase tracking-wide text-zinc-400">
         Progression par filière
       </h2>
       <FiliereGrid filieres={filieres ?? []} lecons={lecons ?? []} />

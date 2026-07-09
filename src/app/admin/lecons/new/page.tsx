@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { buttonClasses } from "@/lib/button-styles";
 import { createLecon } from "../../actions";
 
 export default async function NewLecon({
@@ -72,10 +73,7 @@ export default async function NewLecon({
           </p>
         )}
 
-        <button
-          type="submit"
-          className="mt-2 rounded-xl bg-orange-500 px-4 py-3 text-base font-semibold text-white hover:bg-orange-600"
-        >
+        <button type="submit" className={buttonClasses("primary", "mt-2")}>
           Créer la leçon
         </button>
       </form>

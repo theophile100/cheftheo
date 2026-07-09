@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LeconTree } from "@/components/LeconTree";
+import { filiereColor } from "@/lib/filiere-style";
 
 export default async function Filiere({
   params,
@@ -12,7 +13,7 @@ export default async function Filiere({
 
   const { data: filiere } = await supabase
     .from("filieres")
-    .select("id, name, icon")
+    .select("id, name, position")
     .eq("slug", slug)
     .single();
 
@@ -28,9 +29,16 @@ export default async function Filiere({
 
   return (
     <main className="mx-auto max-w-md px-6 py-10">
-      <h1 className="text-center text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-        {filiere.icon} {filiere.name}
-      </h1>
+      <div className="flex flex-col items-center gap-3 text-center">
+        <div
+          className={`flex h-16 w-16 items-center justify-center rounded-full text-2xl font-extrabold text-white ${filiereColor(filiere.position)}`}
+        >
+          {filiere.name.charAt(0)}
+        </div>
+        <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
+          {filiere.name}
+        </h1>
+      </div>
 
       <LeconTree lecons={lecons ?? []} />
     </main>

@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { AssocierData, OrdonnerData, QcmData, Question } from "@/lib/types";
 import type { QuestionInput } from "@/app/admin/actions";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { buttonClasses } from "@/lib/button-styles";
 
 function newId() {
   return Math.random().toString(36).slice(2, 10);
@@ -403,7 +404,7 @@ export function QuestionForm({
       <button
         type="submit"
         disabled={saving}
-        className="mt-2 rounded-xl bg-orange-500 px-4 py-3 text-base font-semibold text-white hover:bg-orange-600 disabled:opacity-60"
+        className={buttonClasses("primary", "mt-2")}
       >
         {saving ? "Enregistrement..." : "Enregistrer"}
       </button>

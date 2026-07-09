@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { OrdonnerData } from "@/lib/types";
 import { seededShuffle } from "@/lib/shuffle";
+import { buttonClasses } from "@/lib/button-styles";
 
 export function Ordonner({
   data,
@@ -53,12 +54,12 @@ export function Ordonner({
 
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+      <p className="mb-2 text-xs font-bold uppercase tracking-wide text-zinc-400">
         Votre ordre
       </p>
       <div className="flex flex-col gap-2">
         {builtIds.length === 0 && (
-          <div className="rounded-xl border-2 border-dashed border-zinc-200 px-3 py-4 text-center text-sm text-zinc-400 dark:border-zinc-700">
+          <div className="rounded-2xl border-2 border-dashed border-zinc-200 px-3 py-5 text-center text-sm font-medium text-zinc-400 dark:border-zinc-700">
             Sélectionnez les étapes ci-dessous dans l&apos;ordre
           </div>
         )}
@@ -68,7 +69,7 @@ export function Ordonner({
             type="button"
             disabled={answered}
             onClick={() => handleUndo(stepId)}
-            className={`flex items-center gap-3 rounded-xl border-2 px-3 py-3 text-left text-sm font-medium transition-colors ${builtItemClasses(stepId, index)}`}
+            className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-3.5 text-left text-sm font-semibold transition-all ${builtItemClasses(stepId, index)}`}
           >
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black/10 text-xs font-bold dark:bg-white/10">
               {index + 1}
@@ -80,7 +81,7 @@ export function Ordonner({
 
       {pool.length > 0 && (
         <>
-          <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+          <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-wide text-zinc-400">
             Étapes disponibles
           </p>
           <div className="flex flex-col gap-2">
@@ -89,7 +90,7 @@ export function Ordonner({
                 key={step.id}
                 type="button"
                 onClick={() => handlePick(step.id)}
-                className="rounded-xl border-2 border-zinc-200 bg-white px-3 py-3 text-left text-sm font-medium text-zinc-900 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+                className="rounded-2xl border-2 border-zinc-200 bg-white px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 shadow-[0_3px_0_0_#e4e4e7] transition-all hover:border-zinc-300 active:translate-y-[3px] active:shadow-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:shadow-[0_3px_0_0_#3f3f46]"
               >
                 {step.text}
               </button>
@@ -102,7 +103,7 @@ export function Ordonner({
         <button
           type="button"
           onClick={handleVerify}
-          className="mt-4 w-full rounded-xl bg-zinc-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900"
+          className={buttonClasses("dark", "mt-5 w-full")}
         >
           Vérifier
         </button>

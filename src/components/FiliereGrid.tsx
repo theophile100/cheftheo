@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useProgress } from "@/lib/progress-context";
+import { filiereColor } from "@/lib/filiere-style";
 
 interface Filiere {
   id: string;
@@ -26,7 +27,7 @@ export function FiliereGrid({
   const { completedLeconIds } = useProgress();
 
   return (
-    <div className="mt-8 flex flex-col gap-3">
+    <div className="mt-8 flex flex-col gap-4">
       {filieres.map((filiere) => {
         const filiereLecons = lecons.filter(
           (l) => l.filiere_id === filiere.id,
@@ -41,23 +42,25 @@ export function FiliereGrid({
           <Link
             key={filiere.id}
             href={`/filiere/${filiere.slug}`}
-            className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm transition-transform hover:scale-[1.01] dark:bg-zinc-900"
+            className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-lg shadow-zinc-900/5 transition-transform active:scale-[0.98] dark:bg-zinc-900"
           >
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-amber-50 text-2xl dark:bg-zinc-800">
-              {filiere.icon}
+            <div
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-extrabold text-white ${filiereColor(filiere.position)}`}
+            >
+              {filiere.name.charAt(0)}
             </div>
             <div className="flex-1">
-              <p className="font-bold text-zinc-900 dark:text-zinc-50">
+              <p className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
                 {filiere.name}
               </p>
-              <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
                 <div
                   className="h-full rounded-full bg-orange-500 transition-all"
                   style={{ width: `${percent}%` }}
                 />
               </div>
             </div>
-            <span className="text-sm font-medium text-zinc-400">
+            <span className="text-sm font-semibold text-zinc-400">
               {completedCount}/{total}
             </span>
           </Link>

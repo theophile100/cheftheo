@@ -51,7 +51,7 @@ export function SideMenu({
   return (
     <>
       <div className="fixed inset-0 z-30 bg-black/40" onClick={onClose} />
-      <div className="fixed right-0 top-0 z-40 flex h-full w-72 animate-slide-in-right flex-col bg-white p-6 shadow-xl dark:bg-zinc-900">
+      <div className="fixed right-0 top-0 z-40 flex h-full w-72 animate-slide-in-right flex-col rounded-l-3xl bg-white p-6 shadow-xl dark:bg-zinc-900">
         <div className="flex items-center justify-between">
           <p className="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {email}
@@ -69,11 +69,11 @@ export function SideMenu({
         </div>
 
         <div className="mt-4 flex gap-3">
-          <div className="flex-1 rounded-xl bg-amber-50 p-3 text-center dark:bg-zinc-800">
+          <div className="flex-1 rounded-2xl bg-amber-50 p-3 text-center dark:bg-zinc-800">
             <p className="text-lg font-bold text-orange-500">{xpTotal}</p>
             <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">XP</p>
           </div>
-          <div className="flex-1 rounded-xl bg-amber-50 p-3 text-center dark:bg-zinc-800">
+          <div className="flex-1 rounded-2xl bg-amber-50 p-3 text-center dark:bg-zinc-800">
             <p className="text-lg font-bold text-orange-500">{currentStreak}</p>
             <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Série</p>
           </div>
@@ -83,14 +83,14 @@ export function SideMenu({
           <Link
             href="/accueil"
             onClick={onClose}
-            className="rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             Accueil
           </Link>
           <Link
             href="/profil"
             onClick={onClose}
-            className="rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             Profil
           </Link>
@@ -98,7 +98,7 @@ export function SideMenu({
             <Link
               href="/admin"
               onClick={onClose}
-              className="rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               Admin
             </Link>
@@ -109,8 +109,8 @@ export function SideMenu({
           Réglages
         </p>
         <div className="mt-2 flex flex-col gap-1">
-          <div className="flex items-center justify-between rounded-xl px-3 py-2.5">
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+          <div className="flex items-center justify-between rounded-2xl px-3 py-2.5">
+            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
               Mode sombre
             </span>
             <Switch
@@ -118,8 +118,8 @@ export function SideMenu({
               onToggle={() => setTheme(theme === "dark" ? "light" : "dark")}
             />
           </div>
-          <div className="flex items-center justify-between rounded-xl px-3 py-2.5">
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+          <div className="flex items-center justify-between rounded-2xl px-3 py-2.5">
+            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
               Son
             </span>
             <Switch on={!muted} onToggle={toggleMuted} />
@@ -131,7 +131,7 @@ export function SideMenu({
         <button
           type="button"
           onClick={handleSignOut}
-          className="rounded-xl px-3 py-2.5 text-left text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+          className="rounded-2xl px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
         >
           Déconnexion
         </button>

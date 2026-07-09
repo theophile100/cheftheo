@@ -24,10 +24,10 @@ export function LeconTree({ lecons }: { lecons: Lecon[] }) {
           "flex h-20 w-20 items-center justify-center rounded-full bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600";
         if (isCompleted) {
           circleClasses =
-            "flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30 transition-transform hover:scale-105";
+            "flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-[0_5px_0_0_#15803d] transition-all active:translate-y-1 active:shadow-[0_1px_0_0_#15803d]";
         } else if (isUnlocked) {
           circleClasses =
-            "flex h-20 w-20 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/30 transition-transform hover:scale-105";
+            "flex h-20 w-20 items-center justify-center rounded-full bg-orange-500 text-white shadow-[0_5px_0_0_#c2410c] transition-all active:translate-y-1 active:shadow-[0_1px_0_0_#c2410c]";
         }
 
         const icon = isCompleted ? (
@@ -61,7 +61,7 @@ export function LeconTree({ lecons }: { lecons: Lecon[] }) {
             )}
 
             {index < lecons.length - 1 && (
-              <div className="h-8 w-1 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-10 w-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />
             )}
           </div>
         );

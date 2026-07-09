@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { AssocierData } from "@/lib/types";
 import { seededShuffle } from "@/lib/shuffle";
+import { buttonClasses } from "@/lib/button-styles";
 
 export function Associer({
   data,
@@ -79,7 +80,7 @@ export function Associer({
     if (assignments[leftId]) {
       return "border-orange-300 bg-orange-50 text-zinc-900 dark:border-orange-700 dark:bg-orange-900/10 dark:text-zinc-50";
     }
-    return "border-zinc-200 bg-white text-zinc-900 hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50";
+    return "border-zinc-200 bg-white text-zinc-900 shadow-[0_3px_0_0_#e4e4e7] hover:border-zinc-300 active:translate-y-[3px] active:shadow-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:shadow-[0_3px_0_0_#3f3f46]";
   }
 
   function rightClasses(rightId: string) {
@@ -98,7 +99,7 @@ export function Associer({
     if (assignedRightIds.has(rightId)) {
       return "border-orange-300 bg-orange-50 text-zinc-900 dark:border-orange-700 dark:bg-orange-900/10 dark:text-zinc-50";
     }
-    return "border-zinc-200 bg-white text-zinc-900 hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50";
+    return "border-zinc-200 bg-white text-zinc-900 shadow-[0_3px_0_0_#e4e4e7] hover:border-zinc-300 active:translate-y-[3px] active:shadow-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:shadow-[0_3px_0_0_#3f3f46]";
   }
 
   return (
@@ -111,7 +112,7 @@ export function Associer({
               type="button"
               disabled={answered}
               onClick={() => handleLeftClick(pair.left.id)}
-              className={`rounded-xl border-2 px-3 py-3 text-left text-sm font-medium transition-colors ${leftClasses(pair.left.id)}`}
+              className={`rounded-2xl border-2 px-3 py-3.5 text-left text-sm font-semibold transition-all ${leftClasses(pair.left.id)}`}
             >
               {pair.left.text}
             </button>
@@ -124,7 +125,7 @@ export function Associer({
               type="button"
               disabled={answered}
               onClick={() => handleRightClick(right.id)}
-              className={`rounded-xl border-2 px-3 py-3 text-left text-sm font-medium transition-colors ${rightClasses(right.id)}`}
+              className={`rounded-2xl border-2 px-3 py-3.5 text-left text-sm font-semibold transition-all ${rightClasses(right.id)}`}
             >
               {right.text}
             </button>
@@ -137,7 +138,7 @@ export function Associer({
           type="button"
           onClick={handleVerify}
           disabled={!allAssigned}
-          className="mt-4 w-full rounded-xl bg-zinc-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-zinc-50 dark:text-zinc-900"
+          className={buttonClasses("dark", "mt-5 w-full disabled:cursor-not-allowed")}
         >
           Vérifier
         </button>

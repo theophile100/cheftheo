@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { buttonClasses } from "@/lib/button-styles";
 import { updateLecon, deleteQuestion } from "../../actions";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -82,10 +83,7 @@ export default async function EditLecon({
           </p>
         )}
 
-        <button
-          type="submit"
-          className="mt-2 rounded-xl bg-orange-500 px-4 py-3 text-base font-semibold text-white hover:bg-orange-600"
-        >
+        <button type="submit" className={buttonClasses("primary", "mt-2")}>
           Enregistrer
         </button>
       </form>
@@ -94,7 +92,7 @@ export default async function EditLecon({
         <h2 className="font-bold text-zinc-900 dark:text-zinc-50">Questions</h2>
         <Link
           href={`/admin/lecons/${id}/questions/new`}
-          className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900"
+          className={buttonClasses("dark", "text-sm px-5 py-2.5")}
         >
           + Nouvelle question
         </Link>
