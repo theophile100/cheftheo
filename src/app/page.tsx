@@ -4,7 +4,7 @@ import { Mascot } from "@/components/Mascot";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-1 flex-col items-center justify-center gap-10 bg-amber-50 px-6 py-12 dark:bg-black">
+    <div className="flex min-h-screen flex-1 flex-col items-center justify-center gap-10 bg-cream px-6 py-12 dark:bg-black">
       <div className="flex flex-col items-center gap-5 text-center">
         <Mascot mood="idle" size={104} />
         <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">

@@ -1,8 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { useProgress } from "@/lib/progress-context";
+import { FiliereWatermark } from "@/components/FiliereWatermark";
+import { IconCheck, IconPlayerPlayFilled, IconLockFilled } from "@tabler/icons-react";
 
 interface Unite {
   id: string;
@@ -17,85 +19,157 @@ interface Lecon {
   unite_id?: string | null;
 }
 
+const NODE_SIZE = 80;
+const V_GAP = 112;
+const AMPLITUDE = 60;
+const WIDTH = AMPLITUDE * 2 + NODE_SIZE;
+
+// Sine-based zigzag: position cycles centre → right → centre → left, giving a
+// smooth serpentine path instead of a straight column.
+function nodeCenterX(indexInGroup: number) {
+  return AMPLITUDE + AMPLITUDE * Math.sin((indexInGroup * Math.PI) / 2);
+}
+
+function buildPathD(points: { x: number; y: number }[]) {
+  if (points.length < 2) return "";
+  let d = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1];
+    const curr = points[i];
+    const midY = (prev.y + curr.y) / 2;
+    d += ` C ${prev.x} ${midY}, ${curr.x} ${midY}, ${curr.x} ${curr.y}`;
+  }
+  return d;
+}
+
 export function LeconTree({
   lecons,
   unites = [],
+  filiereSlug,
 }: {
   lecons: Lecon[];
   unites?: Unite[];
+  filiereSlug: string;
 }) {
   const { completedLeconIds } = useProgress();
+
+  const lessonStates = useMemo(() => {
+    return lecons.map((lecon, index) => {
+      const isCompleted = completedLeconIds.has(lecon.id);
+      const previousLecon = index > 0 ? lecons[index - 1] : null;
+      const isUnlocked =
+        index === 0 || (previousLecon !== null && completedLeconIds.has(previousLecon.id));
+      return {
+        lecon,
+        isCompleted,
+        isActive: isUnlocked && !isCompleted,
+        isLocked: !isUnlocked,
+      };
+    });
+  }, [lecons, completedLeconIds]);
+
   const uniteById = new Map(unites.map((u) => [u.id, u]));
+
+  const groups = useMemo(() => {
+    const order: string[] = [];
+    const map = new Map<string, typeof lessonStates>();
+    for (const state of lessonStates) {
+      const key = state.lecon.unite_id ?? "__none__";
+      if (!map.has(key)) {
+        order.push(key);
+        map.set(key, []);
+      }
+      map.get(key)!.push(state);
+    }
+    return order.map((key) => ({
+      key,
+      unite: key === "__none__" ? null : (uniteById.get(key) ?? null),
+      items: map.get(key)!,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonStates]);
 
   return (
     <div className="mt-10 flex flex-col items-center">
-      {lecons.map((lecon, index) => {
-        const isCompleted = completedLeconIds.has(lecon.id);
-        const previousLecon = index > 0 ? lecons[index - 1] : null;
-        const isUnlocked =
-          index === 0 || (previousLecon && completedLeconIds.has(previousLecon.id));
-
-        const unite = lecon.unite_id ? uniteById.get(lecon.unite_id) : null;
-        const showUniteHeader =
-          unite && lecon.unite_id !== previousLecon?.unite_id;
-
-        let circleClasses =
-          "flex h-20 w-20 items-center justify-center rounded-full bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600";
-        if (isCompleted) {
-          circleClasses =
-            "flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-[0_5px_0_0_#15803d] transition-all active:translate-y-1 active:shadow-[0_1px_0_0_#15803d]";
-        } else if (isUnlocked) {
-          circleClasses =
-            "flex h-20 w-20 items-center justify-center rounded-full bg-orange-500 text-white shadow-[0_5px_0_0_#c2410c] transition-all active:translate-y-1 active:shadow-[0_1px_0_0_#c2410c]";
-        }
-
-        const icon = isCompleted ? (
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-9 w-9">
-            <path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z" />
-          </svg>
-        ) : isUnlocked ? (
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-9 w-9">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-8 w-8">
-            <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3z" />
-          </svg>
-        );
+      {groups.map((group, groupIndex) => {
+        const points = group.items.map((_, i) => ({
+          x: nodeCenterX(i),
+          y: i * V_GAP + NODE_SIZE / 2,
+        }));
+        const height = (group.items.length - 1) * V_GAP + NODE_SIZE;
+        const pathD = buildPathD(points);
 
         return (
-          <Fragment key={lecon.id}>
-            {showUniteHeader && (
-              <div className={`max-w-xs text-center ${index > 0 ? "mt-8" : ""} mb-5`}>
+          <div key={group.key} className={`flex flex-col items-center ${groupIndex > 0 ? "mt-10" : ""}`}>
+            {group.unite && (
+              <div className="mb-6 max-w-xs text-center">
                 <p className="text-xs font-bold uppercase tracking-wide text-zinc-400">
-                  Unité {unite.position}
+                  Unité {group.unite.position}
                 </p>
                 <p className="mt-0.5 text-sm font-bold text-zinc-700 dark:text-zinc-200">
-                  {unite.title}
+                  {group.unite.title}
                 </p>
               </div>
             )}
 
-            <div className="flex flex-col items-center">
-              {isUnlocked ? (
-                <Link
-                  href={`/lecon/${lecon.id}`}
-                  aria-label={lecon.title}
-                  className={circleClasses}
-                >
-                  {icon}
-                </Link>
-              ) : (
-                <div aria-label={`${lecon.title} verrouillée`} className={circleClasses}>
-                  {icon}
-                </div>
-              )}
+            <div className="relative" style={{ width: WIDTH, height }}>
+              <FiliereWatermark slug={filiereSlug} seed={group.key} width={WIDTH} height={height} />
 
-              {index < lecons.length - 1 && (
-                <div className="h-10 w-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-              )}
+              <svg width={WIDTH} height={height} className="absolute left-0 top-0" aria-hidden>
+                <path
+                  d={pathD}
+                  fill="none"
+                  strokeWidth={6}
+                  strokeLinecap="round"
+                  className="stroke-zinc-200 dark:stroke-zinc-800"
+                />
+              </svg>
+
+              {group.items.map((state, i) => {
+                const { lecon, isCompleted, isActive } = state;
+                const center = points[i];
+
+                let circleClasses =
+                  "flex h-20 w-20 items-center justify-center rounded-full bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600";
+                if (isCompleted) {
+                  circleClasses =
+                    "flex h-20 w-20 items-center justify-center rounded-full bg-orange-500 text-white shadow-[0_5px_0_0_#a75a18] transition-all active:translate-y-1 active:shadow-[0_1px_0_0_#a75a18]";
+                } else if (isActive) {
+                  circleClasses =
+                    "flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-[0_5px_0_0_#15803d] transition-all active:translate-y-1 active:shadow-[0_1px_0_0_#15803d] animate-active-lesson-pulse";
+                }
+
+                const icon = isCompleted ? (
+                  <IconCheck size={38} strokeWidth={3} />
+                ) : isActive ? (
+                  <IconPlayerPlayFilled size={32} />
+                ) : (
+                  <IconLockFilled size={28} />
+                );
+
+                return (
+                  <div
+                    key={lecon.id}
+                    className="absolute"
+                    style={{
+                      left: center.x - NODE_SIZE / 2,
+                      top: center.y - NODE_SIZE / 2,
+                    }}
+                  >
+                    {isCompleted || isActive ? (
+                      <Link href={`/lecon/${lecon.id}`} aria-label={lecon.title} className={circleClasses}>
+                        {icon}
+                      </Link>
+                    ) : (
+                      <div aria-label={`${lecon.title} verrouillée`} className={circleClasses}>
+                        {icon}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          </Fragment>
+          </div>
         );
       })}
     </div>

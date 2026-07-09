@@ -49,7 +49,7 @@ export default async function EditLecon({
 
       <form
         action={updateLecon.bind(null, id)}
-        className="mt-6 flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900"
+        className="mt-6 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
       >
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -102,10 +102,10 @@ export default async function EditLecon({
         {(questions ?? []).map((q) => (
           <div
             key={q.id}
-            className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm dark:bg-zinc-900"
+            className="flex items-center justify-between rounded-3xl bg-white p-4 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
           >
             <div>
-              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
+              <span className="rounded-full bg-orange-50 px-2 py-0.5 text-xs font-semibold text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
                 {TYPE_LABELS[q.type]}
               </span>
               <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">

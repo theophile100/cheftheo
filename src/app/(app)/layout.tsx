@@ -37,7 +37,7 @@ export default async function AppLayout({
       }}
       initialCompletedLeconIds={completions?.map((c) => c.lecon_id) ?? []}
     >
-      <div className="min-h-screen bg-[#fdf9f2] dark:bg-black">
+      <div className="min-h-screen bg-cream dark:bg-black">
         <Header />
         {children}
       </div>

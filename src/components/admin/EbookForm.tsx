@@ -93,7 +93,7 @@ export function EbookForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900"
+      className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
     >
       <ImageUpload value={coverUrl} onChange={setCoverUrl} label="Couverture" size={40} />
 

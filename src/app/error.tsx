@@ -5,7 +5,7 @@ import { Mascot } from "@/components/Mascot";
 
 export default function RootError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-amber-50 px-6 text-center dark:bg-black">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-cream px-6 text-center dark:bg-black">
       <Mascot mood="idle" size={80} />
       <h1 className="text-xl font-extrabold text-zinc-900 dark:text-zinc-50">
         Un problème est survenu

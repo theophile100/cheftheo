@@ -30,7 +30,7 @@ export function Header() {
               <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="h-6 w-6 text-amber-400"
+                className="h-6 w-6 text-orange-500"
               >
                 <path d="M12 2l2.8 6.2L21 9l-5 4.4L17.5 20 12 16.6 6.5 20 8 13.4 3 9l6.2-.8z" />
               </svg>

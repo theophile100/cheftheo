@@ -71,11 +71,11 @@ export function SideMenu({
         </div>
 
         <div className="mt-4 flex gap-3">
-          <div className="flex-1 rounded-2xl bg-amber-50 p-3 text-center dark:bg-zinc-800">
+          <div className="flex-1 rounded-2xl bg-orange-50 p-3 text-center dark:bg-zinc-800">
             <p className="text-lg font-bold text-orange-500">{xpTotal}</p>
             <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">XP</p>
           </div>
-          <div className="flex-1 rounded-2xl bg-amber-50 p-3 text-center dark:bg-zinc-800">
+          <div className="flex-1 rounded-2xl bg-orange-50 p-3 text-center dark:bg-zinc-800">
             <p className="text-lg font-bold text-orange-500">{currentStreak}</p>
             <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Série</p>
           </div>

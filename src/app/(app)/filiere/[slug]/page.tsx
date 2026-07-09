@@ -48,7 +48,7 @@ export default async function Filiere({
         </h1>
       </div>
 
-      <LeconTree lecons={lecons ?? []} unites={unites ?? []} />
+      <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug={filiere.slug} />
     </main>
   );
 }

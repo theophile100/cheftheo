@@ -52,7 +52,7 @@ export default function Inscription() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen flex-1 items-center justify-center bg-amber-50 px-4 py-12 dark:bg-black">
+      <div className="flex min-h-screen flex-1 items-center justify-center bg-cream px-4 py-12 dark:bg-black">
         <div className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
           <Mascot mood="idle" size={80} className="mx-auto" />
           <h1 className="mt-6 text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
@@ -77,7 +77,7 @@ export default function Inscription() {
   }
 
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center bg-amber-50 px-4 py-12 dark:bg-black">
+    <div className="flex min-h-screen flex-1 items-center justify-center bg-cream px-4 py-12 dark:bg-black">
       <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-6">
           <Mascot mood="idle" size={80} />

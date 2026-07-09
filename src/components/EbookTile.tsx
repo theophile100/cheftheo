@@ -18,7 +18,7 @@ export function EbookTile({
   return (
     <Link
       href={`/decouvrir/${ebook.id}`}
-      className="mb-3 block break-inside-avoid overflow-hidden rounded-2xl bg-white shadow-lg shadow-zinc-900/5 transition-transform active:scale-[0.98] dark:bg-zinc-900"
+      className="mb-3 block break-inside-avoid overflow-hidden rounded-3xl bg-white shadow-lg shadow-zinc-900/5 transition-transform active:scale-[0.98] dark:bg-zinc-900"
     >
       {ebook.cover_url ? (
         // eslint-disable-next-line @next/next/no-img-element
