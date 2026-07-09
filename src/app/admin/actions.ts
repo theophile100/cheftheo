@@ -141,6 +141,7 @@ export async function deleteLecon(id: string) {
 
 export async function uploadImage(
   formData: FormData,
+  bucket: "lesson-images" | "branding" = "lesson-images",
 ): Promise<{ url?: string; error?: string }> {
   try {
     await assertAdmin();
@@ -159,13 +160,56 @@ export async function uploadImage(
   const path = `${crypto.randomUUID()}.${extension}`;
 
   const { error } = await admin.storage
-    .from("lesson-images")
+    .from(bucket)
     .upload(path, file, { contentType: file.type });
 
   if (error) return { error: error.message };
 
-  const { data } = admin.storage.from("lesson-images").getPublicUrl(path);
+  const { data } = admin.storage.from(bucket).getPublicUrl(path);
   return { url: data.publicUrl };
+}
+
+// ---------- Branding (logo, icônes de filière) ----------
+
+export async function updateLogo(logoUrl: string | null): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("app_settings")
+    .update({ logo_url: logoUrl })
+    .eq("id", 1);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/", "layout");
+  return {};
+}
+
+export async function updateFiliereIcon(
+  filiereId: string,
+  iconUrl: string | null,
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("filieres")
+    .update({ icon_url: iconUrl })
+    .eq("id", filiereId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/", "layout");
+  return {};
 }
 
 // ---------- Questions ----------

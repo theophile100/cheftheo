@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { buttonClasses } from "@/lib/button-styles";
+import { Mascot } from "@/components/Mascot";
 
 export default function RootError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-amber-50 px-6 text-center dark:bg-black">
-      <Image src="/logo.svg" alt="Chef Théo" width={80} height={80} />
+      <Mascot mood="idle" size={80} />
       <h1 className="text-xl font-extrabold text-zinc-900 dark:text-zinc-50">
         Un problème est survenu
       </h1>

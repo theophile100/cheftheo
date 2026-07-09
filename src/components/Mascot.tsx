@@ -1,4 +1,6 @@
-import Image from "next/image";
+"use client";
+
+import { useLogo } from "@/lib/logo-context";
 
 export type MascotMood = "idle" | "correct" | "incorrect" | "celebrate";
 
@@ -18,9 +20,12 @@ export function Mascot({
   size?: number;
   className?: string;
 }) {
+  const logoUrl = useLogo();
+
   return (
-    <Image
-      src="/logo.svg"
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={logoUrl}
       alt="Chef Théo"
       width={size}
       height={size}

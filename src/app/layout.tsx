@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { SoundSettingsProvider } from "@/lib/sound-settings";
+import { LogoProvider } from "@/lib/logo-context";
 import { TapFeedback } from "@/components/TapFeedback";
+import { createClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,11 +22,27 @@ export const metadata: Metadata = {
   description: "Application d'apprentissage Chef Théo",
 };
 
-export default function RootLayout({
+async function getLogoUrl(): Promise<string> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("app_settings")
+      .select("logo_url")
+      .eq("id", 1)
+      .single();
+    return data?.logo_url || "/logo.svg";
+  } catch {
+    return "/logo.svg";
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const logoUrl = await getLogoUrl();
+
   return (
     <html
       lang="fr"
@@ -33,10 +51,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SoundSettingsProvider>
-            <TapFeedback />
-            {children}
-          </SoundSettingsProvider>
+          <LogoProvider url={logoUrl}>
+            <SoundSettingsProvider>
+              <TapFeedback />
+              {children}
+            </SoundSettingsProvider>
+          </LogoProvider>
         </ThemeProvider>
       </body>
     </html>

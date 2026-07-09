@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { countries } from "@/data/countries";
 import { buttonClasses } from "@/lib/button-styles";
+import { Mascot } from "@/components/Mascot";
 
 const inputClasses =
   "rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3.5 text-base text-zinc-900 outline-none transition-colors focus:border-orange-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
@@ -54,13 +54,7 @@ export default function Inscription() {
     return (
       <div className="flex min-h-screen flex-1 items-center justify-center bg-amber-50 px-4 py-12 dark:bg-black">
         <div className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
-          <Image
-            src="/logo.svg"
-            alt="Chef Théo"
-            width={80}
-            height={80}
-            className="mx-auto"
-          />
+          <Mascot mood="idle" size={80} className="mx-auto" />
           <h1 className="mt-6 text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             Vérifiez vos emails
           </h1>
@@ -86,13 +80,7 @@ export default function Inscription() {
     <div className="flex min-h-screen flex-1 items-center justify-center bg-amber-50 px-4 py-12 dark:bg-black">
       <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-6">
-          <Image
-            src="/logo.svg"
-            alt="Chef Théo"
-            width={80}
-            height={80}
-            priority
-          />
+          <Mascot mood="idle" size={80} />
 
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             Créer un compte

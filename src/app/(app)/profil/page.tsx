@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { ProfileStats } from "@/components/ProfileStats";
 import { ProfileEditForm } from "@/components/ProfileEditForm";
-import { FiliereGrid } from "@/components/FiliereGrid";
+import { FiliereProgressList } from "@/components/FiliereProgressList";
 import { BackButton } from "@/components/BackButton";
 import { countries } from "@/data/countries";
 
@@ -16,7 +16,7 @@ export default async function Profil() {
     supabase.from("profiles").select("country, phone").eq("id", user!.id).single(),
     supabase
       .from("filieres")
-      .select("id, slug, name, icon, position")
+      .select("id, slug, name, icon_url")
       .order("position"),
     supabase.from("lecons").select("id, filiere_id"),
   ]);
@@ -49,7 +49,7 @@ export default async function Profil() {
       <h2 className="mt-9 text-xs font-bold uppercase tracking-wide text-zinc-400">
         Progression par filière
       </h2>
-      <FiliereGrid filieres={filieres ?? []} lecons={lecons ?? []} />
+      <FiliereProgressList filieres={filieres ?? []} lecons={lecons ?? []} />
     </main>
   );
 }

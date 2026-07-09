@@ -7,13 +7,18 @@ export function ImageUpload({
   value,
   onChange,
   label,
+  bucket = "lesson-images",
+  size = 28,
 }: {
   value: string | null;
   onChange: (url: string | null) => void;
   label?: string;
+  bucket?: "lesson-images" | "branding";
+  size?: number;
 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const boxSize = `${size * 0.25}rem`;
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -24,7 +29,7 @@ export function ImageUpload({
 
     const formData = new FormData();
     formData.append("file", file);
-    const result = await uploadImage(formData);
+    const result = await uploadImage(formData, bucket);
 
     setUploading(false);
 
@@ -44,12 +49,13 @@ export function ImageUpload({
         </label>
       )}
       {value ? (
-        <div className="relative w-28">
+        <div className="relative" style={{ width: boxSize }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={value}
             alt=""
-            className="h-28 w-28 rounded-xl object-cover"
+            className="rounded-xl object-cover"
+            style={{ width: boxSize, height: boxSize }}
           />
           <button
             type="button"
@@ -61,7 +67,10 @@ export function ImageUpload({
           </button>
         </div>
       ) : (
-        <label className="flex h-28 w-28 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-zinc-300 text-xs font-medium text-zinc-400 hover:border-orange-400 dark:border-zinc-700">
+        <label
+          className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-zinc-300 text-xs font-medium text-zinc-400 hover:border-orange-400 dark:border-zinc-700"
+          style={{ width: boxSize, height: boxSize }}
+        >
           {uploading ? "Envoi..." : "+ Image"}
           <input
             type="file"

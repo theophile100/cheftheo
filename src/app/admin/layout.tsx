@@ -36,6 +36,20 @@ export default async function AdminLayout({
             Retour à l&apos;app
           </Link>
         </div>
+        <nav className="mx-auto flex max-w-3xl gap-5 px-6 pb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          <Link href="/admin" className="hover:text-orange-500">
+            Filières &amp; leçons
+          </Link>
+          <Link href="/admin/parametres" className="hover:text-orange-500">
+            Apparence
+          </Link>
+          <Link href="/admin/ebooks" className="hover:text-orange-500">
+            Découvrir
+          </Link>
+          <Link href="/admin/analytics" className="hover:text-orange-500">
+            Analytics
+          </Link>
+        </nav>
       </header>
       <main className="mx-auto max-w-3xl px-6 py-8">{children}</main>
     </div>

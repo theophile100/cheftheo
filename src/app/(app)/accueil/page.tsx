@@ -8,13 +8,10 @@ import { getEncouragementMessage } from "@/lib/mascot-messages";
 export default async function Accueil() {
   const supabase = await createClient();
 
-  const [{ data: filieres }, { data: lecons }] = await Promise.all([
-    supabase
-      .from("filieres")
-      .select("id, slug, name, icon, position")
-      .order("position"),
-    supabase.from("lecons").select("id, filiere_id"),
-  ]);
+  const { data: filieres } = await supabase
+    .from("filieres")
+    .select("id, slug, name, icon_url, position")
+    .order("position");
 
   return (
     <main className="mx-auto max-w-md px-6 py-10">
@@ -29,7 +26,7 @@ export default async function Accueil() {
         Choisissez une filière
       </h1>
 
-      <FiliereGrid filieres={filieres ?? []} lecons={lecons ?? []} />
+      <FiliereGrid filieres={filieres ?? []} />
     </main>
   );
 }

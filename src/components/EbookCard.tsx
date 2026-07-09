@@ -1,4 +1,7 @@
+"use client";
+
 import { buttonClasses } from "@/lib/button-styles";
+import { createClient } from "@/lib/supabase/client";
 
 export interface Ebook {
   id: string;
@@ -10,6 +13,11 @@ export interface Ebook {
 }
 
 export function EbookCard({ ebook }: { ebook: Ebook }) {
+  function handleObtenirClick() {
+    const supabase = createClient();
+    void supabase.rpc("increment_ebook_click", { p_ebook_id: ebook.id });
+  }
+
   return (
     <div className="overflow-hidden rounded-3xl bg-white shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
       {ebook.cover_url && (
@@ -36,6 +44,7 @@ export function EbookCard({ ebook }: { ebook: Ebook }) {
           href={ebook.chariow_url}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleObtenirClick}
           className={buttonClasses("primary", "mt-2 w-full")}
         >
           Obtenir

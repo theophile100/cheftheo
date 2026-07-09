@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { FiliereIcon } from "@/components/FiliereIcon";
 import { buttonClasses } from "@/lib/button-styles";
-import { filiereColor } from "@/lib/filiere-style";
 import { deleteLecon } from "./actions";
 
 export default async function AdminHome() {
@@ -11,7 +11,7 @@ export default async function AdminHome() {
   const [{ data: filieres }, { data: lecons }] = await Promise.all([
     supabase
       .from("filieres")
-      .select("id, name, icon, position")
+      .select("id, slug, name, icon_url, position")
       .order("position"),
     supabase
       .from("lecons")
@@ -42,10 +42,8 @@ export default async function AdminHome() {
               className="rounded-3xl bg-white p-5 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
             >
               <h2 className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50">
-                <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-extrabold text-white ${filiereColor(filiere.position)}`}
-                >
-                  {filiere.name.charAt(0)}
+                <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-orange-50 text-orange-500 dark:bg-zinc-800 dark:text-orange-400">
+                  <FiliereIcon slug={filiere.slug} iconUrl={filiere.icon_url} size={14} />
                 </span>
                 {filiere.name}
               </h2>
