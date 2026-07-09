@@ -9,7 +9,9 @@ export interface EbookInput {
   description: string;
   price: number;
   coverUrl: string | null;
+  ctaType: "url" | "embed";
   chariowUrl: string;
+  chariowEmbedCode: string;
   likesEnabled: boolean;
   commentsEnabled: boolean;
   position: number;
@@ -34,7 +36,12 @@ async function assertAdmin() {
 
 function validateEbookInput(input: EbookInput): string | null {
   if (!input.title.trim()) return "Le titre est requis.";
-  if (!input.chariowUrl.trim()) return "Le lien Chariow est requis.";
+  if (input.ctaType === "url" && !input.chariowUrl.trim()) {
+    return "Le lien Chariow est requis.";
+  }
+  if (input.ctaType === "embed" && !input.chariowEmbedCode.trim()) {
+    return "Le code d'intégration Chariow est requis.";
+  }
   if (!Number.isFinite(input.price) || input.price < 0) {
     return "Le prix doit être un nombre positif.";
   }
@@ -57,7 +64,9 @@ export async function createEbook(input: EbookInput): Promise<{ error?: string }
     description: input.description.trim() || null,
     price: input.price,
     cover_url: input.coverUrl,
-    chariow_url: input.chariowUrl.trim(),
+    cta_type: input.ctaType,
+    chariow_url: input.ctaType === "url" ? input.chariowUrl.trim() : null,
+    chariow_embed_code: input.ctaType === "embed" ? input.chariowEmbedCode.trim() : null,
     likes_enabled: input.likesEnabled,
     comments_enabled: input.commentsEnabled,
     position: input.position,
@@ -91,7 +100,9 @@ export async function updateEbook(
       description: input.description.trim() || null,
       price: input.price,
       cover_url: input.coverUrl,
-      chariow_url: input.chariowUrl.trim(),
+      cta_type: input.ctaType,
+      chariow_url: input.ctaType === "url" ? input.chariowUrl.trim() : null,
+      chariow_embed_code: input.ctaType === "embed" ? input.chariowEmbedCode.trim() : null,
       likes_enabled: input.likesEnabled,
       comments_enabled: input.commentsEnabled,
       position: input.position,

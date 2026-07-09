@@ -1,15 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { AcademyToggle } from "@/components/AcademyToggle";
-import { EbookCard } from "@/components/EbookCard";
+import { EbookTile } from "@/components/EbookTile";
 import { Mascot } from "@/components/Mascot";
 
 export default async function Decouvrir() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const { data: ebooks } = await supabase
-    .from("ebooks")
-    .select("id, title, description, price, cover_url, chariow_url")
-    .order("position");
+  const [{ data: ebooks }, { data: profile }] = await Promise.all([
+    supabase
+      .from("ebooks")
+      .select("id, title, price, cover_url")
+      .order("position"),
+    supabase.from("profiles").select("country").eq("id", user!.id).single(),
+  ]);
 
   return (
     <main className="mx-auto max-w-md px-6 py-10">
@@ -20,9 +26,9 @@ export default async function Decouvrir() {
       </h1>
 
       {ebooks && ebooks.length > 0 ? (
-        <div className="mt-6 flex flex-col gap-5">
+        <div className="mt-6 columns-2 gap-3">
           {ebooks.map((ebook) => (
-            <EbookCard key={ebook.id} ebook={ebook} />
+            <EbookTile key={ebook.id} ebook={ebook} country={profile?.country ?? null} />
           ))}
         </div>
       ) : (

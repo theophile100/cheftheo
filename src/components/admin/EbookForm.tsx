@@ -14,7 +14,9 @@ interface InitialEbook {
   description: string | null;
   price: number;
   cover_url: string | null;
-  chariow_url: string;
+  cta_type: "url" | "embed";
+  chariow_url: string | null;
+  chariow_embed_code: string | null;
   likes_enabled: boolean;
   comments_enabled: boolean;
   position: number;
@@ -38,8 +40,14 @@ export function EbookForm({
   const [coverUrl, setCoverUrl] = useState<string | null>(
     initialEbook?.cover_url ?? null,
   );
+  const [ctaType, setCtaType] = useState<"url" | "embed">(
+    initialEbook?.cta_type ?? "url",
+  );
   const [chariowUrl, setChariowUrl] = useState(
     initialEbook?.chariow_url ?? "",
+  );
+  const [chariowEmbedCode, setChariowEmbedCode] = useState(
+    initialEbook?.chariow_embed_code ?? "",
   );
   const [likesEnabled, setLikesEnabled] = useState(
     initialEbook?.likes_enabled ?? true,
@@ -63,7 +71,9 @@ export function EbookForm({
       description,
       price,
       coverUrl,
+      ctaType,
       chariowUrl,
+      chariowEmbedCode,
       likesEnabled,
       commentsEnabled,
       position,
@@ -128,16 +138,50 @@ export function EbookForm({
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Lien Chariow
+          Bouton « Obtenir »
         </label>
-        <input
-          type="url"
-          required
-          placeholder="https://chariow.com/..."
-          value={chariowUrl}
-          onChange={(e) => setChariowUrl(e.target.value)}
-          className={inputClasses}
-        />
+        <div className="flex gap-4">
+          <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <input
+              type="radio"
+              name="cta_type"
+              checked={ctaType === "url"}
+              onChange={() => setCtaType("url")}
+              className="h-4 w-4 accent-orange-500"
+            />
+            Lien URL
+          </label>
+          <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <input
+              type="radio"
+              name="cta_type"
+              checked={ctaType === "embed"}
+              onChange={() => setCtaType("embed")}
+              className="h-4 w-4 accent-orange-500"
+            />
+            Code d&apos;intégration (Chariow Snap)
+          </label>
+        </div>
+
+        {ctaType === "url" ? (
+          <input
+            type="url"
+            required
+            placeholder="https://chariow.com/..."
+            value={chariowUrl}
+            onChange={(e) => setChariowUrl(e.target.value)}
+            className={inputClasses}
+          />
+        ) : (
+          <textarea
+            required
+            placeholder="Collez ici le code d'intégration fourni par Chariow Snap"
+            value={chariowEmbedCode}
+            onChange={(e) => setChariowEmbedCode(e.target.value)}
+            rows={4}
+            className={`font-mono text-sm ${inputClasses}`}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-1.5">

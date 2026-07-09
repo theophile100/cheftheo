@@ -14,7 +14,7 @@ export default async function EditEbook({
   const { data: ebook } = await supabase
     .from("ebooks")
     .select(
-      "title, description, price, cover_url, chariow_url, likes_enabled, comments_enabled, position",
+      "title, description, price, cover_url, cta_type, chariow_url, chariow_embed_code, likes_enabled, comments_enabled, position",
     )
     .eq("id", id)
     .single();

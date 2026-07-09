@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProfileStats } from "@/components/ProfileStats";
 import { ProfileEditForm } from "@/components/ProfileEditForm";
 import { FiliereProgressList } from "@/components/FiliereProgressList";
+import { AvatarUpload } from "@/components/AvatarUpload";
 import { BackButton } from "@/components/BackButton";
 import { countries } from "@/data/countries";
 
@@ -13,7 +14,7 @@ export default async function Profil() {
   } = await supabase.auth.getUser();
 
   const [{ data: profile }, { data: filieres }, { data: lecons }] = await Promise.all([
-    supabase.from("profiles").select("country, phone").eq("id", user!.id).single(),
+    supabase.from("profiles").select("country, phone, avatar_url").eq("id", user!.id).single(),
     supabase
       .from("filieres")
       .select("id, slug, name, icon_url")
@@ -29,6 +30,10 @@ export default async function Profil() {
           Profil
         </h1>
         <div className="w-10" />
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <AvatarUpload initialUrl={profile?.avatar_url ?? null} />
       </div>
 
       <div className="mt-6">
