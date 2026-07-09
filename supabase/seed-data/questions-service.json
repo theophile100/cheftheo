@@ -1,0 +1,147 @@
+{
+  "filiere": "Service et sommellerie en salle",
+  "description": "Banque de questions complete de la filiere Service. Types d'exercices : qcm (choix multiple), paires (associer), ordre (remettre dans l'ordre). Le champ correct designe la ou les bonnes reponses.",
+  "unites": [
+    {
+      "unite": 1,
+      "titre": "La mise en place et les fondamentaux",
+      "lecons": [
+        {
+          "lecon": 1,
+          "titre": "La brigade de salle",
+          "questions": [
+            {"type": "qcm", "enonce": "Qui accueille les clients et supervise la salle ?", "choix": ["Le maitre d'hotel", "Le commis de salle", "Le plongeur"], "correct": "Le maitre d'hotel", "explication": "Le maitre d'hotel dirige la salle, accueille et gere les reclamations."},
+            {"type": "qcm", "enonce": "De quoi est responsable un chef de rang ?", "choix": ["Un groupe de tables", "La cuisine", "Le bar uniquement"], "correct": "Un groupe de tables", "explication": "Le chef de rang gere un rang, prend les commandes et assure le service de ses tables."},
+            {"type": "qcm", "enonce": "Quel est le role du commis de salle (runner) ?", "choix": ["Apporter les plats et debarrasser", "Elaborer la carte des vins", "Encaisser les additions"], "correct": "Apporter les plats et debarrasser", "explication": "Le commis apporte les plats depuis la cuisine et aide au debarrassage."},
+            {"type": "qcm", "enonce": "Qui conseille les clients sur les vins ?", "choix": ["Le sommelier", "Le plongeur", "L'hote d'accueil"], "correct": "Le sommelier", "explication": "Le sommelier gere la carte des vins, conseille et assure le service du vin."},
+            {"type": "qcm", "enonce": "Parmi ces qualites, laquelle est essentielle en salle ?", "choix": ["La discretion", "La lenteur", "L'indifference"], "correct": "La discretion", "explication": "Presentation, ponctualite, discretion et memoire sont les qualites clefs du personnel de salle."},
+            {"type": "paires", "enonce": "Associe chaque poste a son role.", "paires": [["Maitre d'hotel", "Supervise et accueille"], ["Chef de rang", "Sert ses tables"], ["Sommelier", "Conseille les vins"], ["Commis", "Apporte et debarrasse"]], "explication": "Chaque poste a une fonction precise dans la brigade de salle."},
+            {"type": "qcm", "enonce": "Le personnel de salle est aussi un role de...", "choix": ["Vente", "Cuisine", "Comptabilite"], "correct": "Vente", "explication": "La salle vend le travail de la cuisine : le sens commercial est essentiel."},
+            {"type": "qcm", "enonce": "Dans un petit etablissement, les postes...", "choix": ["Se cumulent sur une meme personne", "Restent toujours separes", "Disparaissent"], "correct": "Se cumulent sur une meme personne", "explication": "En petit effectif, une meme personne assure plusieurs roles."}
+          ]
+        },
+        {
+          "lecon": 2,
+          "titre": "Dresser une table",
+          "questions": [
+            {"type": "qcm", "enonce": "Ou place-t-on les fourchettes dans un couvert classique ?", "choix": ["A gauche de l'assiette", "A droite de l'assiette", "Au-dessus de l'assiette"], "correct": "A gauche de l'assiette", "explication": "Les fourchettes se placent a gauche de l'assiette."},
+            {"type": "qcm", "enonce": "Comment oriente-t-on la lame du couteau ?", "choix": ["Vers l'assiette", "Vers l'exterieur", "Vers le haut"], "correct": "Vers l'assiette", "explication": "Le couteau se place a droite, lame tournee vers l'assiette."},
+            {"type": "qcm", "enonce": "Ou se trouve le verre a eau ?", "choix": ["En haut a droite de l'assiette", "A gauche de l'assiette", "Au centre"], "correct": "En haut a droite de l'assiette", "explication": "Les verres se placent en haut a droite, en diagonale, dans l'ordre de service."},
+            {"type": "qcm", "enonce": "Ou place-t-on l'assiette a pain ?", "choix": ["A gauche", "A droite", "Devant le verre"], "correct": "A gauche", "explication": "L'assiette a pain se place a gauche, avec le couteau a beurre."},
+            {"type": "qcm", "enonce": "Dans quel sens l'invite utilise-t-il les couverts ?", "choix": ["De l'exterieur vers l'interieur", "De l'interieur vers l'exterieur", "Au hasard"], "correct": "De l'exterieur vers l'interieur", "explication": "On dresse les couverts dans l'ordre d'utilisation, de l'exterieur vers l'interieur."},
+            {"type": "qcm", "enonce": "Ou place-t-on les couverts a dessert ?", "choix": ["Au-dessus de l'assiette", "Sous l'assiette", "Dans le verre"], "correct": "Au-dessus de l'assiette", "explication": "Les couverts a dessert se placent au-dessus de l'assiette."},
+            {"type": "paires", "enonce": "Associe chaque element a sa place sur la table.", "paires": [["Fourchette", "A gauche"], ["Couteau", "A droite, lame vers l'assiette"], ["Verre a eau", "En haut a droite"], ["Assiette a pain", "A gauche"]], "explication": "C'est la base du dressage classique a la francaise."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre les etapes du dressage d'une table.", "correct": ["Poser la nappe", "Disposer les assiettes", "Placer les couverts", "Poser les verres"], "explication": "On dresse la nappe, puis les assiettes, les couverts et enfin les verres."},
+            {"type": "qcm", "enonce": "Comment verifie-t-on la proprete des verres avant le service ?", "choix": ["A la vapeur puis lustrage", "En les rincant a l'eau chaude a table", "On ne verifie pas"], "correct": "A la vapeur puis lustrage", "explication": "Les verres se lustrent a la vapeur pour un rendu impeccable."}
+          ]
+        },
+        {
+          "lecon": 3,
+          "titre": "Les types de service",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce que le service a l'assiette ?", "choix": ["Le plat arrive deja dresse de la cuisine", "Le client se sert seul", "Le serveur decoupe a table"], "correct": "Le plat arrive deja dresse de la cuisine", "explication": "Le service a l'assiette (a l'americaine) est le standard actuel : rapide et precis."},
+            {"type": "qcm", "enonce": "Dans le service a la francaise, qui se sert ?", "choix": ["Le client lui-meme", "Le sommelier", "Le chef"], "correct": "Le client lui-meme", "explication": "Le plat est presente et le client se sert lui-meme."},
+            {"type": "qcm", "enonce": "Le service a l'anglaise se fait avec...", "choix": ["Une pince (cuillere et fourchette)", "Les mains", "Une louche uniquement"], "correct": "Une pince (cuillere et fourchette)", "explication": "Le serveur sert le client a la pince, cuillere et fourchette d'une main."},
+            {"type": "qcm", "enonce": "Quel service se fait devant le client au gueridon ?", "choix": ["Le service a la russe", "Le service a l'assiette", "Le buffet"], "correct": "Le service a la russe", "explication": "Le service au gueridon : decoupe, flambage ou preparation devant le client."},
+            {"type": "qcm", "enonce": "Par quel cote sert-on les boissons ?", "choix": ["Par la droite", "Par la gauche", "Peu importe"], "correct": "Par la droite", "explication": "Les boissons se servent et se debarrassent par la droite du client."},
+            {"type": "qcm", "enonce": "Par quel cote sert-on les mets a l'assiette ?", "choix": ["Par la droite", "Par la gauche", "Par-dessus l'epaule"], "correct": "Par la droite", "explication": "En service a l'assiette, on sert par la droite ; en francaise et anglaise, les mets par la gauche."},
+            {"type": "qcm", "enonce": "Dans quel sens tourne-t-on autour de la table quand c'est possible ?", "choix": ["Sens des aiguilles d'une montre", "Sens inverse toujours", "Aucun sens defini"], "correct": "Sens des aiguilles d'une montre", "explication": "On tourne dans le sens horaire quand c'est possible, sans passer le bras devant le visage du client."},
+            {"type": "ordre", "enonce": "Classe ces services du plus rapide au plus spectaculaire.", "correct": ["Service a l'assiette", "Service a l'anglaise", "Service au gueridon"], "explication": "L'assiette est le plus rapide, le gueridon le plus technique et spectaculaire."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 2,
+      "titre": "La sequence de service",
+      "lecons": [
+        {
+          "lecon": 4,
+          "titre": "De l'accueil a la prise de commande",
+          "questions": [
+            {"type": "qcm", "enonce": "A l'arrivee d'un client, quel est le bon reflexe ?", "choix": ["Le saluer et l'accueillir avec le sourire", "Finir sa tache en cours", "Attendre qu'il parle"], "correct": "Le saluer et l'accueillir avec le sourire", "explication": "Le client passe avant la tache en cours : contact visuel et sourire d'abord."},
+            {"type": "qcm", "enonce": "Que note-t-on lors d'une reservation ?", "choix": ["Nom, nombre de couverts, heure, demandes speciales", "Seulement le nom", "Rien, c'est inutile"], "correct": "Nom, nombre de couverts, heure, demandes speciales", "explication": "On note aussi les allergies, un anniversaire, un besoin de chaise bebe."},
+            {"type": "qcm", "enonce": "Dans quel ordre prend-on les commandes a table ?", "choix": ["Les dames d'abord", "Les hommes d'abord", "Au hasard"], "correct": "Les dames d'abord", "explication": "On prend la commande dans le sens horaire, les dames d'abord."},
+            {"type": "qcm", "enonce": "Comment valider une commande complexe ?", "choix": ["La reformuler au client", "Ne rien dire", "Deviner"], "correct": "La reformuler au client", "explication": "Reformuler evite les erreurs, notamment sur les cuissons et allergies."},
+            {"type": "qcm", "enonce": "Comment vendre sans forcer ?", "choix": ["Faire une suggestion precise", "Insister lourdement", "Imposer le plat le plus cher"], "correct": "Faire une suggestion precise", "explication": "Une suggestion precise conseille mieux qu'un simple 'avec ceci ?'."},
+            {"type": "qcm", "enonce": "Que doit contenir le bon transmis en cuisine ?", "choix": ["Numero de table, couverts, detail par personne", "Juste le nom du plat", "Le prix seulement"], "correct": "Numero de table, couverts, detail par personne", "explication": "Le bon precise le numero de table, le nombre de couverts et le detail par personne."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre les etapes de l'accueil au restaurant.", "correct": ["Accueillir et saluer", "Installer a la table", "Presenter la carte", "Prendre la commande"], "explication": "C'est la sequence d'un accueil professionnel."},
+            {"type": "qcm", "enonce": "Que propose-t-on souvent avant la commande du repas ?", "choix": ["Un aperitif", "L'addition", "Le cafe"], "correct": "Un aperitif", "explication": "Proposer un aperitif fait partie de l'accueil et augmente le ticket moyen."}
+          ]
+        },
+        {
+          "lecon": 5,
+          "titre": "Le deroule du repas",
+          "questions": [
+            {"type": "qcm", "enonce": "Quand debarrasse-t-on les assiettes d'une table ?", "choix": ["Quand tout le monde a termine", "Des que le premier a fini", "A tout moment"], "correct": "Quand tout le monde a termine", "explication": "On attend que tous les convives aient termine avant de debarrasser."},
+            {"type": "qcm", "enonce": "Comment reconnait-on qu'un client a termine ?", "choix": ["Couverts en parallele sur l'assiette", "Couverts en V ouvert", "Assiette repoussee seulement"], "correct": "Couverts en parallele sur l'assiette", "explication": "Couverts paralleles = termine ; couverts en V ouvert = pause."},
+            {"type": "qcm", "enonce": "Comment servir les convives d'une meme table ?", "choix": ["Tous en meme temps", "Un par un a plusieurs minutes d'ecart", "Selon leur ordre d'arrivee"], "correct": "Tous en meme temps", "explication": "La synchronisation veut que tous soient servis simultanement."},
+            {"type": "qcm", "enonce": "Quand resservir le vin ou l'eau ?", "choix": ["Sans attendre le verre vide", "Seulement si on le demande", "En fin de repas"], "correct": "Sans attendre le verre vide", "explication": "On veille au pain, a l'eau et au vin tout au long du repas."},
+            {"type": "qcm", "enonce": "Que fait-on avant le dessert ?", "choix": ["Ramasser les miettes et placer les couverts a dessert", "Rien de particulier", "Apporter l'addition"], "correct": "Ramasser les miettes et placer les couverts a dessert", "explication": "On debarrasse le menage, on ramasse les miettes et on met les couverts a dessert."},
+            {"type": "qcm", "enonce": "Quand presente-t-on l'addition ?", "choix": ["Rapidement des qu'elle est demandee", "Quand on a le temps", "Avant le dessert"], "correct": "Rapidement des qu'elle est demandee", "explication": "L'addition se presente vite, verifiee, et on raccompagne le client."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre le deroule d'un repas.", "correct": ["Servir l'aperitif", "Servir l'entree", "Servir le plat", "Servir le dessert", "Presenter l'addition"], "explication": "Le service suit l'ordre logique du repas jusqu'a l'addition."},
+            {"type": "paires", "enonce": "Associe chaque signe des couverts a sa signification.", "paires": [["Couverts paralleles", "Le client a termine"], ["Couverts en V ouvert", "Le client fait une pause"]], "explication": "La position des couverts indique au serveur s'il peut debarrasser."}
+          ]
+        },
+        {
+          "lecon": 6,
+          "titre": "Reclamations et situations delicates",
+          "questions": [
+            {"type": "qcm", "enonce": "Face a une reclamation, quelle est la premiere etape ?", "choix": ["Ecouter sans interrompre", "Se justifier", "Accuser la cuisine"], "correct": "Ecouter sans interrompre", "explication": "On ecoute d'abord, on s'excuse, on agit, puis on assure le suivi."},
+            {"type": "qcm", "enonce": "Comment s'excuse-t-on aupres d'un client mecontent ?", "choix": ["Au nom de l'etablissement, sans accuser un collegue", "En blamant un collegue", "En niant le probleme"], "correct": "Au nom de l'etablissement, sans accuser un collegue", "explication": "On presente des excuses sinceres sans reporter la faute sur quelqu'un."},
+            {"type": "qcm", "enonce": "Un plat revient froid. Que faire ?", "choix": ["Le retourner en cuisine avec des excuses", "Demander au client de le manger quand meme", "Ignorer"], "correct": "Le retourner en cuisine avec des excuses", "explication": "Un plat froid ou mal cuit repart immediatement en cuisine avec excuse."},
+            {"type": "qcm", "enonce": "Face a un client ivre, que fait-on ?", "choix": ["Cesser l'alcool avec tact et proposer eau et cafe", "Continuer a servir de l'alcool", "Le mettre dehors brutalement"], "correct": "Cesser l'alcool avec tact et proposer eau et cafe", "explication": "On cesse le service d'alcool avec tact et on previent le responsable."},
+            {"type": "qcm", "enonce": "Un client bien traite apres une reclamation...", "choix": ["Devient souvent fidele", "Ne revient jamais", "Se plaint toujours"], "correct": "Devient souvent fidele", "explication": "Une reclamation bien geree fidelise ; ignoree, elle se raconte partout."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre la methode de gestion d'une reclamation.", "correct": ["Ecouter", "S'excuser", "Agir", "Assurer le suivi"], "explication": "Ecouter, s'excuser, agir, suivre : la methode en quatre temps."},
+            {"type": "qcm", "enonce": "Que fait-on d'un objet trouve ?", "choix": ["Registre et remise au responsable", "On le garde", "On le jette"], "correct": "Registre et remise au responsable", "explication": "Un objet trouve est note dans un registre et remis au responsable."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 3,
+      "titre": "Connaissances de restaurant",
+      "lecons": [
+        {
+          "lecon": 7,
+          "titre": "Lire une carte et connaitre les mets",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un tartare ?", "choix": ["Une viande ou un poisson cru assaisonne", "Un plat tres cuit", "Une sauce chaude"], "correct": "Une viande ou un poisson cru assaisonne", "explication": "Le tartare est cru et assaisonne."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un carpaccio ?", "choix": ["De fines tranches crues", "Un plat mijote", "Un dessert"], "correct": "De fines tranches crues", "explication": "Le carpaccio designe de fines tranches crues, souvent de boeuf ou de poisson."},
+            {"type": "qcm", "enonce": "Que signifie 'a la meuniere' ?", "choix": ["Farine puis cuisson au beurre", "Cuit a la vapeur", "Cru marine"], "correct": "Farine puis cuisson au beurre", "explication": "Meuniere : produit farine puis poele au beurre, typique du poisson."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un ceviche ?", "choix": ["Poisson cru marine au citron", "Poisson frit", "Poisson fume"], "correct": "Poisson cru marine au citron", "explication": "Le ceviche est un poisson cru 'cuit' par l'acidite du citron."},
+            {"type": "qcm", "enonce": "Quel vin accompagne le mieux la plupart des fromages ?", "choix": ["Le vin blanc", "Le vin rouge tannique", "L'eau seulement"], "correct": "Le vin blanc", "explication": "Contrairement a l'idee recue, les blancs s'accordent mieux a la plupart des fromages."},
+            {"type": "paires", "enonce": "Associe chaque fromage a sa famille.", "paires": [["Camembert", "Pate molle a croute fleurie"], ["Comte", "Pate pressee cuite"], ["Roquefort", "Pate persillee"], ["Epoisses", "Croute lavee"]], "explication": "Connaitre les familles de fromages aide a presenter le plateau."},
+            {"type": "qcm", "enonce": "Dans quel ordre presente-t-on les fromages ?", "choix": ["Du plus doux au plus fort", "Du plus fort au plus doux", "Au hasard"], "correct": "Du plus doux au plus fort", "explication": "On deguste et on sert du plus doux au plus puissant."},
+            {"type": "qcm", "enonce": "Que doit connaitre le personnel sur chaque plat ?", "choix": ["Ingredients, allergenes, cuisson", "Seulement le prix", "Rien"], "correct": "Ingredients, allergenes, cuisson", "explication": "Le personnel doit pouvoir decrire chaque plat et ses allergenes."}
+          ]
+        },
+        {
+          "lecon": 8,
+          "titre": "Facturation, encaissement et chiffres",
+          "questions": [
+            {"type": "qcm", "enonce": "Comment calcule-t-on le ticket moyen ?", "choix": ["Chiffre d'affaires divise par le nombre de couverts", "Prix du plat le plus cher", "Nombre de tables"], "correct": "Chiffre d'affaires divise par le nombre de couverts", "explication": "Ticket moyen = CA / nombre de couverts."},
+            {"type": "qcm", "enonce": "Que verifie-t-on avant de presenter l'addition ?", "choix": ["Son exactitude", "Rien", "Seulement le pourboire"], "correct": "Son exactitude", "explication": "Une addition se verifie avant d'etre presentee."},
+            {"type": "qcm", "enonce": "A quoi sert la vente additionnelle raisonnee ?", "choix": ["Augmenter le ticket moyen sans forcer", "Vider la cave", "Faire fuir le client"], "correct": "Augmenter le ticket moyen sans forcer", "explication": "Aperitif, eau, dessert, cafe : la vente additionnelle augmente le ticket moyen."},
+            {"type": "qcm", "enonce": "Le coefficient multiplicateur en restauration est souvent de...", "choix": ["3 a 4", "1", "10"], "correct": "3 a 4", "explication": "Le prix de vente vaut environ 3 a 4 fois le cout matiere."},
+            {"type": "qcm", "enonce": "Qu'engage une erreur de saisie sur un bon ?", "choix": ["La caisse et le stock faux", "Rien", "Un simple retard"], "correct": "La caisse et le stock faux", "explication": "Toute erreur de bon fausse la facturation et le stock."},
+            {"type": "qcm", "enonce": "Le service est-il toujours inclus dans le prix ?", "choix": ["Cela depend du pays", "Toujours", "Jamais"], "correct": "Cela depend du pays", "explication": "Selon les pays, le service est inclus ou le pourboire est attendu."}
+          ]
+        },
+        {
+          "lecon": 9,
+          "titre": "Sommellerie pratique en salle",
+          "questions": [
+            {"type": "qcm", "enonce": "A quelle temperature sert-on un vin rouge structure ?", "choix": ["16 a 18 C", "6 a 8 C", "20 a 22 C"], "correct": "16 a 18 C", "explication": "Les grands rouges se servent a 16-18 C, jamais chambres au-dela."},
+            {"type": "qcm", "enonce": "A quelle temperature sert-on un vin blanc sec ?", "choix": ["8 a 10 C", "16 a 18 C", "2 a 4 C"], "correct": "8 a 10 C", "explication": "Les blancs secs vifs se servent autour de 8-10 C."},
+            {"type": "qcm", "enonce": "A qui fait-on gouter le vin ?", "choix": ["A l'hote qui l'a commande", "Au premier arrive", "A personne"], "correct": "A l'hote qui l'a commande", "explication": "On presente et fait gouter a l'hote avant de servir les convives."},
+            {"type": "qcm", "enonce": "Combien de verres dans une bouteille de 75 cl ?", "choix": ["Environ 6", "Environ 3", "Environ 12"], "correct": "Environ 6", "explication": "Une bouteille de 75 cl sert environ 6 verres de 12 cl."},
+            {"type": "qcm", "enonce": "Que signifie carafer un vin jeune ?", "choix": ["L'aerer dans une carafe large", "Le separer de son depot", "Le rechauffer"], "correct": "L'aerer dans une carafe large", "explication": "Carafer aere un vin jeune ; decanter separe un vieux vin de son depot."},
+            {"type": "qcm", "enonce": "A quel niveau remplit-on un verre de vin ?", "choix": ["Au tiers", "A ras bord", "A moitie exactement"], "correct": "Au tiers", "explication": "On remplit le verre au tiers, sans toucher le verre avec la bouteille."},
+            {"type": "paires", "enonce": "Associe chaque plat a un accord classique.", "paires": [["Huitres", "Muscadet ou Chablis"], ["Viande rouge grillee", "Rouge structure"], ["Roquefort", "Sauternes"], ["Dessert au chocolat", "Banyuls"]], "explication": "Ce sont des accords mets-vins de reference."}
+          ]
+        }
+      ]
+    }
+  ]
+}

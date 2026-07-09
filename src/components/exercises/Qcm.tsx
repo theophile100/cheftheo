@@ -1,19 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { QcmData } from "@/lib/types";
+import { seededShuffle } from "@/lib/shuffle";
 
 export function Qcm({
   data,
+  seed,
   onAnswer,
 }: {
   data: QcmData;
+  seed: string;
   onAnswer: (isCorrect: boolean) => void;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
 
-  const hasImages = data.options.some((option) => option.image_url);
+  const options = useMemo(
+    () => seededShuffle(data.options, seed),
+    [data, seed],
+  );
+  const hasImages = options.some((option) => option.image_url);
 
   function handleSelect(optionId: string) {
     if (answered) return;
@@ -27,7 +34,7 @@ export function Qcm({
       data-tap-feedback="off"
       className={hasImages ? "grid grid-cols-2 gap-3" : "flex flex-col gap-3"}
     >
-      {data.options.map((option) => {
+      {options.map((option) => {
         let stateClasses =
           "border-zinc-200 bg-white text-zinc-900 shadow-[0_3px_0_0_#e4e4e7] hover:border-zinc-300 active:translate-y-[3px] active:shadow-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:shadow-[0_3px_0_0_#3f3f46]";
         let isCorrectAnswered = false;

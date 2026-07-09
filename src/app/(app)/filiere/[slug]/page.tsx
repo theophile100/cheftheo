@@ -22,11 +22,18 @@ export default async function Filiere({
     notFound();
   }
 
-  const { data: lecons } = await supabase
-    .from("lecons")
-    .select("id, title, position")
-    .eq("filiere_id", filiere.id)
-    .order("position");
+  const [{ data: lecons }, { data: unites }] = await Promise.all([
+    supabase
+      .from("lecons")
+      .select("id, title, position, unite_id")
+      .eq("filiere_id", filiere.id)
+      .order("position"),
+    supabase
+      .from("unites")
+      .select("id, title, position")
+      .eq("filiere_id", filiere.id)
+      .order("position"),
+  ]);
 
   return (
     <main className="mx-auto max-w-md px-6 py-10">
@@ -43,7 +50,7 @@ export default async function Filiere({
         </h1>
       </div>
 
-      <LeconTree lecons={lecons ?? []} />
+      <LeconTree lecons={lecons ?? []} unites={unites ?? []} />
     </main>
   );
 }

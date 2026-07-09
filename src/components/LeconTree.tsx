@@ -1,16 +1,31 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { useProgress } from "@/lib/progress-context";
 
-interface Lecon {
+interface Unite {
   id: string;
   title: string;
   position: number;
 }
 
-export function LeconTree({ lecons }: { lecons: Lecon[] }) {
+interface Lecon {
+  id: string;
+  title: string;
+  position: number;
+  unite_id?: string | null;
+}
+
+export function LeconTree({
+  lecons,
+  unites = [],
+}: {
+  lecons: Lecon[];
+  unites?: Unite[];
+}) {
   const { completedLeconIds } = useProgress();
+  const uniteById = new Map(unites.map((u) => [u.id, u]));
 
   return (
     <div className="mt-10 flex flex-col items-center">
@@ -19,6 +34,10 @@ export function LeconTree({ lecons }: { lecons: Lecon[] }) {
         const previousLecon = index > 0 ? lecons[index - 1] : null;
         const isUnlocked =
           index === 0 || (previousLecon && completedLeconIds.has(previousLecon.id));
+
+        const unite = lecon.unite_id ? uniteById.get(lecon.unite_id) : null;
+        const showUniteHeader =
+          unite && lecon.unite_id !== previousLecon?.unite_id;
 
         let circleClasses =
           "flex h-20 w-20 items-center justify-center rounded-full bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600";
@@ -45,25 +64,38 @@ export function LeconTree({ lecons }: { lecons: Lecon[] }) {
         );
 
         return (
-          <div key={lecon.id} className="flex flex-col items-center">
-            {isUnlocked ? (
-              <Link
-                href={`/lecon/${lecon.id}`}
-                aria-label={lecon.title}
-                className={circleClasses}
-              >
-                {icon}
-              </Link>
-            ) : (
-              <div aria-label={`${lecon.title} verrouillée`} className={circleClasses}>
-                {icon}
+          <Fragment key={lecon.id}>
+            {showUniteHeader && (
+              <div className={`max-w-xs text-center ${index > 0 ? "mt-8" : ""} mb-5`}>
+                <p className="text-xs font-bold uppercase tracking-wide text-zinc-400">
+                  Unité {unite.position}
+                </p>
+                <p className="mt-0.5 text-sm font-bold text-zinc-700 dark:text-zinc-200">
+                  {unite.title}
+                </p>
               </div>
             )}
 
-            {index < lecons.length - 1 && (
-              <div className="h-10 w-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-            )}
-          </div>
+            <div className="flex flex-col items-center">
+              {isUnlocked ? (
+                <Link
+                  href={`/lecon/${lecon.id}`}
+                  aria-label={lecon.title}
+                  className={circleClasses}
+                >
+                  {icon}
+                </Link>
+              ) : (
+                <div aria-label={`${lecon.title} verrouillée`} className={circleClasses}>
+                  {icon}
+                </div>
+              )}
+
+              {index < lecons.length - 1 && (
+                <div className="h-10 w-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+              )}
+            </div>
+          </Fragment>
         );
       })}
     </div>

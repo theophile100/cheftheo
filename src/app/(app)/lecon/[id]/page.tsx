@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LeconRunner } from "@/components/LeconRunner";
+import { randomShuffle, randomSeed } from "@/lib/shuffle";
 import type { Question } from "@/lib/types";
 
 export default async function Lecon({
@@ -36,11 +37,17 @@ export default async function Lecon({
     ? filiereRelation[0]?.slug
     : filiereRelation?.slug;
 
+  // A fresh random seed per page load, so answer-order shuffling (which is
+  // otherwise deterministic per question id + retry round) also varies
+  // between separate visits to the same lesson, not just within one.
+  const sessionSeed = randomSeed();
+
   return (
     <LeconRunner
       leconId={lecon.id}
       filiereSlug={slug ?? ""}
-      questions={questions as Question[]}
+      questions={randomShuffle(questions as Question[])}
+      sessionSeed={sessionSeed}
     />
   );
 }

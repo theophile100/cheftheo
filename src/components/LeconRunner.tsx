@@ -31,10 +31,12 @@ export function LeconRunner({
   leconId,
   filiereSlug,
   questions,
+  sessionSeed,
 }: {
   leconId: string;
   filiereSlug: string;
   questions: Question[];
+  sessionSeed: string;
 }) {
   const { applyCompletion } = useProgress();
   const { soundEnabled, vibrationEnabled } = useSoundSettings();
@@ -143,7 +145,7 @@ export function LeconRunner({
     );
   }
 
-  const roundKey = `${current.id}-${round}`;
+  const roundKey = `${sessionSeed}-${current.id}-${round}`;
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] flex-col">
@@ -174,7 +176,12 @@ export function LeconRunner({
 
         <div className="mt-6">
           {current.type === "qcm" && (
-            <Qcm key={roundKey} data={current.data} onAnswer={handleAnswer} />
+            <Qcm
+              key={roundKey}
+              data={current.data}
+              seed={roundKey}
+              onAnswer={handleAnswer}
+            />
           )}
           {current.type === "associer" && (
             <Associer

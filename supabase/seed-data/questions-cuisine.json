@@ -1,0 +1,215 @@
+{
+  "filiere": "Cuisine",
+  "description": "Banque de questions complete de la filiere Cuisine. Types : qcm, paires, ordre. Le champ correct designe la bonne reponse.",
+  "unites": [
+    {
+      "unite": 1,
+      "titre": "Hygiene et securite alimentaire (HACCP)",
+      "lecons": [
+        {
+          "lecon": 1,
+          "titre": "Les microbes et la contamination",
+          "questions": [
+            {"type": "qcm", "enonce": "Combien de types de dangers alimentaires distingue-t-on ?", "choix": ["Trois : biologique, chimique, physique", "Deux seulement", "Un seul"], "correct": "Trois : biologique, chimique, physique", "explication": "Les dangers sont biologiques, chimiques et physiques."},
+            {"type": "qcm", "enonce": "Quelle bacterie se developpe meme au froid ?", "choix": ["Listeria", "Salmonelle", "Aucune"], "correct": "Listeria", "explication": "Listeria monocytogenes se developpe meme a basse temperature, d'ou sa dangerosite."},
+            {"type": "qcm", "enonce": "Ou trouve-t-on surtout les salmonelles ?", "choix": ["Oeufs et volailles crues", "Legumes cuits", "Pain"], "correct": "Oeufs et volailles crues", "explication": "Les salmonelles sont frequentes dans les oeufs et volailles crues."},
+            {"type": "qcm", "enonce": "Qu'est-ce que la contamination croisee ?", "choix": ["Transfert de microbes d'un cru vers un pret a consommer", "Une cuisson ratee", "Un produit perime"], "correct": "Transfert de microbes d'un cru vers un pret a consommer", "explication": "Elle se fait souvent via une planche ou un couteau non nettoye."},
+            {"type": "qcm", "enonce": "Que representent les 5 M ?", "choix": ["Les sources de contamination", "Cinq recettes", "Cinq temperatures"], "correct": "Les sources de contamination", "explication": "Matiere, Main-d'oeuvre, Materiel, Milieu, Methode."},
+            {"type": "paires", "enonce": "Associe chaque bacterie a sa source.", "paires": [["Salmonelle", "Oeufs et volailles"], ["Listeria", "Produits laitiers crus"], ["E. coli", "Viande hachee peu cuite"], ["Staphylocoque", "Mains et plaies"]], "explication": "Connaitre les sources aide a prevenir les contaminations."},
+            {"type": "qcm", "enonce": "Le staphylocoque dore est surtout porte par...", "choix": ["L'homme (mains, nez, plaies)", "Les legumes", "Le froid"], "correct": "L'homme (mains, nez, plaies)", "explication": "Il est porte par l'humain : d'ou l'importance de l'hygiene du personnel."}
+          ]
+        },
+        {
+          "lecon": 2,
+          "titre": "Les temperatures",
+          "questions": [
+            {"type": "qcm", "enonce": "Quelle est la zone de danger microbienne ?", "choix": ["Entre +4 et +63 C", "Entre -18 et 0 C", "Au-dessus de 100 C"], "correct": "Entre +4 et +63 C", "explication": "C'est la plage ou les bacteries se multiplient le plus vite."},
+            {"type": "qcm", "enonce": "A quelle temperature conserve-t-on les produits frais ?", "choix": ["0 a +4 C", "+10 C", "-18 C"], "correct": "0 a +4 C", "explication": "Le froid positif se situe entre 0 et +4 C."},
+            {"type": "qcm", "enonce": "A quelle temperature congele-t-on ?", "choix": ["-18 C", "0 C", "+4 C"], "correct": "-18 C", "explication": "La congelation se fait a -18 C."},
+            {"type": "qcm", "enonce": "Quelle temperature minimale pour maintenir un plat au chaud ?", "choix": ["+63 C", "+40 C", "+30 C"], "correct": "+63 C", "explication": "La liaison chaude impose un minimum de +63 C."},
+            {"type": "qcm", "enonce": "Peut-on recongeler un produit decongele ?", "choix": ["Non, jamais", "Oui, sans probleme", "Oui, une fois"], "correct": "Non, jamais", "explication": "Un produit decongele ne se recongele jamais."},
+            {"type": "qcm", "enonce": "Ou decongele-t-on un produit ?", "choix": ["Au refrigerateur", "A temperature ambiante", "Au soleil"], "correct": "Au refrigerateur", "explication": "La decongelation se fait au froid (0-4 C), jamais a l'air ambiant."},
+            {"type": "qcm", "enonce": "A ne jamais depasser pour l'huile de friture ?", "choix": ["180 C", "250 C", "100 C"], "correct": "180 C", "explication": "Au-dela de 180 C, l'huile forme des composes toxiques."},
+            {"type": "qcm", "enonce": "La cuisson assainissante se fait a coeur a...", "choix": ["75 C", "45 C", "100 C"], "correct": "75 C", "explication": "75 C a coeur detruit la plupart des germes pathogenes."}
+          ]
+        },
+        {
+          "lecon": 3,
+          "titre": "La methode HACCP et la marche en avant",
+          "questions": [
+            {"type": "qcm", "enonce": "Que signifie la marche en avant ?", "choix": ["Les produits vont du sale vers le propre sans revenir", "Cuire vite", "Servir en premier"], "correct": "Les produits vont du sale vers le propre sans revenir", "explication": "Les produits avancent du sale vers le propre, sans croisement."},
+            {"type": "qcm", "enonce": "Que veut dire DLC ?", "choix": ["Date limite de consommation", "Date de livraison", "Duree de cuisson"], "correct": "Date limite de consommation", "explication": "DLC depassee : le produit est jete, danger sanitaire."},
+            {"type": "qcm", "enonce": "Un produit dont la DDM est depassee...", "choix": ["Reste consommable mais perd des qualites", "Est dangereux", "Doit etre recongele"], "correct": "Reste consommable mais perd des qualites", "explication": "La DDM ('de preference avant') n'est pas un danger, juste une perte de qualite."},
+            {"type": "qcm", "enonce": "Combien de principes compte la methode HACCP ?", "choix": ["7", "3", "12"], "correct": "7", "explication": "HACCP repose sur 7 principes, de l'analyse des dangers a la tracabilite."},
+            {"type": "qcm", "enonce": "A quoi sert la tracabilite ?", "choix": ["Retrouver l'origine d'un produit", "Decorer l'assiette", "Accelerer le service"], "correct": "Retrouver l'origine d'un produit", "explication": "On conserve etiquettes et dates pour tracer chaque produit."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre le circuit de la marche en avant.", "correct": ["Reception", "Stockage", "Preparation", "Dressage", "Service"], "explication": "Le produit avance sans jamais revenir en arriere."}
+          ]
+        },
+        {
+          "lecon": 4,
+          "titre": "Hygiene du personnel et allergenes",
+          "questions": [
+            {"type": "qcm", "enonce": "Quel est le geste d'hygiene le plus important ?", "choix": ["Le lavage des mains", "Le port de la toque", "Le nettoyage du sol"], "correct": "Le lavage des mains", "explication": "Le lavage des mains est le geste cle contre les contaminations."},
+            {"type": "qcm", "enonce": "Combien de temps se lave-t-on les mains ?", "choix": ["Environ 30 secondes", "2 secondes", "5 minutes"], "correct": "Environ 30 secondes", "explication": "On savonne 30 secondes en frottant partout, y compris les poignets."},
+            {"type": "qcm", "enonce": "Combien d'allergenes a declaration obligatoire ?", "choix": ["14", "5", "20"], "correct": "14", "explication": "La liste europeenne compte 14 allergenes majeurs."},
+            {"type": "qcm", "enonce": "Une allergie, contrairement a une intolerance, peut...", "choix": ["Provoquer un choc mortel", "Etre ignoree", "Se soigner en mangeant"], "correct": "Provoquer un choc mortel", "explication": "Une allergie peut declencher un choc anaphylactique avec des traces infimes."},
+            {"type": "qcm", "enonce": "Que fait-on d'une plaie a la main en cuisine ?", "choix": ["Pansement bleu detectable et gant", "Rien", "On continue a mains nues"], "correct": "Pansement bleu detectable et gant", "explication": "Le pansement bleu se voit s'il tombe dans un plat, et le gant protege."},
+            {"type": "paires", "enonce": "Associe chaque element a sa fonction dans la tenue.", "paires": [["Toque", "Retenir les cheveux"], ["Veste manches longues", "Proteger des brulures"], ["Chaussures coquees", "Securite des pieds"], ["Tablier", "Proteger la tenue"]], "explication": "Chaque piece de la tenue a un role d'hygiene ou de securite."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 2,
+      "titre": "Le materiel et les decoupes",
+      "lecons": [
+        {
+          "lecon": 5,
+          "titre": "Les couteaux",
+          "questions": [
+            {"type": "qcm", "enonce": "Quel couteau sert a emincer et tailler ?", "choix": ["Le couteau de chef (eminceur)", "Le couteau d'office", "L'econome"], "correct": "Le couteau de chef (eminceur)", "explication": "Le couteau de chef (20-25 cm) est le couteau principal."},
+            {"type": "qcm", "enonce": "A quoi sert un couteau d'office ?", "choix": ["Petits travaux et epluchage", "Lever les filets", "Trancher le pain"], "correct": "Petits travaux et epluchage", "explication": "L'office (8-10 cm) sert aux petits travaux."},
+            {"type": "qcm", "enonce": "A quoi sert le fusil ?", "choix": ["Redresser le fil de la lame", "Affuter reellement", "Decouper"], "correct": "Redresser le fil de la lame", "explication": "Le fusil entretient le fil entre deux affutages, il n'affute pas."},
+            {"type": "qcm", "enonce": "Que fait-on d'un couteau qui tombe ?", "choix": ["On le laisse tomber", "On le rattrape", "On le range en vol"], "correct": "On le laisse tomber", "explication": "On ne rattrape jamais un couteau qui tombe : risque de coupure grave."},
+            {"type": "qcm", "enonce": "Comment protege-t-on la main qui tient l'aliment ?", "choix": ["Doigts replies en griffe", "Doigts tendus", "Main a plat"], "correct": "Doigts replies en griffe", "explication": "La main de garde replie les doigts en griffe pour guider la lame sans se couper."},
+            {"type": "paires", "enonce": "Associe chaque couteau a son usage.", "paires": [["Filet de sole", "Lever les filets de poisson"], ["Desosser", "Suivre les os"], ["Office", "Epluchage"], ["Couteau-scie", "Le pain"]], "explication": "Chaque couteau a une forme adaptee a sa tache."}
+          ]
+        },
+        {
+          "lecon": 6,
+          "titre": "Les taillages de legumes",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une brunoise ?", "choix": ["De petits des de 2 mm", "Des batonnets", "Des lamelles"], "correct": "De petits des de 2 mm", "explication": "La brunoise est une taille en tres petits des de 2 mm."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une julienne ?", "choix": ["Des filaments fins", "De gros cubes", "Des rondelles"], "correct": "Des filaments fins", "explication": "La julienne est une taille en filaments de 1-2 mm."},
+            {"type": "qcm", "enonce": "A quoi sert une mirepoix ?", "choix": ["Garniture aromatique des fonds", "Decoration d'assiette", "Dessert"], "correct": "Garniture aromatique des fonds", "explication": "La mirepoix (cubes irreguliers) aromatise fonds et braises."},
+            {"type": "qcm", "enonce": "Que signifie ciseler un oignon ?", "choix": ["Le tailler en petits des", "Le trancher en rondelles", "Le raper"], "correct": "Le tailler en petits des", "explication": "Ciseler = incisions puis coupe pour obtenir de petits des."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une chiffonnade ?", "choix": ["Des feuilles emincees finement", "Des des", "Des batonnets"], "correct": "Des feuilles emincees finement", "explication": "La chiffonnade concerne les feuilles (salade, basilic) roulees puis emincees."},
+            {"type": "qcm", "enonce": "Que veut dire 'tourner' un legume ?", "choix": ["Lui donner une forme reguliere de tonneau", "Le faire cuire en tournant", "Le raper"], "correct": "Lui donner une forme reguliere de tonneau", "explication": "Tourner donne une forme de petit tonneau a facettes."},
+            {"type": "ordre", "enonce": "Classe ces tailles de la plus grosse a la plus fine.", "correct": ["Mirepoix", "Macedoine", "Brunoise", "Julienne"], "explication": "De la mirepoix (grosse) a la julienne (fine)."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 3,
+      "titre": "Les cuissons",
+      "lecons": [
+        {
+          "lecon": 7,
+          "titre": "Les familles de cuisson",
+          "questions": [
+            {"type": "qcm", "enonce": "Que fait une cuisson par concentration ?", "choix": ["Saisit pour garder les sucs", "Echange les saveurs avec l'eau", "Ne cuit pas"], "correct": "Saisit pour garder les sucs", "explication": "Par concentration, on saisit et les sucs restent dedans (rotir, griller, sauter)."},
+            {"type": "qcm", "enonce": "Une cuisson par expansion...", "choix": ["Part a froid et echange les saveurs", "Saisit a chaud", "Cuit au four sec"], "correct": "Part a froid et echange les saveurs", "explication": "Par expansion, depart a froid, les saveurs passent dans le liquide (pot-au-feu)."},
+            {"type": "qcm", "enonce": "Le braisage est une cuisson...", "choix": ["Mixte", "Par concentration seule", "Crue"], "correct": "Mixte", "explication": "On saisit d'abord puis on cuit longuement en milieu humide : cuisson mixte."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une blanquette ?", "choix": ["Un ragout a blanc, sans coloration", "Un roti", "Une friture"], "correct": "Un ragout a blanc, sans coloration", "explication": "La blanquette est un ragout a blanc, sans coloration prealable."},
+            {"type": "qcm", "enonce": "Qu'est-ce que la reaction de Maillard ?", "choix": ["Le brunissement des sucs a haute temperature", "Une contamination", "Un refroidissement"], "correct": "Le brunissement des sucs a haute temperature", "explication": "Maillard cree les aromes de grille a partir de ~140 C sur surface seche."},
+            {"type": "qcm", "enonce": "Pourquoi laisser reposer une viande apres cuisson ?", "choix": ["Pour redistribuer les jus", "Pour la refroidir", "Pour la saler"], "correct": "Pour redistribuer les jus", "explication": "Le repos laisse les jus se redistribuer, la viande reste moelleuse."},
+            {"type": "paires", "enonce": "Associe chaque cuisson a sa famille.", "paires": [["Rotir", "Concentration"], ["Pot-au-feu", "Expansion"], ["Braiser", "Mixte"], ["Griller", "Concentration"]], "explication": "Chaque technique appartient a une des trois familles."}
+          ]
+        },
+        {
+          "lecon": 8,
+          "titre": "Cuissons de la viande et des oeufs",
+          "questions": [
+            {"type": "qcm", "enonce": "Un steak 'a point' est cuit a coeur vers...", "choix": ["55-60 C", "45 C", "80 C"], "correct": "55-60 C", "explication": "A point : environ 55-60 C a coeur."},
+            {"type": "qcm", "enonce": "Un steak 'bleu' est...", "choix": ["Juste saisi", "Bien cuit", "Cru total"], "correct": "Juste saisi", "explication": "Bleu : a peine saisi, ~45-50 C a coeur."},
+            {"type": "qcm", "enonce": "Combien de temps pour un oeuf dur ?", "choix": ["9-10 minutes", "3 minutes", "20 minutes"], "correct": "9-10 minutes", "explication": "L'oeuf dur cuit 9-10 min ; au-dela apparait un cerne verdatre."},
+            {"type": "qcm", "enonce": "Comment poche-t-on un oeuf ?", "choix": ["Eau fremissante vinaigree", "Eau bouillante salee", "Huile chaude"], "correct": "Eau fremissante vinaigree", "explication": "On poche dans une eau fremissante vinaigree, non salee, 2-3 min."},
+            {"type": "qcm", "enonce": "Comment teste-t-on la fraicheur d'un oeuf ?", "choix": ["Dans l'eau : frais il coule", "On le secoue", "On le pese"], "correct": "Dans l'eau : frais il coule", "explication": "Un oeuf frais coule ; un oeuf age flotte car sa chambre a air a grossi."},
+            {"type": "ordre", "enonce": "Classe ces cuissons de steak du moins au plus cuit.", "correct": ["Bleu", "Saignant", "A point", "Bien cuit"], "explication": "Bleu, saignant, a point, bien cuit."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 4,
+      "titre": "Fonds, sauces et liaisons",
+      "lecons": [
+        {
+          "lecon": 9,
+          "titre": "Les fonds",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un fond ?", "choix": ["Un bouillon aromatique base des sauces", "Une sauce finie", "Un dessert"], "correct": "Un bouillon aromatique base des sauces", "explication": "Le fond sert de base aux sauces."},
+            {"type": "qcm", "enonce": "Quelle difference entre fond blanc et fond brun ?", "choix": ["Les os sont rotis pour le brun", "Aucune", "Le brun est sucre"], "correct": "Les os sont rotis pour le brun", "explication": "Le fond brun demarre par des os rotis colores, le blanc non."},
+            {"type": "qcm", "enonce": "Faut-il saler un fond ?", "choix": ["Non, il sera reduit", "Oui, beaucoup", "Oui, en fin"], "correct": "Non, il sera reduit", "explication": "On ne sale pas un fond car il sera reduit et concentre."},
+            {"type": "qcm", "enonce": "Combien de temps cuit un fumet de poisson ?", "choix": ["20-30 min maximum", "4 heures", "5 minutes"], "correct": "20-30 min maximum", "explication": "Cuit trop longtemps, le fumet devient amer."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une glace de viande ?", "choix": ["Un fond reduit tres concentre", "Un dessert glace", "Une sauce froide"], "correct": "Un fond reduit tres concentre", "explication": "La glace est un fond reduit jusqu'a une consistance sirupeuse."}
+          ]
+        },
+        {
+          "lecon": 10,
+          "titre": "Liaisons et sauces meres",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un roux ?", "choix": ["Beurre et farine cuits ensemble", "Du sucre cuit", "Une creme"], "correct": "Beurre et farine cuits ensemble", "explication": "Le roux (beurre + farine a parts egales) sert a lier."},
+            {"type": "qcm", "enonce": "La bechamel, c'est un roux blanc plus...", "choix": ["Du lait", "Du fond brun", "De l'eau"], "correct": "Du lait", "explication": "Bechamel = roux blanc + lait."},
+            {"type": "qcm", "enonce": "La hollandaise est une emulsion de...", "choix": ["Jaunes montes au beurre", "Farine et eau", "Creme et sucre"], "correct": "Jaunes montes au beurre", "explication": "La hollandaise emulsionne des jaunes avec du beurre clarifie, sans depasser ~60 C."},
+            {"type": "qcm", "enonce": "Combien de sauces meres compte la cuisine classique ?", "choix": ["Cinq", "Deux", "Dix"], "correct": "Cinq", "explication": "Bechamel, veloute, espagnole, tomate, hollandaise."},
+            {"type": "qcm", "enonce": "Le ratio classique d'une vinaigrette ?", "choix": ["1 vinaigre pour 3 huile", "1 pour 1", "3 vinaigre pour 1 huile"], "correct": "1 vinaigre pour 3 huile", "explication": "Une vinaigrette classique : 1 part de vinaigre pour 3 d'huile."},
+            {"type": "paires", "enonce": "Associe chaque sauce mere a sa base.", "paires": [["Bechamel", "Roux blanc et lait"], ["Veloute", "Roux blond et fond blanc"], ["Hollandaise", "Jaunes et beurre"], ["Tomate", "Tomate"]], "explication": "Chaque sauce mere a une base bien identifiee."},
+            {"type": "qcm", "enonce": "Que faire si une mayonnaise tourne ?", "choix": ["La remonter sur un nouveau jaune", "La jeter", "Ajouter de l'eau chaude"], "correct": "La remonter sur un nouveau jaune", "explication": "On rattrape une mayonnaise tournee en repartant d'un nouveau jaune."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 5,
+      "titre": "Les produits",
+      "lecons": [
+        {
+          "lecon": 11,
+          "titre": "Viandes et poissons",
+          "questions": [
+            {"type": "qcm", "enonce": "Quel morceau de boeuf est le plus tendre ?", "choix": ["Le filet", "Le paleron", "La joue"], "correct": "Le filet", "explication": "Le filet est le morceau le plus tendre, a cuisson rapide."},
+            {"type": "qcm", "enonce": "Que deviennent les morceaux riches en collagene a cuisson lente ?", "choix": ["Moelleux (collagene fondu en gelatine)", "Durs", "Secs"], "correct": "Moelleux (collagene fondu en gelatine)", "explication": "Le collagene fond en gelatine lors des cuissons longues : d'ou le moelleux des braises."},
+            {"type": "qcm", "enonce": "Qu'est-ce que le persillage d'une viande ?", "choix": ["Des infiltrations de gras dans le muscle", "Une herbe", "Un defaut"], "correct": "Des infiltrations de gras dans le muscle", "explication": "Le persillage est gage de gout et de tendrete."},
+            {"type": "qcm", "enonce": "Comment reconnaitre un poisson frais ?", "choix": ["Oeil bombe, ouies rouges, chair ferme", "Oeil terne, odeur d'ammoniaque", "Ecailles qui tombent"], "correct": "Oeil bombe, ouies rouges, chair ferme", "explication": "Un poisson frais a l'oeil brillant, les ouies rouges et une chair ferme."},
+            {"type": "qcm", "enonce": "Combien de filets sur un poisson plat comme la sole ?", "choix": ["Quatre", "Deux", "Un"], "correct": "Quatre", "explication": "Les poissons plats donnent 4 filets, les ronds 2."},
+            {"type": "qcm", "enonce": "Une moule qui reste fermee apres cuisson...", "choix": ["Se jette", "Se mange", "Se recuit"], "correct": "Se jette", "explication": "Les moules fermees apres cuisson ne se consomment pas."}
+          ]
+        },
+        {
+          "lecon": 12,
+          "titre": "Legumes, feculents et assaisonnements",
+          "questions": [
+            {"type": "qcm", "enonce": "Que veut dire cuire des legumes verts 'a l'anglaise' ?", "choix": ["Eau bouillante salee puis eau glacee", "A l'etouffee", "A la vapeur douce"], "correct": "Eau bouillante salee puis eau glacee", "explication": "Le refroidissement immediat fixe la couleur verte (chlorophylle)."},
+            {"type": "qcm", "enonce": "Quelle pomme de terre pour une puree ?", "choix": ["A chair farineuse (bintje)", "A chair ferme (ratte)", "N'importe laquelle"], "correct": "A chair farineuse (bintje)", "explication": "Les chairs farineuses conviennent aux purees et frites."},
+            {"type": "qcm", "enonce": "Combien de sel et d'eau pour 100 g de pates ?", "choix": ["1 L d'eau et 10 g de sel", "0,5 L et 1 g", "2 L et 50 g"], "correct": "1 L d'eau et 10 g de sel", "explication": "Regle classique : 1 L d'eau et 10 g de sel pour 100 g de pates."},
+            {"type": "qcm", "enonce": "Le riz pilaf se mouille avec...", "choix": ["1 volume de riz pour 1,5 de liquide", "Beaucoup d'eau", "Sans liquide"], "correct": "1 volume de riz pour 1,5 de liquide", "explication": "Le pilaf : 1 volume de riz pour 1,5 de liquide, a couvert."},
+            {"type": "qcm", "enonce": "Que contient un bouquet garni ?", "choix": ["Thym, laurier, queues de persil", "Sucre et cannelle", "Ail et piment"], "correct": "Thym, laurier, queues de persil", "explication": "Le bouquet garni classique : thym, laurier, queues de persil."},
+            {"type": "qcm", "enonce": "Quelle est l'epice la plus chere ?", "choix": ["Le safran", "Le paprika", "Le cumin"], "correct": "Le safran", "explication": "Le safran est l'epice la plus couteuse."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 6,
+      "titre": "Organisation, brigade et vocabulaire",
+      "lecons": [
+        {
+          "lecon": 13,
+          "titre": "La brigade de cuisine",
+          "questions": [
+            {"type": "qcm", "enonce": "Qui dirige la cuisine ?", "choix": ["Le chef de cuisine", "Le commis", "Le plongeur"], "correct": "Le chef de cuisine", "explication": "Le chef dirige, concoit la carte et gere la brigade."},
+            {"type": "qcm", "enonce": "De quoi s'occupe le saucier ?", "choix": ["Sauces et viandes en sauce", "Desserts", "Legumes"], "correct": "Sauces et viandes en sauce", "explication": "Le saucier tient l'un des postes les plus prestigieux."},
+            {"type": "qcm", "enonce": "Que fait le garde-manger ?", "choix": ["Les preparations froides et la decoupe crue", "Les rotis", "La patisserie"], "correct": "Les preparations froides et la decoupe crue", "explication": "Le garde-manger gere le froid : entrees froides, buffets, decoupe des viandes crues."},
+            {"type": "qcm", "enonce": "Qui remplace n'importe quel poste ?", "choix": ["Le tournant", "Le second", "Le commis"], "correct": "Le tournant", "explication": "Le tournant remplace les postes selon les besoins."},
+            {"type": "paires", "enonce": "Associe chaque poste a sa specialite.", "paires": [["Saucier", "Sauces"], ["Rotisseur", "Rotis et grillades"], ["Entremetier", "Legumes et potages"], ["Patissier", "Desserts"]], "explication": "Chaque chef de partie tient un poste precis."}
+          ]
+        },
+        {
+          "lecon": 14,
+          "titre": "Le service et le vocabulaire",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce que la mise en place ?", "choix": ["Tout preparer avant le service", "Placer les clients", "Encaisser"], "correct": "Tout preparer avant le service", "explication": "Un service reussi est une mise en place reussie."},
+            {"type": "qcm", "enonce": "Que veut dire 'suer' un legume ?", "choix": ["Le cuire doucement sans coloration", "Le frire", "Le congeler"], "correct": "Le cuire doucement sans coloration", "explication": "Suer = cuire doucement pour concentrer les sucs sans colorer."},
+            {"type": "qcm", "enonce": "Que signifie 'deglacer' ?", "choix": ["Dissoudre les sucs avec un liquide", "Refroidir", "Ajouter de la glace"], "correct": "Dissoudre les sucs avec un liquide", "explication": "Deglacer recupere les sucs caramelises avec un liquide pour une sauce."},
+            {"type": "qcm", "enonce": "Que veut dire 'monder' une tomate ?", "choix": ["La peler apres ebouillantage", "La couper en des", "La cuire"], "correct": "La peler apres ebouillantage", "explication": "Monder = peler apres un bref passage a l'eau bouillante."},
+            {"type": "qcm", "enonce": "Que signifie 'napper' ?", "choix": ["Recouvrir de sauce", "Trancher", "Saler"], "correct": "Recouvrir de sauce", "explication": "Napper = recouvrir d'une couche de sauce ; 'cuire a la nappe' pour la creme anglaise."},
+            {"type": "qcm", "enonce": "Que veut dire 'abaisser' une pate ?", "choix": ["L'etaler au rouleau", "La laisser reposer", "La cuire"], "correct": "L'etaler au rouleau", "explication": "Abaisser = etaler une pate au rouleau."},
+            {"type": "paires", "enonce": "Associe chaque terme a sa definition.", "paires": [["Ciseler", "Couper en petits des"], ["Blanchir", "Ebouillanter brievement"], ["Reduire", "Concentrer par evaporation"], ["Clarifier", "Rendre limpide"]], "explication": "Le vocabulaire precis est la base du metier."}
+          ]
+        }
+      ]
+    }
+  ]
+}
