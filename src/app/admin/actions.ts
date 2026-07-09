@@ -1,0 +1,208 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { AssocierData, OrdonnerData, QcmData } from "@/lib/types";
+
+export interface QuestionInput {
+  leconId: string;
+  type: "qcm" | "associer" | "ordonner";
+  prompt: string;
+  explanation: string;
+  position: number;
+  data: QcmData | AssocierData | OrdonnerData;
+}
+
+async function assertAdmin() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Non authentifié.");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.is_admin) throw new Error("Accès réservé aux administrateurs.");
+}
+
+function validateQuestionInput(input: QuestionInput): string | null {
+  if (!input.prompt.trim()) return "L'énoncé de la question est requis.";
+
+  if (input.type === "qcm") {
+    const data = input.data as QcmData;
+    if (!data.options || data.options.length < 2) {
+      return "Un QCM doit avoir au moins 2 réponses.";
+    }
+    if (data.options.some((o) => !o.text.trim())) {
+      return "Chaque réponse doit avoir un texte.";
+    }
+    if (!data.options.some((o) => o.id === data.correct_option_id)) {
+      return "Sélectionnez la bonne réponse.";
+    }
+  }
+
+  if (input.type === "associer") {
+    const data = input.data as AssocierData;
+    if (!data.pairs || data.pairs.length < 2) {
+      return "Un exercice d'association doit avoir au moins 2 paires.";
+    }
+    if (data.pairs.some((p) => !p.left.text.trim() || !p.right.text.trim())) {
+      return "Chaque paire doit avoir ses deux côtés remplis.";
+    }
+  }
+
+  if (input.type === "ordonner") {
+    const data = input.data as OrdonnerData;
+    if (!data.steps || data.steps.length < 2) {
+      return "Un exercice d'ordre doit avoir au moins 2 étapes.";
+    }
+    if (data.steps.some((s) => !s.text.trim())) {
+      return "Chaque étape doit avoir un texte.";
+    }
+  }
+
+  return null;
+}
+
+// ---------- Leçons ----------
+
+export async function createLecon(formData: FormData) {
+  try {
+    await assertAdmin();
+
+    const filiereId = formData.get("filiere_id") as string;
+    const title = (formData.get("title") as string)?.trim();
+    const position = Number(formData.get("position"));
+
+    if (!filiereId || !title || !Number.isFinite(position)) {
+      throw new Error("Merci de remplir tous les champs.");
+    }
+
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from("lecons")
+      .insert({ filiere_id: filiereId, title, position });
+
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    redirect(`/admin/lecons/new?error=${encodeURIComponent((e as Error).message)}`);
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin");
+}
+
+export async function updateLecon(id: string, formData: FormData) {
+  try {
+    await assertAdmin();
+
+    const title = (formData.get("title") as string)?.trim();
+    const position = Number(formData.get("position"));
+
+    if (!title || !Number.isFinite(position)) {
+      throw new Error("Merci de remplir tous les champs.");
+    }
+
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from("lecons")
+      .update({ title, position })
+      .eq("id", id);
+
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    redirect(`/admin/lecons/${id}?error=${encodeURIComponent((e as Error).message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath(`/admin/lecons/${id}`);
+  redirect(`/admin/lecons/${id}`);
+}
+
+export async function deleteLecon(id: string) {
+  await assertAdmin();
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("lecons").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+}
+
+// ---------- Questions ----------
+
+export async function createQuestion(
+  input: QuestionInput,
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const validationError = validateQuestionInput(input);
+  if (validationError) return { error: validationError };
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("questions").insert({
+    lecon_id: input.leconId,
+    type: input.type,
+    position: input.position,
+    prompt: input.prompt,
+    explanation: input.explanation || null,
+    data: input.data,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/admin/lecons/${input.leconId}`);
+  redirect(`/admin/lecons/${input.leconId}`);
+}
+
+export async function updateQuestion(
+  id: string,
+  input: QuestionInput,
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const validationError = validateQuestionInput(input);
+  if (validationError) return { error: validationError };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("questions")
+    .update({
+      type: input.type,
+      position: input.position,
+      prompt: input.prompt,
+      explanation: input.explanation || null,
+      data: input.data,
+    })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/admin/lecons/${input.leconId}`);
+  redirect(`/admin/lecons/${input.leconId}`);
+}
+
+export async function deleteQuestion(id: string, leconId: string) {
+  await assertAdmin();
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("questions").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/admin/lecons/${leconId}`);
+}
