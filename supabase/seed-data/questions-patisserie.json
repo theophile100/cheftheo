@@ -1,0 +1,110 @@
+{
+  "filiere": "Patisserie",
+  "description": "Banque de questions complete de la filiere Patisserie. Types : qcm, paires, ordre.",
+  "unites": [
+    {
+      "unite": 1,
+      "titre": "Les bases et les pates",
+      "lecons": [
+        {
+          "lecon": 1,
+          "titre": "Comprendre les ingredients",
+          "questions": [
+            {"type": "qcm", "enonce": "Que developpe le petrissage d'une farine avec l'eau ?", "choix": ["Le gluten", "Le sucre", "La levure"], "correct": "Le gluten", "explication": "Le gluten donne l'elasticite, recherche pour les pates levees, evite pour les friables."},
+            {"type": "qcm", "enonce": "Quelle farine pour les viennoiseries fines ?", "choix": ["T45", "T65", "T110"], "correct": "T45", "explication": "La T45, blanche, convient a la patisserie fine et aux viennoiseries."},
+            {"type": "qcm", "enonce": "Combien pese un oeuf moyen sans coquille ?", "choix": ["Environ 50 g", "20 g", "100 g"], "correct": "Environ 50 g", "explication": "Un oeuf moyen fait ~50 g (30 g de blanc, 20 g de jaune)."},
+            {"type": "qcm", "enonce": "Quel role joue le jaune d'oeuf ?", "choix": ["Il emulsifie", "Il foisonne", "Il fait lever"], "correct": "Il emulsifie", "explication": "Le jaune emulsifie grace a la lecithine ; le blanc, lui, foisonne."},
+            {"type": "qcm", "enonce": "A partir de quel taux de matiere grasse peut-on fouetter une creme ?", "choix": ["30 %", "10 %", "50 %"], "correct": "30 %", "explication": "Il faut au moins 30 % de MG pour monter une creme."},
+            {"type": "qcm", "enonce": "Quelle levure meurt a la chaleur ?", "choix": ["La levure biologique", "La levure chimique", "Aucune"], "correct": "La levure biologique", "explication": "La levure biologique meurt au-dela de ~50 C ; la chimique agit a la cuisson."},
+            {"type": "paires", "enonce": "Associe chaque ingredient a son role.", "paires": [["Jaune d'oeuf", "Emulsifier"], ["Blanc d'oeuf", "Foisonner"], ["Levure biologique", "Faire fermenter"], ["Sucre inverti", "Retenir l'humidite"]], "explication": "Chaque ingredient a une fonction technique precise."}
+          ]
+        },
+        {
+          "lecon": 2,
+          "titre": "Les pates friables et la pate a choux",
+          "questions": [
+            {"type": "qcm", "enonce": "Pourquoi ne faut-il pas trop travailler une pate brisee ?", "choix": ["Elle deviendrait elastique et dure", "Elle serait trop sucree", "Elle ne cuirait pas"], "correct": "Elle deviendrait elastique et dure", "explication": "Trop la travailler developpe le gluten : elle se corse et durcit."},
+            {"type": "qcm", "enonce": "Que fait-on subir a une pate a foncer avant de l'etaler ?", "choix": ["Un repos au froid", "Une cuisson", "Un fouettage"], "correct": "Un repos au froid", "explication": "Le repos au froid detend la pate et evite qu'elle se retracte."},
+            {"type": "qcm", "enonce": "Quelle etape de la pate a choux consiste a assecher la panade ?", "choix": ["Dessecher sur le feu", "La fouetter", "La congeler"], "correct": "Dessecher sur le feu", "explication": "On desseche jusqu'a ce que la pate se detache des parois."},
+            {"type": "qcm", "enonce": "Que ne faut-il pas faire en debut de cuisson des choux ?", "choix": ["Ouvrir la porte du four", "Les surveiller", "Prechauffer"], "correct": "Ouvrir la porte du four", "explication": "Ouvrir trop tot fait retomber les choux : la vapeur les gonfle."},
+            {"type": "qcm", "enonce": "Comment sait-on que la pate a choux a la bonne texture ?", "choix": ["Elle forme un bec sur la spatule", "Elle coule comme de l'eau", "Elle est solide"], "correct": "Elle forme un bec sur la spatule", "explication": "On ajoute les oeufs jusqu'a obtenir un bec au retrait de la spatule."},
+            {"type": "qcm", "enonce": "Quelle preparation salee est faite en pate a choux ?", "choix": ["La gougere", "La quiche", "Le feuillete"], "correct": "La gougere", "explication": "La gougere est une pate a choux salee au fromage."}
+          ]
+        },
+        {
+          "lecon": 3,
+          "titre": "Feuilletage et pates levees",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce qui cree les feuillets du feuilletage ?", "choix": ["La vapeur ecarte les couches de pate et beurre", "Le sucre", "La levure"], "correct": "La vapeur ecarte les couches de pate et beurre", "explication": "A la cuisson, la vapeur d'eau ecarte les fines couches alternees."},
+            {"type": "qcm", "enonce": "Combien de tours pour un feuilletage classique ?", "choix": ["5 a 6 tours", "1 tour", "20 tours"], "correct": "5 a 6 tours", "explication": "On donne 5 a 6 tours, avec repos au froid entre chaque."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une pate levee feuilletee ?", "choix": ["Croissants et pains au chocolat", "Pate brisee", "Genoise"], "correct": "Croissants et pains au chocolat", "explication": "La pate levee feuilletee combine fermentation et tourage."},
+            {"type": "qcm", "enonce": "Quel enemi fait fondre le beurre du tourage pendant la pousse ?", "choix": ["Une temperature trop chaude", "Le froid", "Le sel"], "correct": "Une temperature trop chaude", "explication": "Une pousse trop chaude fait fondre le beurre : on vise 24-28 C."},
+            {"type": "qcm", "enonce": "Combien de beurre peut contenir une brioche riche ?", "choix": ["Jusqu'a 50 % du poids de farine", "5 %", "100 %"], "correct": "Jusqu'a 50 % du poids de farine", "explication": "Une brioche riche va jusqu'a 50 % de beurre par rapport a la farine."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre les etapes de la brioche.", "correct": ["Petrir", "Pointage", "Faconner", "Apprets", "Cuire"], "explication": "Petrissage, pointage, faconnage, apprets (2e pousse), cuisson."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 2,
+      "titre": "Les cremes et les meringues",
+      "lecons": [
+        {
+          "lecon": 4,
+          "titre": "Les cremes",
+          "questions": [
+            {"type": "qcm", "enonce": "A quelle temperature cuit une creme anglaise ?", "choix": ["82 a 85 C", "100 C", "60 C"], "correct": "82 a 85 C", "explication": "On cuit 'a la nappe' entre 82 et 85 C ; au-dela elle graine."},
+            {"type": "qcm", "enonce": "La creme patissiere doit-elle bouillir ?", "choix": ["Oui, pour cuire l'amidon", "Non, jamais", "Peu importe"], "correct": "Oui, pour cuire l'amidon", "explication": "Elle doit bouillir en fouettant pour cuire la farine ou la poudre a creme."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une creme mousseline ?", "choix": ["Patissiere plus beurre monte", "Anglaise plus gelatine", "Creme fouettee simple"], "correct": "Patissiere plus beurre monte", "explication": "Mousseline = creme patissiere + beurre monte (fraisier, Paris-Brest)."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une ganache ?", "choix": ["Chocolat et creme chaude emulsionnes", "Sucre cuit", "Blancs montes"], "correct": "Chocolat et creme chaude emulsionnes", "explication": "Ganache = chocolat + creme (1:1 pour une version souple)."},
+            {"type": "qcm", "enonce": "Que se passe-t-il si on fait bouillir une creme liee au jaune ?", "choix": ["Le jaune coagule", "Rien", "Elle epaissit mieux"], "correct": "Le jaune coagule", "explication": "Apres liaison au jaune, on ne fait plus bouillir sinon l'oeuf coagule."},
+            {"type": "paires", "enonce": "Associe chaque creme a sa composition.", "paires": [["Anglaise", "Lait, jaunes, sucre"], ["Patissiere", "Lait, jaunes, sucre, amidon"], ["Mousseline", "Patissiere plus beurre"], ["Ganache", "Chocolat plus creme"]], "explication": "Chaque creme a une base bien identifiee."}
+          ]
+        },
+        {
+          "lecon": 5,
+          "titre": "Meringues et sucre cuit",
+          "questions": [
+            {"type": "qcm", "enonce": "A quelle temperature cuit le sucre pour une meringue italienne ?", "choix": ["118 a 121 C", "160 C", "80 C"], "correct": "118 a 121 C", "explication": "On verse un sucre cuit a 118-121 C sur les blancs montes."},
+            {"type": "qcm", "enonce": "Quelle meringue est la plus stable pour une tarte au citron ?", "choix": ["Italienne", "Francaise", "Aucune"], "correct": "Italienne", "explication": "La meringue italienne est stable et brillante, sans cuisson supplementaire."},
+            {"type": "qcm", "enonce": "Qu'est-ce qui empeche des blancs de monter ?", "choix": ["Une trace de gras", "Le sel", "Le froid"], "correct": "Une trace de gras", "explication": "Une trace de gras dans le cul-de-poule empeche les blancs de monter."},
+            {"type": "qcm", "enonce": "A quelle temperature obtient-on un caramel clair ?", "choix": ["155 a 165 C", "100 C", "200 C"], "correct": "155 a 165 C", "explication": "Le caramel clair se forme vers 155-165 C ; au-dela il brunit puis brule."},
+            {"type": "qcm", "enonce": "Faut-il remuer un sirop en cuisson ?", "choix": ["Non, cela cristallise", "Oui, sans arret", "Une seule fois"], "correct": "Non, cela cristallise", "explication": "On ne remue pas un sirop : cela provoque la cristallisation."},
+            {"type": "ordre", "enonce": "Classe ces stades de cuisson du sucre du plus bas au plus haut.", "correct": ["Petit boule", "Gros boule", "Petit casse", "Caramel"], "explication": "Le sucre se concentre a mesure que la temperature monte."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 3,
+      "titre": "Viennoiserie, entremets et chocolat",
+      "lecons": [
+        {
+          "lecon": 6,
+          "titre": "Les classiques a connaitre",
+          "questions": [
+            {"type": "qcm", "enonce": "De quoi est faite la tarte Tatin ?", "choix": ["Pommes caramelisees cuites sous la pate", "Creme et fruits rouges", "Chocolat"], "correct": "Pommes caramelisees cuites sous la pate", "explication": "La Tatin cuit les pommes sous la pate, puis se sert retournee."},
+            {"type": "qcm", "enonce": "Qu'est-ce qui compose un mille-feuille ?", "choix": ["Feuilletage et creme", "Genoise et chantilly", "Pate a choux"], "correct": "Feuilletage et creme", "explication": "Le mille-feuille alterne feuilletage caramelise et creme."},
+            {"type": "qcm", "enonce": "Comment nait la bosse de la madeleine ?", "choix": ["Choc thermique : pate froide, four chaud", "Beaucoup de levure", "Un moule special"], "correct": "Choc thermique : pate froide, four chaud", "explication": "Le contraste pate froide / four chaud cree la bosse."},
+            {"type": "qcm", "enonce": "Qu'est-ce qui forme la collerette d'un macaron ?", "choix": ["Le croutage avant cuisson", "Le sucre glace", "La ganache"], "correct": "Le croutage avant cuisson", "explication": "Laisser crouter les coques forme la collerette a la cuisson."},
+            {"type": "qcm", "enonce": "De quoi est fait un Paris-Brest ?", "choix": ["Pate a choux et praline", "Feuilletage", "Genoise"], "correct": "Pate a choux et praline", "explication": "Le Paris-Brest est une couronne de choux garnie de creme pralinee."},
+            {"type": "paires", "enonce": "Associe chaque gateau a son element cle.", "paires": [["Fraisier", "Mousseline et fraises"], ["Opera", "Ganache et cafe"], ["Foret-noire", "Griottes et chantilly"], ["Mont-Blanc", "Marron"]], "explication": "Chaque grand classique a un composant signature."}
+          ]
+        },
+        {
+          "lecon": 7,
+          "titre": "Biscuits, chocolat et finitions",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce que la genoise ?", "choix": ["Oeufs entiers et sucre montes au ruban", "Blancs montes seuls", "Une pate levee"], "correct": "Oeufs entiers et sucre montes au ruban", "explication": "La genoise monte les oeufs entiers avec le sucre jusqu'au ruban."},
+            {"type": "qcm", "enonce": "A quoi sert le temperage du chocolat ?", "choix": ["Brillance, cassant et demoulage", "Le sucrer", "Le faire fondre plus vite"], "correct": "Brillance, cassant et demoulage", "explication": "Le temperage cristallise le beurre de cacao sous sa forme stable."},
+            {"type": "qcm", "enonce": "A quelle temperature travaille-t-on le chocolat noir tempere ?", "choix": ["31 a 32 C", "50 C", "20 C"], "correct": "31 a 32 C", "explication": "Le chocolat noir se travaille a 31-32 C apres la courbe de temperage."},
+            {"type": "qcm", "enonce": "Quel est l'ennemi du chocolat fondu ?", "choix": ["L'eau", "Le froid", "Le sucre"], "correct": "L'eau", "explication": "Une goutte d'eau fait 'masser' le chocolat fondu."},
+            {"type": "qcm", "enonce": "Comment utilise-t-on une feuille de gelatine ?", "choix": ["Rehydratee a l'eau froide puis fondue", "Ajoutee seche", "Bouillie longtemps"], "correct": "Rehydratee a l'eau froide puis fondue", "explication": "On la rehydrate a froid, on l'essore puis on la fond dans une masse chaude non bouillie."},
+            {"type": "qcm", "enonce": "A quelle temperature coule-t-on un glacage miroir ?", "choix": ["30 a 35 C", "60 C", "10 C"], "correct": "30 a 35 C", "explication": "Le glacage miroir se coule vers 30-35 C sur un entremets congele."},
+            {"type": "qcm", "enonce": "Combien pese une feuille de gelatine standard ?", "choix": ["2 g", "10 g", "0,5 g"], "correct": "2 g", "explication": "Une feuille de gelatine standard pese environ 2 g."}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "filiere": "Bar et Vins",
+  "description": "Banque de questions complete de la filiere Bar et Vins. Types : qcm, paires, ordre.",
+  "unites": [
+    {
+      "unite": 1,
+      "titre": "La vigne et l'elaboration du vin",
+      "lecons": [
+        {
+          "lecon": 1,
+          "titre": "De la vigne au vin",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce que le vin ?", "choix": ["Du jus de raisin fermente", "Du jus de raisin frais", "Un alcool distille"], "correct": "Du jus de raisin fermente", "explication": "Les levures transforment le sucre du raisin en alcool et gaz carbonique."},
+            {"type": "qcm", "enonce": "D'ou vient la couleur d'un vin rouge ?", "choix": ["De la maceration avec les peaux", "Du jus lui-meme", "D'un colorant"], "correct": "De la maceration avec les peaux", "explication": "La couleur et les tanins viennent des peaux, macerees avec le jus."},
+            {"type": "qcm", "enonce": "Comment fait-on un vin blanc ?", "choix": ["Pressurage sans maceration", "Maceration longue", "Ajout d'alcool"], "correct": "Pressurage sans maceration", "explication": "Le vin blanc se fait par pressurage direct, sans macerer les peaux."},
+            {"type": "qcm", "enonce": "Peut-on faire un rose en melangeant rouge et blanc ?", "choix": ["Non (interdit en Europe hors champagne)", "Oui, toujours", "Oui, partout"], "correct": "Non (interdit en Europe hors champagne)", "explication": "Le rose se fait par courte maceration ou pressurage, pas par melange."},
+            {"type": "qcm", "enonce": "Comment se fait la mousse d'un champagne ?", "choix": ["Seconde fermentation en bouteille", "Ajout de gaz", "Agitation"], "correct": "Seconde fermentation en bouteille", "explication": "La methode traditionnelle provoque une seconde fermentation en bouteille."},
+            {"type": "qcm", "enonce": "Qu'est-ce que la pourriture noble ?", "choix": ["Un champignon qui concentre le sucre (liquoreux)", "Un defaut", "Une maladie a jeter"], "correct": "Un champignon qui concentre le sucre (liquoreux)", "explication": "Le botrytis concentre les sucres pour les vins liquoreux comme le Sauternes."},
+            {"type": "ordre", "enonce": "Classe ces mentions de champagne du moins au plus sucre.", "correct": ["Brut nature", "Extra-brut", "Brut", "Demi-sec"], "explication": "Du plus sec (brut nature) au plus doux (demi-sec puis doux)."}
+          ]
+        },
+        {
+          "lecon": 2,
+          "titre": "Cepages et regions",
+          "questions": [
+            {"type": "qcm", "enonce": "Quel cepage domine en Bourgogne rouge ?", "choix": ["Pinot noir", "Cabernet sauvignon", "Syrah"], "correct": "Pinot noir", "explication": "Le pinot noir donne les grands rouges de Bourgogne, fins et soyeux."},
+            {"type": "qcm", "enonce": "Quel cepage blanc pour Chablis et Champagne ?", "choix": ["Chardonnay", "Sauvignon", "Riesling"], "correct": "Chardonnay", "explication": "Le chardonnay domine en Bourgogne blanche et en Champagne."},
+            {"type": "qcm", "enonce": "Quel cepage pour les grands rouges du Medoc ?", "choix": ["Cabernet sauvignon", "Gamay", "Pinot noir"], "correct": "Cabernet sauvignon", "explication": "Le cabernet sauvignon structure les vins de la rive gauche bordelaise."},
+            {"type": "qcm", "enonce": "Quel cepage donne le Beaujolais ?", "choix": ["Gamay", "Merlot", "Syrah"], "correct": "Gamay", "explication": "Le gamay donne des rouges fruites et gouleyants."},
+            {"type": "qcm", "enonce": "Que signifie AOP ?", "choix": ["Appellation d'origine protegee", "Ancien ordre de production", "Assemblage optimal de produit"], "correct": "Appellation d'origine protegee", "explication": "L'AOP garantit une zone et des regles de production strictes."},
+            {"type": "paires", "enonce": "Associe chaque cepage a un arome typique.", "paires": [["Sauvignon", "Buis, agrumes"], ["Syrah", "Poivre, violette"], ["Gewurztraminer", "Litchi, rose"], ["Merlot", "Prune, rondeur"]], "explication": "Chaque cepage a une signature aromatique."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 2,
+      "titre": "Deguster et servir le vin",
+      "lecons": [
+        {
+          "lecon": 3,
+          "titre": "La degustation",
+          "questions": [
+            {"type": "qcm", "enonce": "Que regarde-t-on dans l'etape de l'oeil ?", "choix": ["La robe et la limpidite", "Le gout", "Le prix"], "correct": "La robe et la limpidite", "explication": "L'oeil juge la couleur, l'intensite et la limpidite."},
+            {"type": "qcm", "enonce": "Que sont les aromes tertiaires ?", "choix": ["Ceux de l'elevage et du vieillissement", "Ceux du raisin", "Ceux de la fermentation"], "correct": "Ceux de l'elevage et du vieillissement", "explication": "Les tertiaires (bouquet) viennent de l'elevage et du temps."},
+            {"type": "qcm", "enonce": "En quoi mesure-t-on la longueur d'un vin ?", "choix": ["En caudalies", "En degres", "En centilitres"], "correct": "En caudalies", "explication": "La caudalie mesure les secondes de persistance en bouche."},
+            {"type": "qcm", "enonce": "Comment evolue la robe d'un rouge en vieillissant ?", "choix": ["Elle s'eclaircit et tuile", "Elle fonce", "Elle ne change pas"], "correct": "Elle s'eclaircit et tuile", "explication": "Un rouge s'eclaircit avec l'age ; un blanc, lui, fonce."},
+            {"type": "qcm", "enonce": "Quel equilibre juge-t-on sur un vin rouge ?", "choix": ["Acidite, alcool et tanins", "Sucre seulement", "La couleur"], "correct": "Acidite, alcool et tanins", "explication": "En bouche, on juge l'equilibre entre acidite, alcool et tanins."}
+          ]
+        },
+        {
+          "lecon": 4,
+          "titre": "Le service du vin",
+          "questions": [
+            {"type": "qcm", "enonce": "A quelle temperature sert-on un champagne ?", "choix": ["6 a 8 C", "16 C", "12 C"], "correct": "6 a 8 C", "explication": "Les effervescents se servent frais, 6-8 C."},
+            {"type": "qcm", "enonce": "A quelle temperature sert-on un grand rouge structure ?", "choix": ["16 a 18 C", "6 C", "22 C"], "correct": "16 a 18 C", "explication": "Les rouges structures se servent a 16-18 C."},
+            {"type": "qcm", "enonce": "Que detecte-t-on en sentant le bouchon ?", "choix": ["Le gout de bouchon (moisi)", "Le sucre", "L'alcool"], "correct": "Le gout de bouchon (moisi)", "explication": "Une odeur de moisi signale un vin bouchonne (TCA)."},
+            {"type": "qcm", "enonce": "A quoi sert de decanter un vieux vin ?", "choix": ["Le separer de son depot", "L'aerer fortement", "Le refroidir"], "correct": "Le separer de son depot", "explication": "Decanter separe delicatement le vieux vin de son depot."},
+            {"type": "qcm", "enonce": "Dans quel ordre sert-on les vins au fil d'un repas ?", "choix": ["Puissance croissante", "Puissance decroissante", "Au hasard"], "correct": "Puissance croissante", "explication": "On sert du plus leger au plus puissant au fil du repas."},
+            {"type": "paires", "enonce": "Associe chaque vin a sa temperature de service.", "paires": [["Champagne", "6-8 C"], ["Blanc sec", "8-10 C"], ["Rouge leger", "12-14 C"], ["Rouge structure", "16-18 C"]], "explication": "Chaque type de vin a sa plage de temperature ideale."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 3,
+      "titre": "Le bar",
+      "lecons": [
+        {
+          "lecon": 5,
+          "titre": "Spiritueux et techniques",
+          "questions": [
+            {"type": "qcm", "enonce": "Qu'est-ce que la distillation ?", "choix": ["Concentrer l'alcool d'un liquide fermente", "Fermenter du sucre", "Melanger deux alcools"], "correct": "Concentrer l'alcool d'un liquide fermente", "explication": "L'alambic concentre l'alcool par distillation."},
+            {"type": "qcm", "enonce": "De quoi est fait le cognac ?", "choix": ["De vin distille", "De cereales", "D'agave"], "correct": "De vin distille", "explication": "Le cognac est une eau-de-vie de vin des Charentes."},
+            {"type": "qcm", "enonce": "De quoi provient le rhum ?", "choix": ["De la canne a sucre", "De cereales", "De pomme"], "correct": "De la canne a sucre", "explication": "Le rhum vient de la canne (jus frais pour l'agricole, melasse pour le traditionnel)."},
+            {"type": "qcm", "enonce": "Quand utilise-t-on le shaker ?", "choix": ["Pour les cocktails troubles (jus, creme, oeuf)", "Pour les cocktails limpides", "Jamais"], "correct": "Pour les cocktails troubles (jus, creme, oeuf)", "explication": "On shake ce qui est trouble ; on remue les cocktails limpides."},
+            {"type": "qcm", "enonce": "Un martini se prepare comment ?", "choix": ["On le remue (stir)", "On le shake", "On le mixe"], "correct": "On le remue (stir)", "explication": "Les cocktails de spiritueux seuls se remuent, ne se shakent pas."},
+            {"type": "qcm", "enonce": "Pourquoi mettre beaucoup de glace dans un cocktail ?", "choix": ["Moins de dilution", "Plus de dilution", "Pour le decor"], "correct": "Moins de dilution", "explication": "Plus il y a de glace, moins le cocktail se dilue en refroidissant."},
+            {"type": "paires", "enonce": "Associe chaque spiritueux a sa matiere premiere.", "paires": [["Cognac", "Vin"], ["Rhum", "Canne a sucre"], ["Whisky", "Cereales"], ["Tequila", "Agave"]], "explication": "Chaque spiritueux vient d'une matiere premiere distillee."}
+          ]
+        },
+        {
+          "lecon": 6,
+          "titre": "Cocktails, biere et cafe",
+          "questions": [
+            {"type": "qcm", "enonce": "Quels sont les ingredients du mojito ?", "choix": ["Rhum, menthe, citron vert, sucre, eau gazeuse", "Gin et tonic", "Vodka et tomate"], "correct": "Rhum, menthe, citron vert, sucre, eau gazeuse", "explication": "Le mojito se construit directement dans le verre (build)."},
+            {"type": "qcm", "enonce": "Que contient un negroni ?", "choix": ["Gin, Campari, vermouth rouge", "Rhum et citron", "Whisky et sucre"], "correct": "Gin, Campari, vermouth rouge", "explication": "Le negroni : gin, Campari, vermouth rouge a parts egales."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une biere de fermentation haute ?", "choix": ["Une ale (IPA, stout)", "Une lager", "Un lambic"], "correct": "Une ale (IPA, stout)", "explication": "La fermentation haute donne les ales ; la basse, les lagers."},
+            {"type": "qcm", "enonce": "Combien de temps dure une extraction d'expresso ?", "choix": ["Environ 25 secondes", "2 minutes", "5 secondes"], "correct": "Environ 25 secondes", "explication": "Un expresso s'extrait en ~25 s pour 25-30 ml."},
+            {"type": "qcm", "enonce": "A quelle temperature ne faut-il pas depasser pour le lait a la buse ?", "choix": ["Environ 60-65 C", "90 C", "40 C"], "correct": "Environ 60-65 C", "explication": "Le lait se fait mousser sans bouillir, autour de 60-65 C."},
+            {"type": "qcm", "enonce": "Peut-on servir de l'alcool a un mineur ?", "choix": ["Non, jamais", "Oui, un peu", "Selon l'heure"], "correct": "Non, jamais", "explication": "On ne sert jamais d'alcool a un mineur ni a une personne ivre."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un mocktail ?", "choix": ["Un cocktail sans alcool", "Un cocktail fort", "Une biere"], "correct": "Un cocktail sans alcool", "explication": "Les mocktails sont desormais indispensables sur une carte."}
+          ]
+        }
+      ]
+    }
+  ]
+}

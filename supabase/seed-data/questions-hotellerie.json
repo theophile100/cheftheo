@@ -1,0 +1,91 @@
+{
+  "filiere": "Hotellerie",
+  "description": "Banque de questions complete de la filiere Hotellerie. Types : qcm, paires, ordre.",
+  "unites": [
+    {
+      "unite": 1,
+      "titre": "L'hotel et son organisation",
+      "lecons": [
+        {
+          "lecon": 1,
+          "titre": "Les services et categories",
+          "questions": [
+            {"type": "qcm", "enonce": "Comment appelle-t-on la reception en anglais ?", "choix": ["Front office", "Housekeeping", "Back office"], "correct": "Front office", "explication": "Le front office designe la reception, en contact direct avec le client."},
+            {"type": "qcm", "enonce": "Qui dirige le service des etages ?", "choix": ["La gouvernante", "Le concierge", "Le receptionniste"], "correct": "La gouvernante", "explication": "La gouvernante generale dirige le housekeeping (etages)."},
+            {"type": "qcm", "enonce": "Que signifie une chambre 'twin' ?", "choix": ["Deux lits jumeaux", "Un lit double", "Une suite"], "correct": "Deux lits jumeaux", "explication": "Twin = deux lits simples ; double = un grand lit."},
+            {"type": "qcm", "enonce": "Que veut dire 'BB' dans les formules ?", "choix": ["Nuit et petit-dejeuner", "Pension complete", "Tout inclus"], "correct": "Nuit et petit-dejeuner", "explication": "BB (bed & breakfast) = nuit + petit-dejeuner."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'une chambre PMR ?", "choix": ["Accessible aux personnes a mobilite reduite", "Une suite de luxe", "Une chambre fumeur"], "correct": "Accessible aux personnes a mobilite reduite", "explication": "PMR = amenagee pour l'accessibilite."},
+            {"type": "paires", "enonce": "Associe chaque code a sa formule.", "paires": [["BB", "Nuit et petit-dejeuner"], ["HB", "Demi-pension"], ["FB", "Pension complete"], ["AI", "Tout inclus"]], "explication": "Ces codes designent les formules de restauration incluses."}
+          ]
+        },
+        {
+          "lecon": 2,
+          "titre": "Vocabulaire et indicateurs",
+          "questions": [
+            {"type": "qcm", "enonce": "Que signifie un 'no-show' ?", "choix": ["Un client qui ne se presente pas", "Un client sans reservation", "Un depart tardif"], "correct": "Un client qui ne se presente pas", "explication": "No-show : le client reserve mais ne vient pas ; la nuit peut etre facturee."},
+            {"type": "qcm", "enonce": "Qu'est-ce qu'un walk-in ?", "choix": ["Un client sans reservation", "Un client qui annule", "Un groupe"], "correct": "Un client sans reservation", "explication": "Le walk-in arrive sans avoir reserve."},
+            {"type": "qcm", "enonce": "Que mesure le taux d'occupation ?", "choix": ["Chambres vendues sur disponibles", "Le chiffre d'affaires total", "Le nombre d'employes"], "correct": "Chambres vendues sur disponibles", "explication": "TO = chambres vendues / chambres disponibles."},
+            {"type": "qcm", "enonce": "Que designe le RevPAR ?", "choix": ["Le revenu par chambre disponible", "Le prix du petit-dejeuner", "Le nombre de clients"], "correct": "Le revenu par chambre disponible", "explication": "RevPAR = CA hebergement / chambres disponibles, l'indicateur roi."},
+            {"type": "qcm", "enonce": "Qu'est-ce que l'overbooking ?", "choix": ["Surreservation volontaire", "Une annulation", "Un surclassement"], "correct": "Surreservation volontaire", "explication": "On surreserve pour compenser les annulations, avec delogement si besoin."},
+            {"type": "qcm", "enonce": "A quoi sert le yield management ?", "choix": ["Faire varier les tarifs selon la demande", "Nettoyer les chambres", "Accueillir les groupes"], "correct": "Faire varier les tarifs selon la demande", "explication": "Le yield maximise le RevPAR : bonne chambre, bon client, bon prix, bon moment."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 2,
+      "titre": "La reception",
+      "lecons": [
+        {
+          "lecon": 3,
+          "titre": "Le cycle du client",
+          "questions": [
+            {"type": "qcm", "enonce": "A partir de quelle heure se fait generalement le check-in ?", "choix": ["14-15 h", "8 h", "20 h"], "correct": "14-15 h", "explication": "L'arrivee se fait souvent a partir de 14-15 h."},
+            {"type": "qcm", "enonce": "Que verifie-t-on au depart d'un client ?", "choix": ["Les consommations (minibar, extras)", "Rien", "Sa valise"], "correct": "Les consommations (minibar, extras)", "explication": "On verifie les extras avant d'editer la facture."},
+            {"type": "qcm", "enonce": "Communique-t-on le numero de chambre d'un client a un tiers ?", "choix": ["Jamais", "Toujours", "Si on demande gentiment"], "correct": "Jamais", "explication": "On ne communique jamais le numero de chambre : discretion et securite."},
+            {"type": "qcm", "enonce": "Qu'est-ce que l'upselling a la reception ?", "choix": ["Proposer une categorie superieure", "Baisser le prix", "Refuser un client"], "correct": "Proposer une categorie superieure", "explication": "L'upselling propose une chambre superieure a l'arrivee."},
+            {"type": "qcm", "enonce": "Comment repond-on au telephone ?", "choix": ["Avant la 3e sonnerie, en se presentant", "Apres 10 sonneries", "En raccrochant"], "correct": "Avant la 3e sonnerie, en se presentant", "explication": "On decroche vite, on sourit (ca s'entend) et on se presente."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre les etapes du cycle client.", "correct": ["Reservation", "Arrivee", "Sejour", "Depart"], "explication": "Reservation, arrivee (check-in), sejour, depart (check-out)."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 3,
+      "titre": "Les etages",
+      "lecons": [
+        {
+          "lecon": 4,
+          "titre": "Faire une chambre",
+          "questions": [
+            {"type": "qcm", "enonce": "Quelle difference entre chambre 'a blanc' et 'recouche' ?", "choix": ["A blanc = depart, nettoyage complet", "Aucune", "Recouche = plus long"], "correct": "A blanc = depart, nettoyage complet", "explication": "A blanc (depart) : nettoyage complet ; recouche (client present) : rafraichissement."},
+            {"type": "qcm", "enonce": "Dans quel sens nettoie-t-on une chambre ?", "choix": ["Du haut vers le bas, du propre au sale", "Du bas vers le haut", "Au hasard"], "correct": "Du haut vers le bas, du propre au sale", "explication": "On nettoie du haut vers le bas et du plus propre au plus sale."},
+            {"type": "qcm", "enonce": "Que fait-on du linge sale ?", "choix": ["Circuit separe du linge propre", "On le pose au sol", "On le melange au propre"], "correct": "Circuit separe du linge propre", "explication": "Propre et sale suivent des circuits strictement separes."},
+            {"type": "qcm", "enonce": "Que respecte-t-on en recouche ?", "choix": ["Les biens du client", "Rien", "On range tout"], "correct": "Les biens du client", "explication": "On ne jette et ne deplace rien qui appartienne au client."},
+            {"type": "qcm", "enonce": "Comment finit-on une chambre ?", "choix": ["Controle visuel depuis l'entree", "On part sans regarder", "On ferme les rideaux"], "correct": "Controle visuel depuis l'entree", "explication": "On verifie le rendu depuis la porte, comme le client qui decouvre."},
+            {"type": "ordre", "enonce": "Remets dans l'ordre les etapes d'une chambre a blanc.", "correct": ["Aerer", "Debarrasser", "Faire le lit", "Nettoyer la salle de bains", "Aspirer"], "explication": "On aere, debarrasse, refait le lit, nettoie, et aspire en reculant vers la porte."}
+          ]
+        }
+      ]
+    },
+    {
+      "unite": 4,
+      "titre": "Relation client et excellence",
+      "lecons": [
+        {
+          "lecon": 5,
+          "titre": "L'excellence de service",
+          "questions": [
+            {"type": "qcm", "enonce": "Que dit la regle des 4x20 ?", "choix": ["Les 20 premieres secondes, gestes, mots et cm du visage", "Attendre 20 minutes", "20 chambres par jour"], "correct": "Les 20 premieres secondes, gestes, mots et cm du visage", "explication": "La regle des 4x20 fixe la premiere impression."},
+            {"type": "qcm", "enonce": "Que fait-on des qu'on connait le nom du client ?", "choix": ["On l'appelle par son nom", "On l'oublie", "On l'ecrit seulement"], "correct": "On l'appelle par son nom", "explication": "Appeler le client par son nom personnalise l'accueil."},
+            {"type": "qcm", "enonce": "Comment repond-on a une demande impossible ?", "choix": ["Proposer une alternative", "Dire non sec", "Ignorer"], "correct": "Proposer une alternative", "explication": "On ne dit jamais 'non' sec : on propose une solution de rechange."},
+            {"type": "qcm", "enonce": "Qu'est-ce que le cardex ?", "choix": ["Le journal des preferences du client", "Une carte de paiement", "Un menu"], "correct": "Le journal des preferences du client", "explication": "Le cardex consigne les preferences des habitues et VIP."},
+            {"type": "qcm", "enonce": "Que fait-on des avis en ligne negatifs ?", "choix": ["Repondre avec courtoisie, sans polemiquer", "Les ignorer", "Se disputer"], "correct": "Repondre avec courtoisie, sans polemiquer", "explication": "La reponse est lue par des milliers de futurs clients : rester courtois."},
+            {"type": "qcm", "enonce": "Pourquoi soigner le depart du client ?", "choix": ["Le dernier souvenir compte autant que le premier", "Ca ne compte pas", "Pour aller vite"], "correct": "Le dernier souvenir compte autant que le premier", "explication": "Le dernier souvenir pese autant que le premier dans la fidelisation."},
+            {"type": "paires", "enonce": "Associe chaque clientele a son attente principale.", "paires": [["Affaires", "Rapidite et efficacite"], ["Loisirs", "Conseils et chaleur"], ["Familles", "Securite et patience"], ["VIP habitues", "Attentions personnalisees"]], "explication": "Chaque clientele a des attentes specifiques."}
+          ]
+        }
+      ]
+    }
+  ]
+}
