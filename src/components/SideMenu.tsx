@@ -37,7 +37,8 @@ export function SideMenu({
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { email, xpTotal, currentStreak, isAdmin } = useProgress();
-  const { muted, toggleMuted } = useSoundSettings();
+  const { soundEnabled, vibrationEnabled, toggleSound, toggleVibration } =
+    useSoundSettings();
 
   if (!open) return null;
 
@@ -122,7 +123,13 @@ export function SideMenu({
             <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
               Son
             </span>
-            <Switch on={!muted} onToggle={toggleMuted} />
+            <Switch on={soundEnabled} onToggle={toggleSound} />
+          </div>
+          <div className="flex items-center justify-between rounded-2xl px-3 py-2.5">
+            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+              Vibrations
+            </span>
+            <Switch on={vibrationEnabled} onToggle={toggleVibration} />
           </div>
         </div>
 

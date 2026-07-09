@@ -7,7 +7,7 @@ import { playTapSound } from "@/lib/sound";
 const INTERACTIVE_SELECTOR = 'button:not(:disabled), a[href], [role="switch"]';
 
 export function TapFeedback() {
-  const { muted } = useSoundSettings();
+  const { soundEnabled, vibrationEnabled } = useSoundSettings();
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -18,15 +18,15 @@ export function TapFeedback() {
       if (!interactive) return;
       if (interactive.closest('[data-tap-feedback="off"]')) return;
 
-      if (!muted) playTapSound();
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
+      if (soundEnabled) playTapSound();
+      if (vibrationEnabled && typeof navigator !== "undefined" && navigator.vibrate) {
         navigator.vibrate(8);
       }
     }
 
     document.addEventListener("pointerdown", handlePointerDown);
     return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [muted]);
+  }, [soundEnabled, vibrationEnabled]);
 
   return null;
 }

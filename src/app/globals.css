@@ -29,8 +29,8 @@ body {
   0% {
     transform: scale(1);
   }
-  40% {
-    transform: scale(1.03);
+  45% {
+    transform: scale(1.02);
   }
   100% {
     transform: scale(1);
@@ -38,32 +38,13 @@ body {
 }
 
 .animate-pulse-once {
-  animation: pulse-once 0.35s ease-out;
-}
-
-@keyframes pop-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  70% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-pop-in {
-  animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pulse-once 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes fade-up {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   100% {
     opacity: 1;
@@ -72,7 +53,7 @@ body {
 }
 
 .animate-fade-up {
-  animation: fade-up 0.45s ease-out both;
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes slide-in-right {
@@ -85,7 +66,7 @@ body {
 }
 
 .animate-slide-in-right {
-  animation: slide-in-right 0.25s ease-out both;
+  animation: slide-in-right 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes mascot-float {
@@ -107,19 +88,19 @@ body {
   100% {
     transform: translateY(0) scale(1);
   }
-  30% {
-    transform: translateY(-14px) scale(1.05);
+  35% {
+    transform: translateY(-10px) scale(1.04);
   }
-  50% {
-    transform: translateY(0) scale(0.97);
+  55% {
+    transform: translateY(0) scale(0.985);
   }
-  70% {
-    transform: translateY(-6px) scale(1.02);
+  75% {
+    transform: translateY(-4px) scale(1.01);
   }
 }
 
 .animate-mascot-bounce {
-  animation: mascot-bounce 0.6s ease-out;
+  animation: mascot-bounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes mascot-tilt {
@@ -128,15 +109,15 @@ body {
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(-9deg);
+    transform: rotate(-6deg);
   }
   75% {
-    transform: rotate(6deg);
+    transform: rotate(4deg);
   }
 }
 
 .animate-mascot-tilt {
-  animation: mascot-tilt 0.5s ease-in-out;
+  animation: mascot-tilt 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes mascot-jump {
@@ -144,13 +125,13 @@ body {
     transform: translateY(0) scale(1);
   }
   40% {
-    transform: translateY(-26px) scale(1.08);
+    transform: translateY(-22px) scale(1.06);
   }
-  60% {
-    transform: translateY(0) scale(0.95);
+  62% {
+    transform: translateY(0) scale(0.97);
   }
   80% {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-6px) scale(1.015);
   }
   100% {
     transform: translateY(0) scale(1);
@@ -158,13 +139,13 @@ body {
 }
 
 .animate-mascot-jump {
-  animation: mascot-jump 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: mascot-jump 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 @keyframes bubble-in {
   0% {
     opacity: 0;
-    transform: scale(0.8) translateX(-4px);
+    transform: scale(0.88) translateX(-4px);
   }
   100% {
     opacity: 1;
@@ -173,5 +154,5 @@ body {
 }
 
 .animate-bubble-in {
-  animation: bubble-in 0.25s ease-out both;
+  animation: bubble-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }

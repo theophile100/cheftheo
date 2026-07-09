@@ -36,7 +36,7 @@ export function LeconRunner({
   questions: Question[];
 }) {
   const { applyCompletion } = useProgress();
-  const { muted } = useSoundSettings();
+  const { soundEnabled, vibrationEnabled } = useSoundSettings();
   const totalQuestions = questions.length;
 
   const [queue, setQueue] = useState<Question[]>(questions);
@@ -66,7 +66,7 @@ export function LeconRunner({
       }
       if (data) {
         applyCompletion(data, leconId);
-        if (!muted) playCompleteSound();
+        if (soundEnabled) playCompleteSound();
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,11 +78,11 @@ export function LeconRunner({
     setFeedbackMessage(isCorrect ? getCorrectMessage() : getIncorrectMessage());
 
     if (isCorrect) {
-      if (!muted) playCorrectSound();
-      vibrate(15);
+      if (soundEnabled) playCorrectSound();
+      if (vibrationEnabled) vibrate(15);
     } else {
-      if (!muted) playIncorrectSound();
-      vibrate(40);
+      if (soundEnabled) playIncorrectSound();
+      if (vibrationEnabled) vibrate(40);
     }
   }
 
