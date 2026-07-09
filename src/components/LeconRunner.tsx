@@ -7,6 +7,7 @@ import { useProgress } from "@/lib/progress-context";
 import { useSoundSettings } from "@/lib/sound-settings";
 import { playCorrectSound, playIncorrectSound, playCompleteSound } from "@/lib/sound";
 import { SoundToggle } from "@/components/SoundToggle";
+import { BackButton } from "@/components/BackButton";
 import { Mascot } from "@/components/Mascot";
 import { SpeechBubble } from "@/components/SpeechBubble";
 import {
@@ -147,6 +148,7 @@ export function LeconRunner({
   return (
     <div className="flex min-h-[calc(100vh-64px)] flex-col">
       <div className="mx-auto flex w-full max-w-md items-center gap-3 px-6 pt-6">
+        <BackButton href={`/filiere/${filiereSlug}`} />
         <div className="h-3 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
           <div
             className="h-full rounded-full bg-orange-500 transition-all"

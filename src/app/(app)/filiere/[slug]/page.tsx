@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LeconTree } from "@/components/LeconTree";
 import { filiereColor } from "@/lib/filiere-style";
+import { BackButton } from "@/components/BackButton";
 
 export default async function Filiere({
   params,
@@ -29,7 +30,9 @@ export default async function Filiere({
 
   return (
     <main className="mx-auto max-w-md px-6 py-10">
-      <div className="flex flex-col items-center gap-3 text-center">
+      <BackButton href="/accueil" />
+
+      <div className="mt-2 flex flex-col items-center gap-3 text-center">
         <div
           className={`flex h-16 w-16 items-center justify-center rounded-full text-2xl font-extrabold text-white ${filiereColor(filiere.position)}`}
         >

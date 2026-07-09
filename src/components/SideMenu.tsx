@@ -53,7 +53,7 @@ export function SideMenu({
     <>
       <div className="fixed inset-0 z-30 bg-black/40" onClick={onClose} />
       <div className="fixed right-0 top-0 z-40 flex h-full w-72 animate-slide-in-right flex-col rounded-l-3xl bg-white p-6 shadow-xl dark:bg-zinc-900">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <p className="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {email}
           </p>
@@ -61,11 +61,12 @@ export function SideMenu({
             type="button"
             aria-label="Fermer le menu"
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4">
               <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
             </svg>
+            Fermer
           </button>
         </div>
 
@@ -94,6 +95,13 @@ export function SideMenu({
             className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             Profil
+          </Link>
+          <Link
+            href="/decouvrir"
+            onClick={onClose}
+            className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          >
+            Découvrir
           </Link>
           {isAdmin && (
             <Link
