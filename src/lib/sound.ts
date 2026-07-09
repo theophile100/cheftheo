@@ -51,6 +51,13 @@ export function playIncorrectSound() {
   playTone(ctx, 180, now, 0.22, "triangle", 0.1);
 }
 
+export function playTapSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  playTone(ctx, 950, now, 0.045, "sine", 0.06);
+}
+
 export function playCompleteSound() {
   const ctx = getAudioContext();
   if (!ctx) return;

@@ -102,6 +102,7 @@ export function Ordonner({
       {!answered && pool.length === 0 && (
         <button
           type="button"
+          data-tap-feedback="off"
           onClick={handleVerify}
           className={buttonClasses("dark", "mt-5 w-full")}
         >

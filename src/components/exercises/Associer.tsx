@@ -136,6 +136,7 @@ export function Associer({
       {!answered && (
         <button
           type="button"
+          data-tap-feedback="off"
           onClick={handleVerify}
           disabled={!allAssigned}
           className={buttonClasses("dark", "mt-5 w-full disabled:cursor-not-allowed")}

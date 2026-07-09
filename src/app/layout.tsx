@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { SoundSettingsProvider } from "@/lib/sound-settings";
+import { TapFeedback } from "@/components/TapFeedback";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,7 +33,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SoundSettingsProvider>{children}</SoundSettingsProvider>
+          <SoundSettingsProvider>
+            <TapFeedback />
+            {children}
+          </SoundSettingsProvider>
         </ThemeProvider>
       </body>
     </html>
