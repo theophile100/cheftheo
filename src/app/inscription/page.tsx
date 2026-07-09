@@ -3,10 +3,12 @@
 import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { countries } from "@/data/countries";
 
 export default function Inscription() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [country, setCountry] = useState("");
@@ -21,7 +23,7 @@ export default function Inscription() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { country, phone } },
@@ -31,6 +33,13 @@ export default function Inscription() {
 
     if (signUpError) {
       setError(signUpError.message);
+      return;
+    }
+
+    if (data.session) {
+      // Email confirmation is off: signUp already returned an active session.
+      router.push("/accueil");
+      router.refresh();
       return;
     }
 
