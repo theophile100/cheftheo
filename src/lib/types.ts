@@ -1,5 +1,5 @@
 export interface QcmData {
-  options: { id: string; text: string }[];
+  options: { id: string; text: string; image_url?: string }[];
   correct_option_id: string;
 }
 
@@ -18,6 +18,7 @@ interface QuestionBase {
   id: string;
   prompt: string;
   explanation: string | null;
+  image_url: string | null;
 }
 
 export type Question =

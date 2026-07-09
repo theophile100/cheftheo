@@ -23,7 +23,7 @@ export default async function Lecon({
 
   const { data: questions } = await supabase
     .from("questions")
-    .select("id, type, prompt, explanation, data")
+    .select("id, type, prompt, explanation, image_url, data")
     .eq("lecon_id", id)
     .order("position");
 

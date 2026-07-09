@@ -14,7 +14,9 @@ export default async function EditQuestion({
 
   const { data: question } = await supabase
     .from("questions")
-    .select("id, lecon_id, type, prompt, explanation, position, data, lecons(title)")
+    .select(
+      "id, lecon_id, type, prompt, explanation, position, image_url, data, lecons(title)",
+    )
     .eq("id", id)
     .single();
 

@@ -12,6 +12,7 @@ export interface QuestionInput {
   prompt: string;
   explanation: string;
   position: number;
+  imageUrl: string | null;
   data: QcmData | AssocierData | OrdonnerData;
 }
 
@@ -40,8 +41,8 @@ function validateQuestionInput(input: QuestionInput): string | null {
     if (!data.options || data.options.length < 2) {
       return "Un QCM doit avoir au moins 2 réponses.";
     }
-    if (data.options.some((o) => !o.text.trim())) {
-      return "Chaque réponse doit avoir un texte.";
+    if (data.options.some((o) => !o.text.trim() && !o.image_url)) {
+      return "Chaque réponse doit avoir un texte ou une image.";
     }
     if (!data.options.some((o) => o.id === data.correct_option_id)) {
       return "Sélectionnez la bonne réponse.";
@@ -136,6 +137,37 @@ export async function deleteLecon(id: string) {
   revalidatePath("/admin");
 }
 
+// ---------- Images ----------
+
+export async function uploadImage(
+  formData: FormData,
+): Promise<{ url?: string; error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) return { error: "Aucun fichier reçu." };
+  if (!file.type.startsWith("image/")) {
+    return { error: "Le fichier doit être une image." };
+  }
+
+  const admin = createAdminClient();
+  const extension = file.name.split(".").pop() || "jpg";
+  const path = `${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await admin.storage
+    .from("lesson-images")
+    .upload(path, file, { contentType: file.type });
+
+  if (error) return { error: error.message };
+
+  const { data } = admin.storage.from("lesson-images").getPublicUrl(path);
+  return { url: data.publicUrl };
+}
+
 // ---------- Questions ----------
 
 export async function createQuestion(
@@ -157,6 +189,7 @@ export async function createQuestion(
     position: input.position,
     prompt: input.prompt,
     explanation: input.explanation || null,
+    image_url: input.imageUrl,
     data: input.data,
   });
 
@@ -187,6 +220,7 @@ export async function updateQuestion(
       position: input.position,
       prompt: input.prompt,
       explanation: input.explanation || null,
+      image_url: input.imageUrl,
       data: input.data,
     })
     .eq("id", id);

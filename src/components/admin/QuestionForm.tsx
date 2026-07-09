@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { AssocierData, OrdonnerData, QcmData, Question } from "@/lib/types";
 import type { QuestionInput } from "@/app/admin/actions";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 function newId() {
   return Math.random().toString(36).slice(2, 10);
@@ -31,15 +32,22 @@ export function QuestionForm({
   const [position, setPosition] = useState(
     initialQuestion?.position ?? defaultPosition ?? 1,
   );
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    initialQuestion?.image_url ?? null,
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const initialQcm =
     initialQuestion?.type === "qcm" ? (initialQuestion.data as QcmData) : null;
   const [qcmOptions, setQcmOptions] = useState(
-    initialQcm?.options.map((o) => ({ id: o.id, text: o.text })) ?? [
-      { id: newId(), text: "" },
-      { id: newId(), text: "" },
+    initialQcm?.options.map((o) => ({
+      id: o.id,
+      text: o.text,
+      imageUrl: o.image_url ?? null,
+    })) ?? [
+      { id: newId(), text: "", imageUrl: null as string | null },
+      { id: newId(), text: "", imageUrl: null as string | null },
     ],
   );
   const [correctOptionId, setCorrectOptionId] = useState(
@@ -79,7 +87,14 @@ export function QuestionForm({
 
     let data: QcmData | AssocierData | OrdonnerData;
     if (type === "qcm") {
-      data = { options: qcmOptions, correct_option_id: correctOptionId };
+      data = {
+        options: qcmOptions.map((o) => ({
+          id: o.id,
+          text: o.text,
+          ...(o.imageUrl ? { image_url: o.imageUrl } : {}),
+        })),
+        correct_option_id: correctOptionId,
+      };
     } else if (type === "associer") {
       data = {
         pairs: pairs.map((p) => ({
@@ -97,6 +112,7 @@ export function QuestionForm({
       prompt,
       explanation,
       position,
+      imageUrl,
       data,
     });
 
@@ -129,6 +145,12 @@ export function QuestionForm({
           <option value="ordonner">Remettre dans l&apos;ordre</option>
         </select>
       </div>
+
+      <ImageUpload
+        value={imageUrl}
+        onChange={setImageUrl}
+        label="Image de la question (optionnelle)"
+      />
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -170,38 +192,53 @@ export function QuestionForm({
       </div>
 
       {type === "qcm" && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Réponses (cochez la bonne)
+            Réponses (cochez la bonne — texte, image, ou les deux)
           </label>
           {qcmOptions.map((option, index) => (
-            <div key={option.id} className="flex items-center gap-2">
+            <div
+              key={option.id}
+              className="flex items-start gap-2 rounded-xl border border-zinc-100 p-2 dark:border-zinc-800"
+            >
               <input
                 type="radio"
                 name="correct"
                 checked={correctOptionId === option.id}
                 onChange={() => setCorrectOptionId(option.id)}
-                className="h-4 w-4 accent-orange-500"
+                className="mt-3 h-4 w-4 accent-orange-500"
               />
-              <input
-                value={option.text}
-                onChange={(e) =>
-                  setQcmOptions((prev) =>
-                    prev.map((o, i) =>
-                      i === index ? { ...o, text: e.target.value } : o,
-                    ),
-                  )
-                }
-                placeholder={`Réponse ${index + 1}`}
-                className="flex-1 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-              />
+              <div className="flex flex-1 flex-col gap-2">
+                <input
+                  value={option.text}
+                  onChange={(e) =>
+                    setQcmOptions((prev) =>
+                      prev.map((o, i) =>
+                        i === index ? { ...o, text: e.target.value } : o,
+                      ),
+                    )
+                  }
+                  placeholder={`Réponse ${index + 1} (texte optionnel si image)`}
+                  className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                />
+                <ImageUpload
+                  value={option.imageUrl}
+                  onChange={(url) =>
+                    setQcmOptions((prev) =>
+                      prev.map((o, i) =>
+                        i === index ? { ...o, imageUrl: url } : o,
+                      ),
+                    )
+                  }
+                />
+              </div>
               {qcmOptions.length > 2 && (
                 <button
                   type="button"
                   onClick={() =>
                     setQcmOptions((prev) => prev.filter((_, i) => i !== index))
                   }
-                  className="text-sm text-red-500 hover:text-red-600"
+                  className="mt-3 text-sm text-red-500 hover:text-red-600"
                 >
                   ✕
                 </button>
@@ -211,7 +248,10 @@ export function QuestionForm({
           <button
             type="button"
             onClick={() =>
-              setQcmOptions((prev) => [...prev, { id: newId(), text: "" }])
+              setQcmOptions((prev) => [
+                ...prev,
+                { id: newId(), text: "", imageUrl: null },
+              ])
             }
             className="self-start text-sm font-medium text-orange-500 hover:text-orange-600"
           >

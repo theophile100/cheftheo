@@ -4,10 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useProgress } from "@/lib/progress-context";
+import { useSoundSettings } from "@/lib/sound-settings";
+import { playCorrectSound, playIncorrectSound, playCompleteSound } from "@/lib/sound";
+import { SoundToggle } from "@/components/SoundToggle";
 import type { Question } from "@/lib/types";
 import { Qcm } from "@/components/exercises/Qcm";
 import { Associer } from "@/components/exercises/Associer";
 import { Ordonner } from "@/components/exercises/Ordonner";
+
+function vibrate(pattern: number | number[]) {
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    navigator.vibrate(pattern);
+  }
+}
 
 export function LeconRunner({
   leconId,
@@ -19,6 +28,7 @@ export function LeconRunner({
   questions: Question[];
 }) {
   const { applyCompletion } = useProgress();
+  const { muted } = useSoundSettings();
   const totalQuestions = questions.length;
 
   const [queue, setQueue] = useState<Question[]>(questions);
@@ -47,6 +57,7 @@ export function LeconRunner({
       }
       if (data) {
         applyCompletion(data, leconId);
+        if (!muted) playCompleteSound();
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +66,14 @@ export function LeconRunner({
   function handleAnswer(isCorrect: boolean) {
     setAnswered(true);
     setLastCorrect(isCorrect);
+
+    if (isCorrect) {
+      if (!muted) playCorrectSound();
+      vibrate(15);
+    } else {
+      if (!muted) playIncorrectSound();
+      vibrate(40);
+    }
   }
 
   function handleContinue() {
@@ -79,18 +98,22 @@ export function LeconRunner({
 
     return (
       <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6 px-6 text-center">
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-20 w-20 text-amber-400">
+        <svg
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-20 w-20 animate-pop-in text-amber-400"
+        >
           <path d="M12 2l2.8 6.2L21 9l-5 4.4L17.5 20 12 16.6 6.5 20 8 13.4 3 9l6.2-.8z" />
         </svg>
 
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="animate-fade-up text-2xl font-bold text-zinc-900 [animation-delay:150ms] dark:text-zinc-50">
           Félicitations !
         </h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <p className="animate-fade-up text-zinc-600 [animation-delay:220ms] dark:text-zinc-400">
           Vous avez terminé la leçon.
         </p>
 
-        <div className="rounded-2xl bg-white px-6 py-4 shadow-sm dark:bg-zinc-900">
+        <div className="animate-fade-up rounded-2xl bg-white px-6 py-4 shadow-sm [animation-delay:290ms] dark:bg-zinc-900">
           <span className="text-xl font-bold text-orange-500">
             +{xpEarned} XP
           </span>
@@ -104,7 +127,7 @@ export function LeconRunner({
 
         <Link
           href={`/filiere/${filiereSlug}`}
-          className="mt-2 w-full max-w-xs rounded-xl bg-orange-500 px-4 py-3 text-center text-base font-semibold text-white transition-colors hover:bg-orange-600"
+          className="mt-2 w-full max-w-xs animate-fade-up rounded-xl bg-orange-500 px-4 py-3 text-center text-base font-semibold text-white transition-colors [animation-delay:360ms] hover:bg-orange-600"
         >
           Retour à la filière
         </Link>
@@ -116,16 +139,26 @@ export function LeconRunner({
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] flex-col">
-      <div className="mx-auto w-full max-w-md px-6 pt-6">
-        <div className="h-3 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+      <div className="mx-auto flex w-full max-w-md items-center gap-3 px-6 pt-6">
+        <div className="h-3 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
           <div
             className="h-full rounded-full bg-orange-500 transition-all"
             style={{ width: `${(completed / totalQuestions) * 100}%` }}
           />
         </div>
+        <SoundToggle />
       </div>
 
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 py-8">
+        {current.image_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={current.image_url}
+            alt=""
+            className="mb-4 max-h-56 w-full rounded-2xl object-cover"
+          />
+        )}
+
         <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
           {current.prompt}
         </h1>
@@ -156,7 +189,7 @@ export function LeconRunner({
           <div
             className={`mt-6 rounded-2xl p-4 ${
               lastCorrect
-                ? "bg-green-50 dark:bg-green-900/30"
+                ? "animate-pulse-once bg-green-50 dark:bg-green-900/30"
                 : "bg-red-50 dark:bg-red-900/30"
             }`}
           >
