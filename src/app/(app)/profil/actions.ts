@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkImageSize } from "@/lib/upload-constraints";
 
 export async function uploadAvatar(formData: FormData): Promise<{ url?: string; error?: string }> {
   const supabase = await createClient();
@@ -17,6 +18,8 @@ export async function uploadAvatar(formData: FormData): Promise<{ url?: string; 
   if (!file.type.startsWith("image/")) {
     return { error: "Le fichier doit être une image." };
   }
+  const sizeError = checkImageSize(file);
+  if (sizeError) return { error: sizeError };
 
   const admin = createAdminClient();
   const extension = file.name.split(".").pop() || "jpg";

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateLogo, updateFiliereIcon, uploadImage } from "@/app/admin/actions";
 import { FiliereIcon } from "@/components/FiliereIcon";
+import { checkImageSize } from "@/lib/upload-constraints";
 
 interface Filiere {
   id: string;
@@ -34,6 +35,13 @@ function ImageSlot({
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    const sizeError = checkImageSize(file);
+    if (sizeError) {
+      setError(sizeError);
+      event.target.value = "";
+      return;
+    }
 
     setUploading(true);
     setError(null);

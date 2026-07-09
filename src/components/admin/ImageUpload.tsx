@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { uploadImage } from "@/app/admin/actions";
+import { checkImageSize } from "@/lib/upload-constraints";
 
 export function ImageUpload({
   value,
@@ -23,6 +24,13 @@ export function ImageUpload({
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    const sizeError = checkImageSize(file);
+    if (sizeError) {
+      setError(sizeError);
+      event.target.value = "";
+      return;
+    }
 
     setUploading(true);
     setError(null);

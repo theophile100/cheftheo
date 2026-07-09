@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { uploadAvatar } from "@/app/(app)/profil/actions";
+import { checkImageSize } from "@/lib/upload-constraints";
 
 export function AvatarUpload({ initialUrl }: { initialUrl: string | null }) {
   const [avatarUrl, setAvatarUrl] = useState(initialUrl);
@@ -11,6 +12,13 @@ export function AvatarUpload({ initialUrl }: { initialUrl: string | null }) {
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    const sizeError = checkImageSize(file);
+    if (sizeError) {
+      setError(sizeError);
+      event.target.value = "";
+      return;
+    }
 
     setUploading(true);
     setError(null);

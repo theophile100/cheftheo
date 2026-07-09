@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkImageSize } from "@/lib/upload-constraints";
 import type { AssocierData, OrdonnerData, QcmData } from "@/lib/types";
 
 export interface QuestionInput {
@@ -154,6 +155,8 @@ export async function uploadImage(
   if (!file.type.startsWith("image/")) {
     return { error: "Le fichier doit être une image." };
   }
+  const sizeError = checkImageSize(file);
+  if (sizeError) return { error: sizeError };
 
   const admin = createAdminClient();
   const extension = file.name.split(".").pop() || "jpg";
