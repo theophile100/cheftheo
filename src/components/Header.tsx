@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { SideMenu } from "@/components/SideMenu";
+import { EnergyDisplay } from "@/components/EnergyDisplay";
 
 export function Header() {
   const { currentStreak, xpTotal } = useProgress();
@@ -12,7 +13,7 @@ export function Header() {
     <>
       <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-black/90">
         <div className="mx-auto flex max-w-md items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <svg
                 viewBox="0 0 24 24"
@@ -35,9 +36,11 @@ export function Header() {
                 <path d="M12 2l2.8 6.2L21 9l-5 4.4L17.5 20 12 16.6 6.5 20 8 13.4 3 9l6.2-.8z" />
               </svg>
               <span className="font-bold text-zinc-900 dark:text-zinc-50">
-                {xpTotal} XP
+                {xpTotal}
               </span>
             </div>
+
+            <EnergyDisplay />
           </div>
 
           <button

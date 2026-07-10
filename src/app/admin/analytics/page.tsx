@@ -9,12 +9,12 @@ export default async function AdminAnalytics() {
     { data: profiles },
     { data: lecons },
     { data: userLecons },
-    { data: ebooks },
+    { data: produits },
   ] = await Promise.all([
     admin.from("profiles").select("id, country"),
     admin.from("lecons").select("id, title, filieres(name)"),
     admin.from("user_lecons").select("lecon_id"),
-    admin.from("ebooks").select("id, title, clicks").order("clicks", { ascending: false }),
+    admin.from("produits").select("id, title, clicks").order("clicks", { ascending: false }),
   ]);
 
   const totalUsers = profiles?.length ?? 0;
@@ -63,8 +63,8 @@ export default async function AdminAnalytics() {
   const avgCompletionRate =
     possibleCompletions > 0 ? (totalCompletions / possibleCompletions) * 100 : 0;
 
-  const totalEbookClicks = (ebooks ?? []).reduce((sum, e) => sum + e.clicks, 0);
-  const ebookClicks = (ebooks ?? []).map((e) => ({ label: e.title, value: e.clicks }));
+  const totalProduitClicks = (produits ?? []).reduce((sum, p) => sum + p.clicks, 0);
+  const produitClicks = (produits ?? []).map((p) => ({ label: p.title, value: p.clicks }));
 
   return (
     <div>
@@ -79,9 +79,9 @@ export default async function AdminAnalytics() {
         />
         <StatTile label="Leçons complétées (total)" value={String(totalCompletions)} />
         <StatTile
-          label="Clics « Obtenir » sur les ebooks"
-          value={String(totalEbookClicks)}
-          hint="Chariow ne renvoie pas encore les ventes confirmées à l'app"
+          label="Clics « Obtenir » sur les produits"
+          value={String(totalProduitClicks)}
+          hint="Les achats confirmés par Chariow s'ajouteront une fois le webhook configuré"
         />
       </div>
 
@@ -93,9 +93,9 @@ export default async function AdminAnalytics() {
           emptyMessage="Aucune leçon complétée pour l'instant."
         />
         <BarChart
-          title="Ebooks — clics sur « Obtenir »"
-          data={ebookClicks}
-          emptyMessage="Aucun ebook publié pour l'instant."
+          title="Produits — clics sur « Obtenir »"
+          data={produitClicks}
+          emptyMessage="Aucun produit publié pour l'instant."
         />
       </div>
     </div>

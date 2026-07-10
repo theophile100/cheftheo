@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { AcademyToggle } from "@/components/AcademyToggle";
-import { EbookTile } from "@/components/EbookTile";
+import { ProduitTile } from "@/components/ProduitTile";
 import { Mascot } from "@/components/Mascot";
 
 export default async function Decouvrir() {
@@ -9,10 +9,10 @@ export default async function Decouvrir() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: ebooks }, { data: profile }] = await Promise.all([
+  const [{ data: produits }, { data: profile }] = await Promise.all([
     supabase
-      .from("ebooks")
-      .select("id, title, price, cover_url")
+      .from("produits")
+      .select("id, title, type, price, cover_url")
       .order("position"),
     supabase.from("profiles").select("country").eq("id", user!.id).single(),
   ]);
@@ -25,10 +25,10 @@ export default async function Decouvrir() {
         À découvrir
       </h1>
 
-      {ebooks && ebooks.length > 0 ? (
+      {produits && produits.length > 0 ? (
         <div className="mt-6 columns-2 gap-3">
-          {ebooks.map((ebook) => (
-            <EbookTile key={ebook.id} ebook={ebook} country={profile?.country ?? null} />
+          {produits.map((produit) => (
+            <ProduitTile key={produit.id} produit={produit} country={profile?.country ?? null} />
           ))}
         </div>
       ) : (

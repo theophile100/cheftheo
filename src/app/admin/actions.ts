@@ -172,6 +172,39 @@ export async function uploadImage(
   return { url: data.publicUrl };
 }
 
+// Same as uploadImage but also accepts PDFs — used for downloadable free
+// products (guide PDF, etc.) in the admin "produits" section.
+export async function uploadProductFile(
+  formData: FormData,
+): Promise<{ url?: string; error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) return { error: "Aucun fichier reçu." };
+  if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
+    return { error: "Le fichier doit être une image ou un PDF." };
+  }
+  const sizeError = checkImageSize(file);
+  if (sizeError) return { error: sizeError };
+
+  const admin = createAdminClient();
+  const extension = file.name.split(".").pop() || "pdf";
+  const path = `${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await admin.storage
+    .from("lesson-images")
+    .upload(path, file, { contentType: file.type });
+
+  if (error) return { error: error.message };
+
+  const { data } = admin.storage.from("lesson-images").getPublicUrl(path);
+  return { url: data.publicUrl };
+}
+
 // ---------- Branding (logo, icônes de filière) ----------
 
 export async function updateLogo(logoUrl: string | null): Promise<{ error?: string }> {

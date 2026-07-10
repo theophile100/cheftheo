@@ -20,7 +20,9 @@ export default async function AppLayout({
   const [{ data: profile }, { data: completions }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("email, xp_total, current_streak, longest_streak, is_admin")
+      .select(
+        "email, xp_total, current_streak, longest_streak, is_admin, energy, energy_updated_at",
+      )
       .eq("id", user.id)
       .single(),
     supabase.from("user_lecons").select("lecon_id").eq("user_id", user.id),
@@ -34,6 +36,8 @@ export default async function AppLayout({
         currentStreak: profile?.current_streak ?? 0,
         longestStreak: profile?.longest_streak ?? 0,
         isAdmin: profile?.is_admin ?? false,
+        energy: profile?.energy ?? 25,
+        energyUpdatedAt: profile?.energy_updated_at ?? new Date().toISOString(),
       }}
       initialCompletedLeconIds={completions?.map((c) => c.lecon_id) ?? []}
     >

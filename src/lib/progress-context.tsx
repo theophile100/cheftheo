@@ -8,6 +8,8 @@ export interface ProfileData {
   currentStreak: number;
   longestStreak: number;
   isAdmin: boolean;
+  energy: number;
+  energyUpdatedAt: string;
 }
 
 interface ProgressContextValue extends ProfileData {
@@ -20,6 +22,7 @@ interface ProgressContextValue extends ProfileData {
     },
     leconId: string,
   ) => void;
+  setEnergy: (energy: number, energyUpdatedAt?: string) => void;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -55,8 +58,16 @@ export function ProgressProvider({
     setCompletedLeconIds((prev) => new Set(prev).add(leconId));
   }
 
+  function setEnergy(energy: number, energyUpdatedAt?: string) {
+    setProfile((prev) => ({
+      ...prev,
+      energy,
+      energyUpdatedAt: energyUpdatedAt ?? prev.energyUpdatedAt,
+    }));
+  }
+
   const value = useMemo(
-    () => ({ ...profile, completedLeconIds, applyCompletion }),
+    () => ({ ...profile, completedLeconIds, applyCompletion, setEnergy }),
     [profile, completedLeconIds],
   );
 

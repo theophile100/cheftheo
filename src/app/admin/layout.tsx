@@ -43,7 +43,7 @@ export default async function AdminLayout({
           <Link href="/admin/parametres" className="hover:text-orange-500">
             Apparence
           </Link>
-          <Link href="/admin/ebooks" className="hover:text-orange-500">
+          <Link href="/admin/produits" className="hover:text-orange-500">
             Découvrir
           </Link>
           <Link href="/admin/analytics" className="hover:text-orange-500">

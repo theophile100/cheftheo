@@ -4,7 +4,7 @@ export const MAX_IMAGE_BYTES = 7 * 1024 * 1024;
 
 export function checkImageSize(file: { size: number }): string | null {
   if (file.size > MAX_IMAGE_BYTES) {
-    return "Image trop lourde (7 Mo maximum). Essayez une photo plus légère.";
+    return "Fichier trop lourd (7 Mo maximum). Essayez un fichier plus léger.";
   }
   return null;
 }

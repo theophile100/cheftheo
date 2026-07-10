@@ -32,15 +32,22 @@ export function LeconRunner({
   filiereSlug,
   questions,
   sessionSeed,
+  energyAfterStart,
 }: {
   leconId: string;
   filiereSlug: string;
   questions: Question[];
   sessionSeed: string;
+  energyAfterStart: { energy: number; energyUpdatedAt: string };
 }) {
-  const { applyCompletion } = useProgress();
+  const { applyCompletion, setEnergy } = useProgress();
   const { soundEnabled, vibrationEnabled } = useSoundSettings();
   const totalQuestions = questions.length;
+
+  useEffect(() => {
+    setEnergy(energyAfterStart.energy, energyAfterStart.energyUpdatedAt);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [queue, setQueue] = useState<Question[]>(questions);
   const [completed, setCompleted] = useState(0);

@@ -1,8 +1,17 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LeconRunner } from "@/components/LeconRunner";
+import { EnergyBlockedScreen } from "@/components/EnergyBlockedScreen";
 import { randomShuffle, randomSeed } from "@/lib/shuffle";
 import type { Question } from "@/lib/types";
+
+interface StartLeconResult {
+  ok: boolean;
+  already_completed: boolean;
+  energy: number;
+  energy_updated_at: string;
+  available_at?: string;
+}
 
 export default async function Lecon({
   params,
@@ -22,6 +31,32 @@ export default async function Lecon({
     notFound();
   }
 
+  const filiereRelation = lecon.filieres as { slug: string } | { slug: string }[];
+  const slug = Array.isArray(filiereRelation)
+    ? filiereRelation[0]?.slug
+    : filiereRelation?.slug;
+
+  const { data: startResult, error: startError } = await supabase.rpc(
+    "start_lecon",
+    { p_lecon_id: id },
+  );
+
+  if (startError) {
+    throw new Error(startError.message);
+  }
+
+  const result = startResult as StartLeconResult;
+
+  if (!result.ok) {
+    return (
+      <EnergyBlockedScreen
+        filiereSlug={slug ?? ""}
+        energy={result.energy}
+        availableAt={result.available_at!}
+      />
+    );
+  }
+
   const { data: questions } = await supabase
     .from("questions")
     .select("id, type, prompt, explanation, image_url, data")
@@ -31,11 +66,6 @@ export default async function Lecon({
   if (!questions || questions.length === 0) {
     notFound();
   }
-
-  const filiereRelation = lecon.filieres as { slug: string } | { slug: string }[];
-  const slug = Array.isArray(filiereRelation)
-    ? filiereRelation[0]?.slug
-    : filiereRelation?.slug;
 
   // A fresh random seed per page load, so answer-order shuffling (which is
   // otherwise deterministic per question id + retry round) also varies
@@ -48,6 +78,10 @@ export default async function Lecon({
       filiereSlug={slug ?? ""}
       questions={randomShuffle(questions as Question[])}
       sessionSeed={sessionSeed}
+      energyAfterStart={{
+        energy: result.energy,
+        energyUpdatedAt: result.energy_updated_at,
+      }}
     />
   );
 }

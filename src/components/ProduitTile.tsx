@@ -1,37 +1,38 @@
 import Link from "next/link";
 import { formatPrice } from "@/lib/currency";
 
-export interface EbookSummary {
+export interface ProduitSummary {
   id: string;
   title: string;
-  price: number;
+  type: "gratuit" | "payant";
+  price: number | null;
   cover_url: string | null;
 }
 
-export function EbookTile({
-  ebook,
+export function ProduitTile({
+  produit,
   country,
 }: {
-  ebook: EbookSummary;
+  produit: ProduitSummary;
   country: string | null;
 }) {
   return (
     <Link
-      href={`/decouvrir/${ebook.id}`}
+      href={`/decouvrir/${produit.id}`}
       className="mb-3 block break-inside-avoid overflow-hidden rounded-3xl bg-white shadow-lg shadow-zinc-900/5 transition-transform active:scale-[0.98] dark:bg-zinc-900"
     >
-      {ebook.cover_url ? (
+      {produit.cover_url ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={ebook.cover_url} alt="" className="h-auto w-full" />
+        <img src={produit.cover_url} alt="" className="h-auto w-full" />
       ) : (
         <div className="aspect-[3/4] w-full bg-zinc-100 dark:bg-zinc-800" />
       )}
       <div className="p-3">
         <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">
-          {ebook.title}
+          {produit.title}
         </p>
         <p className="mt-0.5 text-sm font-extrabold text-orange-500">
-          {formatPrice(ebook.price, country)}
+          {produit.type === "gratuit" ? "Gratuit" : formatPrice(produit.price ?? 0, country)}
         </p>
       </div>
     </Link>
