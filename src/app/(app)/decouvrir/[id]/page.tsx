@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { BackButton } from "@/components/BackButton";
 import { ProduitCta } from "@/components/ProduitCta";
 import { ProduitSocial } from "@/components/ProduitSocial";
+import { ProduitDescription } from "@/components/ProduitDescription";
+import { ProduitComments, type CommentRow } from "@/components/ProduitComments";
+import { IconBolt } from "@tabler/icons-react";
 import { formatPrice } from "@/lib/currency";
 
 export default async function ProduitDetail({
@@ -19,9 +22,8 @@ export default async function ProduitDetail({
   const [
     { data: produit },
     { data: profile },
-    { count: likesCount },
     { data: ownLike },
-    { data: comments },
+    { data: rawComments },
   ] = await Promise.all([
     supabase
       .from("produits")
@@ -31,7 +33,6 @@ export default async function ProduitDetail({
       .eq("id", id)
       .single(),
     supabase.from("profiles").select("country").eq("id", user!.id).single(),
-    supabase.from("produit_likes").select("*", { count: "exact", head: true }).eq("produit_id", id),
     supabase
       .from("produit_likes")
       .select("user_id")
@@ -40,12 +41,34 @@ export default async function ProduitDetail({
       .maybeSingle(),
     supabase
       .from("produit_commentaires")
-      .select("id, author_label, text, created_at")
+      .select("id, author_label, text, parent_comment_id, status, user_id, created_at")
       .eq("produit_id", id)
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: true }),
   ]);
 
   if (!produit) notFound();
+
+  const commentIds = (rawComments ?? []).map((c) => c.id);
+  const { data: allLikes } = commentIds.length
+    ? await supabase
+        .from("commentaire_likes")
+        .select("commentaire_id, user_id")
+        .in("commentaire_id", commentIds)
+    : { data: [] as { commentaire_id: string; user_id: string }[] };
+
+  const comments: CommentRow[] = (rawComments ?? []).map((c) => {
+    const likesForComment = (allLikes ?? []).filter((l) => l.commentaire_id === c.id);
+    return {
+      id: c.id,
+      author_label: c.author_label,
+      text: c.text,
+      parent_comment_id: c.parent_comment_id,
+      status: c.status,
+      user_id: c.user_id,
+      likes_count: likesForComment.length,
+      liked_by_me: likesForComment.some((l) => l.user_id === user!.id),
+    };
+  });
 
   const filiereName = Array.isArray(produit.filieres)
     ? produit.filieres[0]?.name
@@ -60,35 +83,42 @@ export default async function ProduitDetail({
           // eslint-disable-next-line @next/next/no-img-element
           <img src={produit.cover_url} alt="" className="h-auto w-full" />
         )}
-        <div className="flex flex-col gap-3 p-5">
+        <div className="flex flex-col gap-4 p-5">
           {filiereName && (
             <span className="self-start rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
               {filiereName}
             </span>
           )}
+
           <h1 className="text-xl font-extrabold text-zinc-900 dark:text-zinc-50">
             {produit.title}
           </h1>
-          {produit.description && (
-            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-              {produit.description}
+
+          <div className="flex items-center gap-3">
+            <p className="text-2xl font-extrabold text-orange-500">
+              {produit.type === "gratuit"
+                ? "Gratuit"
+                : formatPrice(produit.price ?? 0, profile?.country ?? null)}
             </p>
-          )}
+            <span className="flex items-center gap-1 rounded-full bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
+              <IconBolt size={14} stroke={2} />
+              {produit.type === "gratuit" ? "+10" : "Plein"}
+            </span>
+          </div>
 
           <ProduitSocial
             produitId={produit.id}
             likesEnabled={produit.likes_enabled}
             commentsEnabled={produit.comments_enabled}
             initialLiked={!!ownLike}
-            initialLikesCount={likesCount ?? 0}
-            initialComments={comments ?? []}
           />
 
-          <p className="text-2xl font-extrabold text-orange-500">
-            {produit.type === "gratuit"
-              ? "Gratuit"
-              : formatPrice(produit.price ?? 0, profile?.country ?? null)}
-          </p>
+          {produit.description && <ProduitDescription text={produit.description} />}
+
+          {produit.comments_enabled && (
+            <ProduitComments produitId={produit.id} initialComments={comments} />
+          )}
+
           <ProduitCta
             produitId={produit.id}
             type={produit.type}

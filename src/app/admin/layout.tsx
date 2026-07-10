@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export default async function AdminLayout({
   children,
@@ -21,6 +22,13 @@ export default async function AdminLayout({
     .single();
 
   if (!profile?.is_admin) redirect("/accueil");
+
+  // Regular RLS only shows each user their own pending comments — the badge
+  // needs to count everyone's, hence service role.
+  const { count: pendingCommentsCount } = await createAdminClient()
+    .from("produit_commentaires")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "en_attente");
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
@@ -45,6 +53,14 @@ export default async function AdminLayout({
           </Link>
           <Link href="/admin/produits" className="hover:text-orange-500">
             Découvrir
+          </Link>
+          <Link href="/admin/commentaires" className="flex items-center gap-1.5 hover:text-orange-500">
+            Commentaires
+            {!!pendingCommentsCount && (
+              <span className="rounded-full bg-orange-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+                {pendingCommentsCount}
+              </span>
+            )}
           </Link>
           <Link href="/admin/analytics" className="hover:text-orange-500">
             Analytics

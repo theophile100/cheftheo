@@ -31,6 +31,7 @@ export function ProduitCta({
   const { energy, setEnergy } = useProgress();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [embedRevealed, setEmbedRevealed] = useState(false);
 
   function trackClick() {
     const supabase = createClient();
@@ -85,8 +86,23 @@ export function ProduitCta({
   }
 
   if (ctaType === "embed" && chariowEmbedCode) {
+    if (!embedRevealed) {
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            trackClick();
+            setEmbedRevealed(true);
+          }}
+          className={buttonClasses("primary", "mt-2 w-full")}
+        >
+          Obtenir
+        </button>
+      );
+    }
+
     return (
-      <div onClickCapture={trackClick} className="mt-2">
+      <div className="mt-2">
         <TrustedEmbed html={chariowEmbedCode} />
       </div>
     );
