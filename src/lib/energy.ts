@@ -1,6 +1,6 @@
 export const ENERGY_MAX = 25;
 export const ENERGY_PER_LESSON = 5;
-export const ENERGY_RECHARGE_SECONDS = 12 * 60;
+export const ENERGY_RECHARGE_SECONDS = 5 * 60;
 
 function toDate(value: string | Date): Date {
   return typeof value === "string" ? new Date(value) : value;
