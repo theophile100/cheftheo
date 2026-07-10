@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BackButton } from "@/components/BackButton";
 import { ProduitCta } from "@/components/ProduitCta";
+import { ProduitSocial } from "@/components/ProduitSocial";
 import { formatPrice } from "@/lib/currency";
 
 export default async function ProduitDetail({
@@ -15,15 +16,33 @@ export default async function ProduitDetail({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: produit }, { data: profile }] = await Promise.all([
+  const [
+    { data: produit },
+    { data: profile },
+    { count: likesCount },
+    { data: ownLike },
+    { data: comments },
+  ] = await Promise.all([
     supabase
       .from("produits")
       .select(
-        "id, title, description, cover_url, type, price, cta_type, chariow_url, chariow_embed_code, filieres(name)",
+        "id, title, description, cover_url, type, price, cta_type, chariow_url, chariow_embed_code, likes_enabled, comments_enabled, filieres(name)",
       )
       .eq("id", id)
       .single(),
     supabase.from("profiles").select("country").eq("id", user!.id).single(),
+    supabase.from("produit_likes").select("*", { count: "exact", head: true }).eq("produit_id", id),
+    supabase
+      .from("produit_likes")
+      .select("user_id")
+      .eq("produit_id", id)
+      .eq("user_id", user!.id)
+      .maybeSingle(),
+    supabase
+      .from("produit_commentaires")
+      .select("id, author_label, text, created_at")
+      .eq("produit_id", id)
+      .order("created_at", { ascending: false }),
   ]);
 
   if (!produit) notFound();
@@ -55,6 +74,16 @@ export default async function ProduitDetail({
               {produit.description}
             </p>
           )}
+
+          <ProduitSocial
+            produitId={produit.id}
+            likesEnabled={produit.likes_enabled}
+            commentsEnabled={produit.comments_enabled}
+            initialLiked={!!ownLike}
+            initialLikesCount={likesCount ?? 0}
+            initialComments={comments ?? []}
+          />
+
           <p className="text-2xl font-extrabold text-orange-500">
             {produit.type === "gratuit"
               ? "Gratuit"

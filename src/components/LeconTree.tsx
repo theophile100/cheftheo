@@ -23,6 +23,11 @@ const NODE_SIZE = 80;
 const V_GAP = 112;
 const AMPLITUDE = 60;
 const WIDTH = AMPLITUDE * 2 + NODE_SIZE;
+// Rough estimates used only to size the watermark layer — a pixel or two of
+// imprecision here just makes the pattern very slightly more/less dense,
+// never affects real layout.
+const UNITE_HEADER_HEIGHT = 76;
+const GROUP_GAP = 40;
 
 // Sine-based zigzag: position cycles centre → right → centre → left, giving a
 // smooth serpentine path instead of a straight column.
@@ -89,8 +94,17 @@ export function LeconTree({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lessonStates]);
 
+  const totalHeight = groups.reduce((sum, group, i) => {
+    const groupHeight = (group.items.length - 1) * V_GAP + NODE_SIZE;
+    const headerHeight = group.unite ? UNITE_HEADER_HEIGHT : 0;
+    const gap = i > 0 ? GROUP_GAP : 0;
+    return sum + groupHeight + headerHeight + gap;
+  }, 0);
+
   return (
-    <div className="mt-10 flex flex-col items-center">
+    <div className="relative mt-10 flex flex-col items-center overflow-hidden">
+      <FiliereWatermark slug={filiereSlug} seed={filiereSlug} width={WIDTH} height={totalHeight} />
+
       {groups.map((group, groupIndex) => {
         const points = group.items.map((_, i) => ({
           x: nodeCenterX(i),
@@ -113,8 +127,6 @@ export function LeconTree({
             )}
 
             <div className="relative" style={{ width: WIDTH, height }}>
-              <FiliereWatermark slug={filiereSlug} seed={group.key} width={WIDTH} height={height} />
-
               <svg width={WIDTH} height={height} className="absolute left-0 top-0" aria-hidden>
                 <path
                   d={pathD}

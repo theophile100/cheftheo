@@ -25,26 +25,22 @@ const WATERMARK_ICONS: Record<string, Icon[]> = {
   hotellerie: [IconBed, IconKey, IconLuggage],
 };
 
-// Deterministic pseudo-random layout from a seed string — never Math.random(),
-// so server and client render the exact same positions (no hydration mismatch).
-function seededPositions(seed: string, count: number, width: number, height: number) {
+// One icon roughly every ROW_SPACING px, so coverage stays even regardless
+// of how tall the tree is — a short filiere gets a few icons, a long one
+// gets proportionally more, instead of always capping out at a handful.
+const ROW_SPACING = 78;
+const ICON_SIZE = 28;
+
+// Deterministic pseudo-random sequence from a seed string — never
+// Math.random(), so server and client render the exact same layout
+// (no hydration mismatch).
+function seededRandom(seed: string) {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-
-  const next = () => {
+  return () => {
     h = (h * 1103515245 + 12345) >>> 0;
     return (h % 1000) / 1000;
   };
-
-  const positions = [];
-  for (let i = 0; i < count; i++) {
-    positions.push({
-      left: 8 + next() * Math.max(0, width - 50),
-      top: 8 + next() * Math.max(0, height - 50),
-      rotate: next() * 40 - 20,
-    });
-  }
-  return positions;
 }
 
 export function FiliereWatermark({
@@ -59,25 +55,35 @@ export function FiliereWatermark({
   height: number;
 }) {
   const icons = WATERMARK_ICONS[slug];
-  if (!icons || height < 60) return null;
+  if (!icons || height < ROW_SPACING) return null;
 
-  const count = Math.max(2, Math.min(5, Math.round(height / 130)));
-  const positions = seededPositions(seed, count, width, height);
+  const next = seededRandom(seed);
+  const rowCount = Math.max(1, Math.round(height / ROW_SPACING));
+  const rowHeight = height / rowCount;
+
+  const marks = Array.from({ length: rowCount }, (_, i) => {
+    const jitterY = (next() - 0.5) * rowHeight * 0.6;
+    const top = Math.min(
+      height - ICON_SIZE,
+      Math.max(0, (i + 0.5) * rowHeight + jitterY),
+    );
+    const left = 6 + next() * Math.max(0, width - ICON_SIZE - 12);
+    const rotate = next() * 40 - 20;
+    const WatermarkIcon = icons[i % icons.length];
+    return { top, left, rotate, WatermarkIcon };
+  });
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {positions.map((pos, i) => {
-        const WatermarkIcon = icons[i % icons.length];
-        return (
-          <WatermarkIcon
-            key={i}
-            size={34}
-            stroke={1.5}
-            className="absolute text-orange-500/10 dark:text-orange-400/10"
-            style={{ left: pos.left, top: pos.top, transform: `rotate(${pos.rotate}deg)` }}
-          />
-        );
-      })}
+      {marks.map((mark, i) => (
+        <mark.WatermarkIcon
+          key={i}
+          size={ICON_SIZE}
+          stroke={1.5}
+          className="absolute text-orange-500/10 dark:text-orange-400/10"
+          style={{ top: mark.top, left: mark.left, transform: `rotate(${mark.rotate}deg)` }}
+        />
+      ))}
     </div>
   );
 }
