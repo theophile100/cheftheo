@@ -51,15 +51,15 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-1 flex-col items-center gap-1 py-2.5"
+              className="flex flex-1 flex-col items-center gap-0.5 py-1.5"
             >
               <ItemIcon
-                size={26}
+                size={22}
                 stroke={1.75}
                 className={active ? "text-orange-500" : "text-zinc-400 dark:text-zinc-500"}
               />
               <span
-                className={`text-xs font-semibold ${
+                className={`text-[11px] font-semibold ${
                   active ? "text-orange-500" : "text-zinc-400 dark:text-zinc-500"
                 }`}
               >
