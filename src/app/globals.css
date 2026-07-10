@@ -214,3 +214,13 @@ body {
 .animate-fade-in {
   animation: fade-in 0.2s ease-out both;
 }
+
+/* Lesson-tree backdrop: sober cream at the top, warming gradually toward the
+   bottom so a long path feels like a journey rather than a flat repeat. */
+.lecon-tree-backdrop {
+  background: linear-gradient(to bottom, #fbf7f0 0%, #fce3bd 100%);
+}
+
+.dark .lecon-tree-backdrop {
+  background: linear-gradient(to bottom, #0a0a0a 0%, #2b1c0d 100%);
+}

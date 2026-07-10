@@ -4,7 +4,12 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { useProgress } from "@/lib/progress-context";
 import { FiliereWatermark } from "@/components/FiliereWatermark";
-import { IconCheck, IconPlayerPlayFilled, IconLockFilled } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconPlayerPlayFilled,
+  IconLockFilled,
+  IconTrophyFilled,
+} from "@tabler/icons-react";
 
 interface Unite {
   id: string;
@@ -27,7 +32,9 @@ const WIDTH = AMPLITUDE * 2 + NODE_SIZE;
 // imprecision here just makes the pattern very slightly more/less dense,
 // never affects real layout.
 const UNITE_HEADER_HEIGHT = 76;
-const GROUP_GAP = 40;
+const UNIT_END_MARKER_HEIGHT = 80;
+const GROUP_GAP = 32;
+const OUTER_PADDING = 64;
 
 // Sine-based zigzag: position cycles centre → right → centre → left, giving a
 // smooth serpentine path instead of a straight column.
@@ -97,12 +104,13 @@ export function LeconTree({
   const totalHeight = groups.reduce((sum, group, i) => {
     const groupHeight = (group.items.length - 1) * V_GAP + NODE_SIZE;
     const headerHeight = group.unite ? UNITE_HEADER_HEIGHT : 0;
+    const markerHeight = group.unite ? UNIT_END_MARKER_HEIGHT : 0;
     const gap = i > 0 ? GROUP_GAP : 0;
-    return sum + groupHeight + headerHeight + gap;
-  }, 0);
+    return sum + groupHeight + headerHeight + markerHeight + gap;
+  }, OUTER_PADDING);
 
   return (
-    <div className="relative mt-10 flex flex-col items-center overflow-hidden">
+    <div className="lecon-tree-backdrop relative mt-10 flex flex-col items-center overflow-hidden rounded-[2.5rem] px-4 py-8">
       <FiliereWatermark slug={filiereSlug} seed={filiereSlug} width={WIDTH} height={totalHeight} />
 
       {groups.map((group, groupIndex) => {
@@ -112,17 +120,23 @@ export function LeconTree({
         }));
         const height = (group.items.length - 1) * V_GAP + NODE_SIZE;
         const pathD = buildPathD(points);
+        const isUnitComplete = group.items.every((item) => item.isCompleted);
 
         return (
-          <div key={group.key} className={`flex flex-col items-center ${groupIndex > 0 ? "mt-10" : ""}`}>
+          <div key={group.key} className={`flex flex-col items-center ${groupIndex > 0 ? "mt-8" : ""}`}>
             {group.unite && (
-              <div className="mb-6 max-w-xs text-center">
-                <p className="text-xs font-bold uppercase tracking-wide text-zinc-400">
-                  Unité {group.unite.position}
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-zinc-700 dark:text-zinc-200">
-                  {group.unite.title}
-                </p>
+              <div className="mb-6 flex flex-col items-center gap-2 rounded-3xl bg-white px-6 py-4 text-center shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-500 text-sm font-extrabold text-white">
+                  {group.unite.position}
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-orange-500">
+                    Unité {group.unite.position}
+                  </p>
+                  <p className="mt-0.5 max-w-[180px] text-sm font-bold text-zinc-800 dark:text-zinc-100">
+                    {group.unite.title}
+                  </p>
+                </div>
               </div>
             )}
 
@@ -181,6 +195,21 @@ export function LeconTree({
                 );
               })}
             </div>
+
+            {group.unite && (
+              <div className="mt-2 flex flex-col items-center gap-1">
+                <div className="h-6 w-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                <div
+                  className={
+                    isUnitComplete
+                      ? "flex h-11 w-11 items-center justify-center rounded-full bg-orange-500 text-white shadow-[0_4px_0_0_#a75a18]"
+                      : "flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100 text-zinc-300 dark:bg-zinc-800 dark:text-zinc-600"
+                  }
+                >
+                  <IconTrophyFilled size={22} />
+                </div>
+              </div>
+            )}
           </div>
         );
       })}

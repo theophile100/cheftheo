@@ -25,10 +25,11 @@ const WATERMARK_ICONS: Record<string, Icon[]> = {
   hotellerie: [IconBed, IconKey, IconLuggage],
 };
 
-// One icon roughly every ROW_SPACING px, so coverage stays even regardless
-// of how tall the tree is — a short filiere gets a few icons, a long one
-// gets proportionally more, instead of always capping out at a handful.
-const ROW_SPACING = 78;
+// Icons start sparse near the top and get progressively denser toward the
+// bottom, so the deeper you scroll into a filiere the richer the backdrop
+// feels — a sense of journey rather than a flat repeating pattern.
+const MAX_ROW_SPACING = 130;
+const MIN_ROW_SPACING = 55;
 const ICON_SIZE = 28;
 
 // Deterministic pseudo-random sequence from a seed string — never
@@ -55,23 +56,25 @@ export function FiliereWatermark({
   height: number;
 }) {
   const icons = WATERMARK_ICONS[slug];
-  if (!icons || height < ROW_SPACING) return null;
+  if (!icons || height < MIN_ROW_SPACING) return null;
 
   const next = seededRandom(seed);
-  const rowCount = Math.max(1, Math.round(height / ROW_SPACING));
-  const rowHeight = height / rowCount;
+  const marks: { top: number; left: number; rotate: number; WatermarkIcon: Icon }[] = [];
 
-  const marks = Array.from({ length: rowCount }, (_, i) => {
-    const jitterY = (next() - 0.5) * rowHeight * 0.6;
-    const top = Math.min(
-      height - ICON_SIZE,
-      Math.max(0, (i + 0.5) * rowHeight + jitterY),
-    );
+  let y = 30;
+  let i = 0;
+  while (y < height) {
+    const progress = Math.min(1, y / height);
+    const spacing = MAX_ROW_SPACING - (MAX_ROW_SPACING - MIN_ROW_SPACING) * progress;
+    const jitterY = (next() - 0.5) * spacing * 0.5;
+    const top = Math.min(height - ICON_SIZE, Math.max(0, y + jitterY));
     const left = 6 + next() * Math.max(0, width - ICON_SIZE - 12);
     const rotate = next() * 40 - 20;
     const WatermarkIcon = icons[i % icons.length];
-    return { top, left, rotate, WatermarkIcon };
-  });
+    marks.push({ top, left, rotate, WatermarkIcon });
+    y += spacing;
+    i++;
+  }
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
