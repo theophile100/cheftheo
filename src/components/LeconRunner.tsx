@@ -75,7 +75,7 @@ export function LeconRunner({
         return;
       }
       if (data) {
-        applyCompletion(data, leconId);
+        applyCompletion(data, leconId, totalQuestions * 10);
         if (soundEnabled) playCompleteSound();
       }
     })();

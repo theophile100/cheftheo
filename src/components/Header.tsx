@@ -4,17 +4,28 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { SideMenu } from "@/components/SideMenu";
 import { EnergyDisplay } from "@/components/EnergyDisplay";
+import { StatPanel } from "@/components/StatPanel";
+import { StreakPanel } from "@/components/StreakPanel";
+import { XpPanel } from "@/components/XpPanel";
+import { EnergyPanel } from "@/components/EnergyPanel";
+
+type PanelName = "streak" | "xp" | "energy" | null;
 
 export function Header() {
-  const { currentStreak, xpTotal } = useProgress();
+  const { currentStreak, xpTotal, energy, energyUpdatedAt, completions } = useProgress();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activePanel, setActivePanel] = useState<PanelName>(null);
 
   return (
     <>
       <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-black/90">
         <div className="mx-auto flex max-w-md items-center justify-between px-6 py-3 md:max-w-2xl lg:max-w-4xl">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setActivePanel("streak")}
+              className="flex items-center gap-1.5 rounded-full px-1.5 py-0.5 transition-colors active:bg-zinc-100 dark:active:bg-zinc-800"
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"
@@ -25,9 +36,13 @@ export function Header() {
               <span className="font-bold text-zinc-900 dark:text-zinc-50">
                 {currentStreak}
               </span>
-            </div>
+            </button>
 
-            <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setActivePanel("xp")}
+              className="flex items-center gap-1.5 rounded-full px-1.5 py-0.5 transition-colors active:bg-zinc-100 dark:active:bg-zinc-800"
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"
@@ -38,9 +53,15 @@ export function Header() {
               <span className="font-bold text-zinc-900 dark:text-zinc-50">
                 {xpTotal}
               </span>
-            </div>
+            </button>
 
-            <EnergyDisplay />
+            <button
+              type="button"
+              onClick={() => setActivePanel("energy")}
+              className="rounded-full px-1.5 py-0.5 transition-colors active:bg-zinc-100 dark:active:bg-zinc-800"
+            >
+              <EnergyDisplay />
+            </button>
           </div>
 
           <button
@@ -57,6 +78,26 @@ export function Header() {
       </header>
 
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+
+      {activePanel === "streak" && (
+        <StatPanel title="Série" onClose={() => setActivePanel(null)}>
+          <StreakPanel currentStreak={currentStreak} completions={completions} />
+        </StatPanel>
+      )}
+      {activePanel === "xp" && (
+        <StatPanel title="XP" onClose={() => setActivePanel(null)}>
+          <XpPanel xpTotal={xpTotal} completions={completions} />
+        </StatPanel>
+      )}
+      {activePanel === "energy" && (
+        <StatPanel title="Énergie" onClose={() => setActivePanel(null)}>
+          <EnergyPanel
+            energy={energy}
+            energyUpdatedAt={energyUpdatedAt}
+            onNavigate={() => setActivePanel(null)}
+          />
+        </StatPanel>
+      )}
     </>
   );
 }

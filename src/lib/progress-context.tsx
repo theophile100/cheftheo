@@ -12,8 +12,15 @@ export interface ProfileData {
   energyUpdatedAt: string;
 }
 
+export interface CompletionRecord {
+  leconId: string;
+  completedAt: string;
+  xpEarned: number;
+}
+
 interface ProgressContextValue extends ProfileData {
   completedLeconIds: Set<string>;
+  completions: CompletionRecord[];
   applyCompletion: (
     profile: {
       xp_total: number;
@@ -21,6 +28,7 @@ interface ProgressContextValue extends ProfileData {
       longest_streak: number;
     },
     leconId: string,
+    xpEarned: number,
   ) => void;
   setEnergy: (energy: number, energyUpdatedAt?: string) => void;
 }
@@ -30,16 +38,19 @@ const ProgressContext = createContext<ProgressContextValue | null>(null);
 export function ProgressProvider({
   initialProfile,
   initialCompletedLeconIds,
+  initialCompletions,
   children,
 }: {
   initialProfile: ProfileData;
   initialCompletedLeconIds: string[];
+  initialCompletions: CompletionRecord[];
   children: React.ReactNode;
 }) {
   const [profile, setProfile] = useState(initialProfile);
   const [completedLeconIds, setCompletedLeconIds] = useState(
     () => new Set(initialCompletedLeconIds),
   );
+  const [completions, setCompletions] = useState(initialCompletions);
 
   function applyCompletion(
     updated: {
@@ -48,6 +59,7 @@ export function ProgressProvider({
       longest_streak: number;
     },
     leconId: string,
+    xpEarned: number,
   ) {
     setProfile((prev) => ({
       ...prev,
@@ -56,6 +68,10 @@ export function ProgressProvider({
       longestStreak: updated.longest_streak,
     }));
     setCompletedLeconIds((prev) => new Set(prev).add(leconId));
+    setCompletions((prev) => [
+      ...prev,
+      { leconId, completedAt: new Date().toISOString(), xpEarned },
+    ]);
   }
 
   function setEnergy(energy: number, energyUpdatedAt?: string) {
@@ -67,8 +83,8 @@ export function ProgressProvider({
   }
 
   const value = useMemo(
-    () => ({ ...profile, completedLeconIds, applyCompletion, setEnergy }),
-    [profile, completedLeconIds],
+    () => ({ ...profile, completedLeconIds, completions, applyCompletion, setEnergy }),
+    [profile, completedLeconIds, completions],
   );
 
   return (

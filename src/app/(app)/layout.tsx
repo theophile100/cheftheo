@@ -26,7 +26,10 @@ export default async function AppLayout({
       )
       .eq("id", user.id)
       .single(),
-    supabase.from("user_lecons").select("lecon_id").eq("user_id", user.id),
+    supabase
+      .from("user_lecons")
+      .select("lecon_id, completed_at, xp_earned")
+      .eq("user_id", user.id),
   ]);
 
   return (
@@ -41,6 +44,13 @@ export default async function AppLayout({
         energyUpdatedAt: profile?.energy_updated_at ?? new Date().toISOString(),
       }}
       initialCompletedLeconIds={completions?.map((c) => c.lecon_id) ?? []}
+      initialCompletions={
+        completions?.map((c) => ({
+          leconId: c.lecon_id,
+          completedAt: c.completed_at,
+          xpEarned: c.xp_earned,
+        })) ?? []
+      }
     >
       <div className="min-h-screen bg-cream dark:bg-black">
         <Header />
