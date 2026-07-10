@@ -3,12 +3,12 @@
 import { useProgress } from "@/lib/progress-context";
 
 export function ProfileStats() {
-  const { email, xpTotal, currentStreak, longestStreak } = useProgress();
+  const { displayName, xpTotal, currentStreak, longestStreak } = useProgress();
 
   return (
     <div className="rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
-      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-        {email}
+      <p className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+        {displayName}
       </p>
 
       <div className="mt-5 grid grid-cols-3 gap-3 text-center">

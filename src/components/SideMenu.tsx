@@ -36,7 +36,7 @@ export function SideMenu({
 }) {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { email, xpTotal, currentStreak, isAdmin } = useProgress();
+  const { displayName, xpTotal, currentStreak, isAdmin } = useProgress();
   const { soundEnabled, vibrationEnabled, toggleSound, toggleVibration } =
     useSoundSettings();
 
@@ -54,8 +54,8 @@ export function SideMenu({
       <div className="fixed inset-0 z-30 bg-black/40" onClick={onClose} />
       <div className="fixed right-0 top-0 z-40 flex h-full w-72 animate-slide-in-right flex-col rounded-l-3xl bg-white p-6 shadow-xl dark:bg-zinc-900">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-medium text-zinc-500 dark:text-zinc-400">
-            {email}
+          <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-50">
+            {displayName}
           </p>
           <button
             type="button"

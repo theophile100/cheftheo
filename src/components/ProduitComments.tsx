@@ -15,24 +15,6 @@ export interface CommentRow {
   liked_by_me: boolean;
 }
 
-function StatusBadge({ status }: { status: CommentRow["status"] }) {
-  if (status === "en_attente") {
-    return (
-      <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-        En attente de validation
-      </span>
-    );
-  }
-  if (status === "refuse") {
-    return (
-      <span className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-600 dark:bg-red-900/30 dark:text-red-300">
-        Refusé
-      </span>
-    );
-  }
-  return null;
-}
-
 function CommentActions({
   comment,
   onReply,
@@ -118,12 +100,9 @@ function CommentRowView({
   return (
     <div id={`comment-${comment.id}`}>
       <div className="rounded-2xl bg-zinc-50 p-3 dark:bg-zinc-800">
-        <div className="flex items-center gap-2">
-          <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-            {comment.author_label}
-          </p>
-          <StatusBadge status={comment.status} />
-        </div>
+        <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+          {comment.author_label}
+        </p>
         <p className="mt-0.5 text-sm text-zinc-700 dark:text-zinc-200">{comment.text}</p>
         <CommentActions comment={comment} onReply={() => setReplying((r) => !r)} />
       </div>

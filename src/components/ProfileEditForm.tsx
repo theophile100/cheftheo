@@ -3,19 +3,26 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClasses } from "@/lib/button-styles";
+import { useProgress } from "@/lib/progress-context";
 
 const inputClasses =
   "rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3.5 text-base text-zinc-900 outline-none transition-colors focus:border-orange-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
 
 export function ProfileEditForm({
+  initialDisplayName,
   initialCountry,
   initialPhone,
+  email,
   countries,
 }: {
+  initialDisplayName: string;
   initialCountry: string;
   initialPhone: string;
+  email: string;
   countries: string[];
 }) {
+  const { setDisplayName: applyDisplayName } = useProgress();
+  const [displayName, setDisplayName] = useState(initialDisplayName);
   const [country, setCountry] = useState(initialCountry);
   const [phone, setPhone] = useState(initialPhone);
   const [saving, setSaving] = useState(false);
@@ -24,6 +31,12 @@ export function ProfileEditForm({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      setError("Le nom d'affichage ne peut pas être vide.");
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
@@ -40,7 +53,7 @@ export function ProfileEditForm({
 
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({ country, phone })
+      .update({ display_name: trimmedName, country, phone })
       .eq("id", user.id);
 
     setSaving(false);
@@ -50,6 +63,7 @@ export function ProfileEditForm({
       return;
     }
 
+    applyDisplayName(trimmedName);
     setSavedAt(Date.now());
     setTimeout(() => setSavedAt(null), 3000);
   }
@@ -59,6 +73,35 @@ export function ProfileEditForm({
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
     >
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Nom d&apos;affichage
+        </label>
+        <input
+          type="text"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          maxLength={30}
+          placeholder="Le pseudo affiché aux autres"
+          className={inputClasses}
+        />
+        <p className="text-xs text-zinc-400">
+          Visible par les autres dans les commentaires et le classement.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          Adresse email
+        </label>
+        <p className="rounded-2xl bg-zinc-50 px-4 py-3.5 text-base text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+          {email}
+        </p>
+        <p className="text-xs text-zinc-400">
+          Jamais visible par les autres utilisateurs.
+        </p>
+      </div>
+
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
           Pays

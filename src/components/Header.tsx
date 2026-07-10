@@ -12,7 +12,8 @@ import { EnergyPanel } from "@/components/EnergyPanel";
 type PanelName = "streak" | "xp" | "energy" | null;
 
 export function Header() {
-  const { currentStreak, xpTotal, energy, energyUpdatedAt, completions } = useProgress();
+  const { currentStreak, longestStreak, xpTotal, energy, energyUpdatedAt, completions } =
+    useProgress();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activePanel, setActivePanel] = useState<PanelName>(null);
 
@@ -81,7 +82,11 @@ export function Header() {
 
       {activePanel === "streak" && (
         <StatPanel title="Série" onClose={() => setActivePanel(null)}>
-          <StreakPanel currentStreak={currentStreak} completions={completions} />
+          <StreakPanel
+            currentStreak={currentStreak}
+            longestStreak={longestStreak}
+            completions={completions}
+          />
         </StatPanel>
       )}
       {activePanel === "xp" && (

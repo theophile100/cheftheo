@@ -4,6 +4,7 @@ import { createContext, useContext, useMemo, useState } from "react";
 
 export interface ProfileData {
   email: string;
+  displayName: string;
   xpTotal: number;
   currentStreak: number;
   longestStreak: number;
@@ -31,6 +32,7 @@ interface ProgressContextValue extends ProfileData {
     xpEarned: number,
   ) => void;
   setEnergy: (energy: number, energyUpdatedAt?: string) => void;
+  setDisplayName: (displayName: string) => void;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -82,8 +84,19 @@ export function ProgressProvider({
     }));
   }
 
+  function setDisplayName(displayName: string) {
+    setProfile((prev) => ({ ...prev, displayName }));
+  }
+
   const value = useMemo(
-    () => ({ ...profile, completedLeconIds, completions, applyCompletion, setEnergy }),
+    () => ({
+      ...profile,
+      completedLeconIds,
+      completions,
+      applyCompletion,
+      setEnergy,
+      setDisplayName,
+    }),
     [profile, completedLeconIds, completions],
   );
 

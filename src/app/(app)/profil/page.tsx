@@ -14,7 +14,11 @@ export default async function Profil() {
   } = await supabase.auth.getUser();
 
   const [{ data: profile }, { data: filieres }, { data: lecons }] = await Promise.all([
-    supabase.from("profiles").select("country, phone, avatar_url").eq("id", user!.id).single(),
+    supabase
+      .from("profiles")
+      .select("display_name, country, phone, avatar_url")
+      .eq("id", user!.id)
+      .single(),
     supabase
       .from("filieres")
       .select("id, slug, name, icon_url")
@@ -45,8 +49,10 @@ export default async function Profil() {
       </h2>
       <div className="mt-2">
         <ProfileEditForm
+          initialDisplayName={profile?.display_name ?? ""}
           initialCountry={profile?.country ?? ""}
           initialPhone={profile?.phone ?? ""}
+          email={user?.email ?? ""}
           countries={countries}
         />
       </div>

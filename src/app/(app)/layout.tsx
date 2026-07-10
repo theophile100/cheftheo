@@ -22,7 +22,7 @@ export default async function AppLayout({
     supabase
       .from("profiles")
       .select(
-        "email, xp_total, current_streak, longest_streak, is_admin, energy, energy_updated_at",
+        "email, display_name, xp_total, current_streak, longest_streak, is_admin, energy, energy_updated_at",
       )
       .eq("id", user.id)
       .single(),
@@ -36,6 +36,7 @@ export default async function AppLayout({
     <ProgressProvider
       initialProfile={{
         email: profile?.email ?? user.email ?? "",
+        displayName: profile?.display_name ?? "",
         xpTotal: profile?.xp_total ?? 0,
         currentStreak: profile?.current_streak ?? 0,
         longestStreak: profile?.longest_streak ?? 0,

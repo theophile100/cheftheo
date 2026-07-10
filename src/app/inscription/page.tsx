@@ -15,6 +15,7 @@ export default function Inscription() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [country, setCountry] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function Inscription() {
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { country, phone } },
+      options: { data: { display_name: displayName, country, phone } },
     });
 
     setLoading(false);
@@ -102,6 +103,26 @@ export default function Inscription() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="vous@exemple.com"
+                className={inputClasses}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="displayName"
+                className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+              >
+                Nom d&apos;affichage
+              </label>
+              <input
+                id="displayName"
+                name="displayName"
+                type="text"
+                required
+                maxLength={30}
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Le pseudo affiché aux autres"
                 className={inputClasses}
               />
             </div>
