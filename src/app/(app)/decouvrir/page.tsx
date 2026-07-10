@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { AcademyToggle } from "@/components/AcademyToggle";
 import { ProduitTile } from "@/components/ProduitTile";
 import { Mascot } from "@/components/Mascot";
 
@@ -19,9 +18,7 @@ export default async function Decouvrir() {
 
   return (
     <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
-      <AcademyToggle active="decouvrir" />
-
-      <h1 className="mt-8 text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
+      <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
         À découvrir
       </h1>
 

@@ -81,29 +81,8 @@ export function SideMenu({
           </div>
         </div>
 
-        <nav className="mt-6 flex flex-col gap-1">
-          <Link
-            href="/accueil"
-            onClick={onClose}
-            className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-          >
-            Accueil
-          </Link>
-          <Link
-            href="/profil"
-            onClick={onClose}
-            className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-          >
-            Profil
-          </Link>
-          <Link
-            href="/decouvrir"
-            onClick={onClose}
-            className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-          >
-            Découvrir
-          </Link>
-          {isAdmin && (
+        {isAdmin && (
+          <nav className="mt-6 flex flex-col gap-1">
             <Link
               href="/admin"
               onClick={onClose}
@@ -111,8 +90,8 @@ export function SideMenu({
             >
               Admin
             </Link>
-          )}
-        </nav>
+          </nav>
+        )}
 
         <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-zinc-400">
           Réglages

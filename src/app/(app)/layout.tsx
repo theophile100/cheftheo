@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProgressProvider } from "@/lib/progress-context";
 import { Header } from "@/components/Header";
+import { BottomNav } from "@/components/BottomNav";
 
 export default async function AppLayout({
   children,
@@ -43,7 +44,8 @@ export default async function AppLayout({
     >
       <div className="min-h-screen bg-cream dark:bg-black">
         <Header />
-        {children}
+        <div className="pb-24">{children}</div>
+        <BottomNav />
       </div>
     </ProgressProvider>
   );

@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { FiliereGrid } from "@/components/FiliereGrid";
 import { Mascot } from "@/components/Mascot";
 import { SpeechBubble } from "@/components/SpeechBubble";
-import { AcademyToggle } from "@/components/AcademyToggle";
 import { getEncouragementMessage } from "@/lib/mascot-messages";
 
 export default async function Accueil() {
@@ -15,9 +14,7 @@ export default async function Accueil() {
 
   return (
     <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
-      <AcademyToggle active="academy" />
-
-      <div className="mt-8 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <Mascot mood="idle" size={64} />
         <SpeechBubble>{getEncouragementMessage()}</SpeechBubble>
       </div>

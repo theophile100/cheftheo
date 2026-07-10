@@ -117,7 +117,7 @@ export function LeconRunner({
     const xpEarned = totalQuestions * 10;
 
     return (
-      <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-md flex-col items-center justify-center gap-6 px-6 text-center md:max-w-xl lg:max-w-2xl">
+      <div className="mx-auto flex min-h-[calc(100vh-140px)] max-w-md flex-col items-center justify-center gap-6 px-6 text-center md:max-w-xl lg:max-w-2xl">
         <Mascot mood="celebrate" size={110} />
 
         <h1 className="animate-fade-up text-2xl font-extrabold text-zinc-900 [animation-delay:150ms] dark:text-zinc-50">
@@ -155,7 +155,7 @@ export function LeconRunner({
   const roundKey = `${sessionSeed}-${current.id}-${round}`;
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-col">
+    <div className="flex min-h-[calc(100vh-140px)] flex-col">
       <div className="mx-auto flex w-full max-w-md items-center gap-3 px-6 pt-6 md:max-w-xl lg:max-w-2xl">
         <BackButton href={`/filiere/${filiereSlug}`} />
         <div className="h-3 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
