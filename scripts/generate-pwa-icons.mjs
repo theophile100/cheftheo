@@ -9,21 +9,28 @@ import sharp from "sharp";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 const SOURCE_PATH = path.join(ROOT, "public", "icon-source.png");
-const CREAM = "#fbf7f0";
+// Orange tres pale (deja utilise dans la palette de marque comme orange-50) :
+// une seule couleur unie, presque blanche, plutot que le creme plus fonce
+// utilise ailleurs dans l'app.
+const BG_COLOR = "#fdf2e7";
 
 async function makeIcon(size, outPath, { maskable = false } = {}) {
-  const srcBuffer = fs.readFileSync(SOURCE_PATH);
+  // On retire d'abord la marge deja presente dans l'image source pour que
+  // le personnage remplisse vraiment l'icone, au lieu de rester petit au
+  // centre d'un grand cadre vide.
+  const trimmed = await sharp(fs.readFileSync(SOURCE_PATH)).trim({ threshold: 10 }).toBuffer();
+
   // Les icones "maskable" doivent garder leur contenu dans une zone de
-  // securite centrale (~80% du canevas) car l'OS (Android) applique son
+  // securite centrale (~75% du canevas) car l'OS (Android) applique son
   // propre masque (cercle, carre arrondi...) qui peut rogner les bords.
-  const contentSize = maskable ? Math.round(size * 0.7) : size;
-  const logoResized = await sharp(srcBuffer)
+  const contentSize = maskable ? Math.round(size * 0.75) : Math.round(size * 0.94);
+  const logoResized = await sharp(trimmed)
     .resize(contentSize, contentSize, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer();
 
   await sharp({
-    create: { width: size, height: size, channels: 4, background: CREAM },
+    create: { width: size, height: size, channels: 4, background: BG_COLOR },
   })
     .composite([{ input: logoResized, gravity: "center" }])
     .png()
