@@ -17,7 +17,7 @@ export function EnergyBlockedScreen({
   });
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-md flex-col px-6 py-6">
+    <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-md flex-col px-6 py-6 md:max-w-xl lg:max-w-2xl">
       <BackButton href={`/filiere/${filiereSlug}`} />
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
         <Mascot mood="idle" size={88} />

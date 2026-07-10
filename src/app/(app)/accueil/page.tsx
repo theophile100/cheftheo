@@ -14,7 +14,7 @@ export default async function Accueil() {
     .order("position");
 
   return (
-    <main className="mx-auto max-w-md px-6 py-10">
+    <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
       <AcademyToggle active="academy" />
 
       <div className="mt-8 flex items-center gap-3">

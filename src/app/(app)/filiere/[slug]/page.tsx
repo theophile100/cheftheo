@@ -36,7 +36,7 @@ export default async function Filiere({
   ]);
 
   return (
-    <main className="mx-auto max-w-md px-6 py-10">
+    <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
       <BackButton href="/accueil" />
 
       <div className="mt-2 flex flex-col items-center gap-3 text-center">

@@ -12,7 +12,7 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-black/90">
-        <div className="mx-auto flex max-w-md items-center justify-between px-6 py-3">
+        <div className="mx-auto flex max-w-md items-center justify-between px-6 py-3 md:max-w-2xl lg:max-w-4xl">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <svg

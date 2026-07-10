@@ -33,7 +33,7 @@ export default async function ProduitDetail({
     : (produit.filieres as { name: string } | null)?.name;
 
   return (
-    <main className="mx-auto max-w-md px-6 py-10">
+    <main className="mx-auto max-w-md px-6 py-10 md:max-w-xl lg:max-w-2xl">
       <BackButton href="/decouvrir" />
 
       <div className="mt-4 overflow-hidden rounded-3xl bg-white shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">

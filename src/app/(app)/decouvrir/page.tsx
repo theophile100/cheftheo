@@ -18,7 +18,7 @@ export default async function Decouvrir() {
   ]);
 
   return (
-    <main className="mx-auto max-w-md px-6 py-10">
+    <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
       <AcademyToggle active="decouvrir" />
 
       <h1 className="mt-8 text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
@@ -26,7 +26,7 @@ export default async function Decouvrir() {
       </h1>
 
       {produits && produits.length > 0 ? (
-        <div className="mt-6 columns-2 gap-3">
+        <div className="mt-6 columns-2 gap-3 md:columns-3 lg:columns-4">
           {produits.map((produit) => (
             <ProduitTile key={produit.id} produit={produit} country={profile?.country ?? null} />
           ))}

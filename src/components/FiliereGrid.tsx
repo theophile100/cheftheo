@@ -11,7 +11,7 @@ interface Filiere {
 
 export function FiliereGrid({ filieres }: { filieres: Filiere[] }) {
   return (
-    <div className="mt-8 flex flex-col gap-4">
+    <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {filieres.map((filiere) => (
         <Link
           key={filiere.id}

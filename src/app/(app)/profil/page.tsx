@@ -23,7 +23,7 @@ export default async function Profil() {
   ]);
 
   return (
-    <main className="mx-auto max-w-md px-6 py-10">
+    <main className="mx-auto max-w-md px-6 py-10 md:max-w-xl lg:max-w-2xl">
       <div className="flex items-center">
         <BackButton href="/accueil" />
         <h1 className="flex-1 text-center text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
