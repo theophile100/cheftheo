@@ -54,6 +54,9 @@ export default async function AdminLayout({
           <Link href="/admin/produits" className="hover:text-orange-500">
             Découvrir
           </Link>
+          <Link href="/admin/materiel" className="hover:text-orange-500">
+            Matériel
+          </Link>
           <Link href="/admin/commentaires" className="flex items-center gap-1.5 hover:text-orange-500">
             Commentaires
             {!!pendingCommentsCount && (

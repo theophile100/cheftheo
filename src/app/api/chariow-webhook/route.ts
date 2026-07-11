@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Receives Chariow's payment-confirmed notification and recharges the
-// buyer's energy to the max. Fails closed: without CHARIOW_WEBHOOK_SECRET
-// set, or without a matching secret on the request, nothing happens.
+// Receives Chariow's payment-confirmed notification, logs the purchase, and
+// grants 30 days of unlimited energy (cumulative with any still-active
+// period). Fails closed: without CHARIOW_WEBHOOK_SECRET set, or without a
+// matching secret on the request, nothing happens.
 //
 // NOTE: the exact header/param Chariow signs its webhook with, and the exact
 // shape of its payload, aren't known yet — see the explanation given to the
@@ -70,16 +71,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
   }
 
-  await admin.from("profiles").update({ energy: 25 }).eq("id", profileId);
+  // Enregistre l'achat et prolonge les 30 jours d'énergie illimitée (cumulés
+  // si une période est déjà en cours) en une seule opération atomique côté
+  // base — voir record_produit_purchase (migration 14).
+  const { data: unlimitedUntil, error: purchaseError } = await admin.rpc(
+    "record_produit_purchase",
+    {
+      p_user_id: profileId,
+      p_produit_id: produitId,
+      p_chariow_reference:
+        (payload.id as string | undefined) ?? (payload.reference as string | undefined) ?? null,
+      p_buyer_email: buyerEmail,
+      p_amount: (payload.amount as number | undefined) ?? null,
+      p_raw_payload: payload,
+    },
+  );
 
-  await admin.from("achats").insert({
-    user_id: profileId,
-    produit_id: produitId,
-    chariow_reference: (payload.id as string | undefined) ?? (payload.reference as string | undefined) ?? null,
-    buyer_email: buyerEmail,
-    amount: (payload.amount as number | undefined) ?? null,
-    raw_payload: payload,
-  });
+  if (purchaseError) {
+    return NextResponse.json({ error: purchaseError.message }, { status: 500 });
+  }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, unlimited_energy_until: unlimitedUntil });
 }

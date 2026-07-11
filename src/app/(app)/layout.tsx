@@ -22,7 +22,7 @@ export default async function AppLayout({
     supabase
       .from("profiles")
       .select(
-        "email, display_name, xp_total, current_streak, longest_streak, is_admin, energy, energy_updated_at",
+        "email, display_name, xp_total, current_streak, longest_streak, is_admin, energy, energy_updated_at, unlimited_energy_until",
       )
       .eq("id", user.id)
       .single(),
@@ -43,6 +43,7 @@ export default async function AppLayout({
         isAdmin: profile?.is_admin ?? false,
         energy: profile?.energy ?? 25,
         energyUpdatedAt: profile?.energy_updated_at ?? new Date().toISOString(),
+        unlimitedEnergyUntil: profile?.unlimited_energy_until ?? null,
       }}
       initialCompletedLeconIds={completions?.map((c) => c.lecon_id) ?? []}
       initialCompletions={

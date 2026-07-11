@@ -79,15 +79,20 @@ export function LeconTree({
   unites?: Unite[];
   filiereSlug: string;
 }) {
-  const { completedLeconIds } = useProgress();
+  const { completedLeconIds, isAdmin } = useProgress();
   const ActiveIcon = ACTIVE_LESSON_ICONS[filiereSlug] ?? IconChefHatFilled;
 
   const lessonStates = useMemo(() => {
     return lecons.map((lecon, index) => {
       const isCompleted = completedLeconIds.has(lecon.id);
       const previousLecon = index > 0 ? lecons[index - 1] : null;
+      // L'admin a accès à tout le parcours, sans progression à respecter
+      // (vérifié aussi côté serveur : start_lecon lui laisse toujours
+      // passer, quelle que soit son énergie).
       const isUnlocked =
-        index === 0 || (previousLecon !== null && completedLeconIds.has(previousLecon.id));
+        isAdmin ||
+        index === 0 ||
+        (previousLecon !== null && completedLeconIds.has(previousLecon.id));
       return {
         lecon,
         isCompleted,
@@ -95,7 +100,7 @@ export function LeconTree({
         isLocked: !isUnlocked,
       };
     });
-  }, [lecons, completedLeconIds]);
+  }, [lecons, completedLeconIds, isAdmin]);
 
   const uniteById = new Map(unites.map((u) => [u.id, u]));
 
@@ -142,15 +147,15 @@ export function LeconTree({
         return (
           <div key={group.key} className={`flex flex-col items-center ${groupIndex > 0 ? "mt-8" : ""}`}>
             {group.unite && (
-              <div className="mb-6 flex flex-col items-center gap-2 rounded-3xl bg-white px-6 py-4 text-center shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-500 text-sm font-extrabold text-white">
+              <div className="mb-6 flex items-center gap-4 rounded-3xl bg-gradient-to-r from-orange-50 to-cream px-5 py-4 shadow-sm dark:from-zinc-900 dark:to-zinc-900">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-2xl font-extrabold text-white shadow-[0_3px_0_0_#c86f1e]">
                   {group.unite.position}
                 </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-orange-500">
-                    Unité {group.unite.position}
+                <div className="text-left">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+                    Niveau {group.unite.position}
                   </p>
-                  <p className="mt-0.5 max-w-[180px] text-sm font-bold text-zinc-800 dark:text-zinc-100">
+                  <p className="mt-0.5 max-w-[180px] text-base font-bold leading-snug text-zinc-800 dark:text-zinc-100">
                     {group.unite.title}
                   </p>
                 </div>

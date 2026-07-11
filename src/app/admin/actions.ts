@@ -142,7 +142,7 @@ export async function deleteLecon(id: string) {
 
 export async function uploadImage(
   formData: FormData,
-  bucket: "lesson-images" | "branding" = "lesson-images",
+  bucket: "lesson-images" | "branding" | "materiel" = "lesson-images",
 ): Promise<{ url?: string; error?: string }> {
   try {
     await assertAdmin();
@@ -245,6 +245,30 @@ export async function updateFiliereIcon(
   if (error) return { error: error.message };
 
   revalidatePath("/", "layout");
+  return {};
+}
+
+// ---------- Matériel (images utilisées par les jeux) ----------
+
+export async function updateMaterielImage(
+  itemId: string,
+  imageUrl: string | null,
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("materiel_items")
+    .update({ image_url: imageUrl })
+    .eq("id", itemId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/materiel");
   return {};
 }
 

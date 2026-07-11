@@ -12,8 +12,16 @@ import { EnergyPanel } from "@/components/EnergyPanel";
 type PanelName = "streak" | "xp" | "energy" | null;
 
 export function Header() {
-  const { currentStreak, longestStreak, xpTotal, energy, energyUpdatedAt, completions } =
-    useProgress();
+  const {
+    currentStreak,
+    longestStreak,
+    xpTotal,
+    energy,
+    energyUpdatedAt,
+    completions,
+    isAdmin,
+    unlimitedEnergyUntil,
+  } = useProgress();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activePanel, setActivePanel] = useState<PanelName>(null);
 
@@ -99,6 +107,8 @@ export function Header() {
           <EnergyPanel
             energy={energy}
             energyUpdatedAt={energyUpdatedAt}
+            isAdmin={isAdmin}
+            unlimitedEnergyUntil={unlimitedEnergyUntil}
             onNavigate={() => setActivePanel(null)}
           />
         </StatPanel>

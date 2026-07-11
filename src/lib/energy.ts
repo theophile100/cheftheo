@@ -34,6 +34,16 @@ export function secondsUntilNextPoint(
   return Math.max(0, Math.round((nextPointAt - now.getTime()) / 1000));
 }
 
+// True while a purchased energy bonus (30 days, granted/extended on paid
+// produit purchase — see record_produit_purchase) is still running.
+export function isUnlimitedEnergyActive(
+  until: string | null | undefined,
+  now: Date = new Date(),
+): boolean {
+  if (!until) return false;
+  return toDate(until).getTime() > now.getTime();
+}
+
 export function formatEta(seconds: number): string {
   if (seconds <= 0) return "maintenant";
   const totalMinutes = Math.ceil(seconds / 60);

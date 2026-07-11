@@ -7,16 +7,21 @@ import {
   computeCurrentEnergy,
   secondsUntilNextPoint,
   formatEta,
+  isUnlimitedEnergyActive,
   ENERGY_MAX,
 } from "@/lib/energy";
 
 export function EnergyPanel({
   energy,
   energyUpdatedAt,
+  isAdmin = false,
+  unlimitedEnergyUntil = null,
   onNavigate,
 }: {
   energy: number;
   energyUpdatedAt: string;
+  isAdmin?: boolean;
+  unlimitedEnergyUntil?: string | null;
   onNavigate: () => void;
 }) {
   const [now, setNow] = useState(() => new Date());
@@ -29,17 +34,34 @@ export function EnergyPanel({
   const currentEnergy = computeCurrentEnergy(energy, energyUpdatedAt, now);
   const eta = secondsUntilNextPoint(energy, energyUpdatedAt, now);
   const isFull = currentEnergy >= ENERGY_MAX;
+  const purchasedUnlimited = isUnlimitedEnergyActive(unlimitedEnergyUntil, now);
+  const unlimited = isAdmin || purchasedUnlimited;
 
   return (
     <div className="flex flex-col items-center gap-5 text-center">
       <div className="flex items-center gap-2">
         <IconBoltFilled size={40} className="text-orange-500" />
         <span className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-50">
-          {currentEnergy}/{ENERGY_MAX}
+          {unlimited ? "∞" : `${currentEnergy}/${ENERGY_MAX}`}
         </span>
       </div>
 
-      {isFull ? (
+      {isAdmin ? (
+        <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+          Compte admin : énergie illimitée.
+        </p>
+      ) : purchasedUnlimited ? (
+        <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+          Énergie illimitée jusqu&apos;au{" "}
+          <span className="font-extrabold text-orange-500">
+            {new Date(unlimitedEnergyUntil!).toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "long",
+            })}
+          </span>
+          .
+        </p>
+      ) : isFull ? (
         <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
           Énergie complète !
         </p>

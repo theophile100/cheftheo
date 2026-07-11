@@ -11,6 +11,7 @@ export interface ProfileData {
   isAdmin: boolean;
   energy: number;
   energyUpdatedAt: string;
+  unlimitedEnergyUntil: string | null;
 }
 
 export interface CompletionRecord {
