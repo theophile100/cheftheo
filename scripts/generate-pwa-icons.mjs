@@ -19,7 +19,9 @@ async function trimmedHead() {
 }
 
 // Compose la tete (a `fillRatio` de la largeur/hauteur du canevas, le reste
-// est de la marge) sur un fond blanc uni carre.
+// est de la marge) sur un fond blanc uni carre. Utilise pour les fichiers
+// icone/favicon/partage : ce sont des vignettes carrees opaques, un fond
+// transparent y ferait apparaitre du damier ou du noir selon la plateforme.
 async function composeSquare(size, fillRatio) {
   const contentSize = Math.round(size * fillRatio);
   const head = await sharp(await trimmedHead())
@@ -29,6 +31,24 @@ async function composeSquare(size, fillRatio) {
 
   return sharp({ create: { width: size, height: size, channels: 4, background: WHITE } })
     .composite([{ input: head, gravity: "center" }])
+    .png()
+    .toBuffer();
+}
+
+// Meme cadrage, mais fond transparent : utilise pour la mascotte affichee
+// A L'INTERIEUR de l'app (bulles, ecrans...), qui doit flotter sur le fond
+// de la carte/page plutot que trainer son propre carre blanc.
+async function composeTransparent(size, fillRatio) {
+  const contentSize = Math.round(size * fillRatio);
+  return sharp(await trimmedHead())
+    .resize(contentSize, contentSize, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .extend({
+      top: Math.floor((size - contentSize) / 2),
+      bottom: Math.ceil((size - contentSize) / 2),
+      left: Math.floor((size - contentSize) / 2),
+      right: Math.ceil((size - contentSize) / 2),
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .png()
     .toBuffer();
 }
@@ -64,11 +84,13 @@ async function main() {
   const publicDir = path.join(ROOT, "public");
   const appDir = path.join(ROOT, "src", "app");
 
-  // Image "maitresse" propre : tete bien cadree, marge confortable, fond
-  // blanc uni. Sert de base a toutes les icones ci-dessous et reste
-  // disponible telle quelle pour un usage futur (ex: mascotte dans l'app).
+  // Image "maitresse" (fond blanc) : sert de base a toutes les icones
+  // ci-dessous (favicon, PWA, partage). Reste en memoire, pas ecrite seule.
   const master = await composeSquare(1024, 0.8);
-  await writeFile(master, MASCOT_PATH);
+
+  // Mascotte affichee dans l'app : meme cadrage, mais fond transparent pour
+  // flotter naturellement sur les bulles/cartes de l'interface.
+  await writeFile(await composeTransparent(1024, 0.8), MASCOT_PATH);
 
   // Favicon + icones PWA "normales" : simple redimension du maitre, la
   // marge est deja bonne a toutes les tailles.
