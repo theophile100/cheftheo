@@ -26,6 +26,18 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Chef Théo",
   },
+  openGraph: {
+    title: "Chef Théo",
+    description: "Apprenez les métiers de l'hôtellerie et de la restauration, leçon par leçon.",
+    siteName: "Chef Théo",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Chef Théo",
+    description: "Apprenez les métiers de l'hôtellerie et de la restauration, leçon par leçon.",
+  },
 };
 
 export const viewport: Viewport = {
@@ -45,9 +57,9 @@ async function getLogoUrl(): Promise<string> {
       .select("logo_url")
       .eq("id", 1)
       .single();
-    return data?.logo_url || "/logo.svg";
+    return data?.logo_url || "/mascot.png";
   } catch {
-    return "/logo.svg";
+    return "/mascot.png";
   }
 }
 

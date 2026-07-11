@@ -1,6 +1,6 @@
-// Regenere toutes les icones PWA a partir de public/icon-source.png (image
-// source a fond transparent). A relancer (`node scripts/generate-pwa-icons.mjs`)
-// chaque fois que l'icone change (ex: apres avoir recu un nouveau visuel).
+// Regenere toutes les icones/images de partage a partir de public/icon-source.png
+// (photo source a fond transparent de la mascotte). A relancer
+// (`node scripts/generate-pwa-icons.mjs`) chaque fois que la mascotte change.
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -9,46 +9,105 @@ import sharp from "sharp";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
 const SOURCE_PATH = path.join(ROOT, "public", "icon-source.png");
-// Orange tres pale (deja utilise dans la palette de marque comme orange-50) :
-// une seule couleur unie, presque blanche, plutot que le creme plus fonce
-// utilise ailleurs dans l'app.
-const BG_COLOR = "#fdf2e7";
+const MASCOT_PATH = path.join(ROOT, "public", "mascot.png");
+const WHITE = "#ffffff";
 
-async function makeIcon(size, outPath, { maskable = false } = {}) {
-  // On retire d'abord la marge deja presente dans l'image source pour que
-  // le personnage remplisse vraiment l'icone, au lieu de rester petit au
-  // centre d'un grand cadre vide.
-  const trimmed = await sharp(fs.readFileSync(SOURCE_PATH)).trim({ threshold: 10 }).toBuffer();
+// Retire la marge deja presente dans la photo source pour ne garder que la
+// tete, prete a etre recomposee avec une marge maitrisee.
+async function trimmedHead() {
+  return sharp(fs.readFileSync(SOURCE_PATH)).trim({ threshold: 10 }).toBuffer();
+}
 
-  // Les icones "maskable" doivent garder leur contenu dans une zone de
-  // securite centrale (~75% du canevas) car l'OS (Android) applique son
-  // propre masque (cercle, carre arrondi...) qui peut rogner les bords.
-  const contentSize = maskable ? Math.round(size * 0.75) : Math.round(size * 0.94);
-  const logoResized = await sharp(trimmed)
+// Compose la tete (a `fillRatio` de la largeur/hauteur du canevas, le reste
+// est de la marge) sur un fond blanc uni carre.
+async function composeSquare(size, fillRatio) {
+  const contentSize = Math.round(size * fillRatio);
+  const head = await sharp(await trimmedHead())
     .resize(contentSize, contentSize, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer();
 
-  await sharp({
-    create: { width: size, height: size, channels: 4, background: BG_COLOR },
-  })
-    .composite([{ input: logoResized, gravity: "center" }])
+  return sharp({ create: { width: size, height: size, channels: 4, background: WHITE } })
+    .composite([{ input: head, gravity: "center" }])
     .png()
-    .toFile(outPath);
+    .toBuffer();
+}
 
+async function writeFile(buffer, outPath) {
+  await fs.promises.writeFile(outPath, buffer);
   console.log("wrote", path.relative(ROOT, outPath));
+}
+
+// Construit un .ico minimal (conteneur ICO a une seule image PNG), supporte
+// par tous les navigateurs modernes et Windows depuis Vista. Evite une
+// dependance externe pour un fichier aussi simple.
+function pngToIco(pngBuffer, size) {
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(1, 4); // image count
+
+  const entry = Buffer.alloc(16);
+  entry.writeUInt8(size >= 256 ? 0 : size, 0); // width (0 = 256)
+  entry.writeUInt8(size >= 256 ? 0 : size, 1); // height (0 = 256)
+  entry.writeUInt8(0, 2); // color count
+  entry.writeUInt8(0, 3); // reserved
+  entry.writeUInt16LE(1, 4); // color planes
+  entry.writeUInt16LE(32, 6); // bits per pixel
+  entry.writeUInt32LE(pngBuffer.length, 8); // size of image data
+  entry.writeUInt32LE(header.length + entry.length, 12); // offset
+
+  return Buffer.concat([header, entry, pngBuffer]);
 }
 
 async function main() {
   const publicDir = path.join(ROOT, "public");
   const appDir = path.join(ROOT, "src", "app");
 
-  await makeIcon(192, path.join(publicDir, "icon-192.png"));
-  await makeIcon(512, path.join(publicDir, "icon-512.png"));
-  await makeIcon(192, path.join(publicDir, "icon-maskable-192.png"), { maskable: true });
-  await makeIcon(512, path.join(publicDir, "icon-maskable-512.png"), { maskable: true });
-  await makeIcon(180, path.join(appDir, "apple-icon.png"));
-  await makeIcon(32, path.join(appDir, "icon.png"));
+  // Image "maitresse" propre : tete bien cadree, marge confortable, fond
+  // blanc uni. Sert de base a toutes les icones ci-dessous et reste
+  // disponible telle quelle pour un usage futur (ex: mascotte dans l'app).
+  const master = await composeSquare(1024, 0.8);
+  await writeFile(master, MASCOT_PATH);
+
+  // Favicon + icones PWA "normales" : simple redimension du maitre, la
+  // marge est deja bonne a toutes les tailles.
+  for (const size of [512, 192]) {
+    const buf = await sharp(master).resize(size, size).png().toBuffer();
+    await writeFile(buf, path.join(publicDir, `icon-${size}.png`));
+  }
+  await writeFile(
+    await sharp(master).resize(32, 32).png().toBuffer(),
+    path.join(appDir, "icon.png"),
+  );
+  await writeFile(
+    await sharp(master).resize(180, 180).png().toBuffer(),
+    path.join(appDir, "apple-icon.png"),
+  );
+  const faviconPng = await sharp(master).resize(48, 48).png().toBuffer();
+  await writeFile(pngToIco(faviconPng, 48), path.join(appDir, "favicon.ico"));
+
+  // Icones "maskable" : marge plus genereuse (~70% de remplissage) car
+  // Android applique son propre masque (cercle, carre arrondi...) qui peut
+  // rogner les bords.
+  for (const size of [512, 192]) {
+    const buf = await composeSquare(size, 0.7);
+    await writeFile(buf, path.join(publicDir, `icon-maskable-${size}.png`));
+  }
+
+  // Aperçu de partage de lien (Open Graph / Twitter card), format standard
+  // 1200x630, mascotte centree sur fond blanc.
+  const ogHead = await sharp(await trimmedHead())
+    .resize(460, 460, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+  const og = await sharp({
+    create: { width: 1200, height: 630, channels: 4, background: WHITE },
+  })
+    .composite([{ input: ogHead, gravity: "center" }])
+    .png()
+    .toBuffer();
+  await writeFile(og, path.join(appDir, "opengraph-image.png"));
 }
 
 main().catch((e) => {

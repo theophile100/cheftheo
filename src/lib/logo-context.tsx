@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-const LogoContext = createContext<string>("/logo.svg");
+const LogoContext = createContext<string>("/mascot.png");
 
 export function LogoProvider({
   url,
