@@ -6,10 +6,26 @@ import { useProgress } from "@/lib/progress-context";
 import { FiliereWatermark } from "@/components/FiliereWatermark";
 import {
   IconCheck,
-  IconPlayerPlayFilled,
   IconLockFilled,
   IconTrophyFilled,
+  IconChefHatFilled,
+  IconCake,
+  IconGlassFullFilled,
+  IconBellRingingFilled,
+  IconKeyFilled,
+  type Icon,
 } from "@tabler/icons-react";
+
+// Icone du bouton de leçon active : un objet propre à chaque filière plutôt
+// qu'un simple triangle "lecture", pour que le parcours reste identifiable
+// comme le nôtre et pas un simple habillage d'un autre gabarit d'app.
+const ACTIVE_LESSON_ICONS: Record<string, Icon> = {
+  cuisine: IconChefHatFilled,
+  patisserie: IconCake,
+  "bar-et-vins": IconGlassFullFilled,
+  service: IconBellRingingFilled,
+  hotellerie: IconKeyFilled,
+};
 
 interface Unite {
   id: string;
@@ -64,6 +80,7 @@ export function LeconTree({
   filiereSlug: string;
 }) {
   const { completedLeconIds } = useProgress();
+  const ActiveIcon = ACTIVE_LESSON_ICONS[filiereSlug] ?? IconChefHatFilled;
 
   const lessonStates = useMemo(() => {
     return lecons.map((lecon, index) => {
@@ -168,7 +185,7 @@ export function LeconTree({
                 const icon = isCompleted ? (
                   <IconCheck size={38} strokeWidth={3} />
                 ) : isActive ? (
-                  <IconPlayerPlayFilled size={32} />
+                  <ActiveIcon size={34} strokeWidth={2} />
                 ) : (
                   <IconLockFilled size={28} />
                 );
