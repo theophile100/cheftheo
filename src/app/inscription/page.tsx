@@ -53,10 +53,11 @@ export default function Inscription() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen flex-1 items-center justify-center bg-cream px-4 py-12 dark:bg-black">
+      <div className="flex min-h-screen flex-1 flex-col items-center justify-center gap-6 bg-cream px-4 py-12 dark:bg-black">
+        <Mascot mood="idle" size={80} />
+
         <div className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
-          <Mascot mood="idle" size={80} className="mx-auto" />
-          <h1 className="mt-6 text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             Vérifiez vos emails
           </h1>
           <p className="mt-3 text-base text-zinc-600 dark:text-zinc-400">
@@ -78,11 +79,11 @@ export default function Inscription() {
   }
 
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center bg-cream px-4 py-12 dark:bg-black">
+    <div className="flex min-h-screen flex-1 flex-col items-center justify-center gap-6 bg-cream px-4 py-12 dark:bg-black">
+      <Mascot mood="idle" size={80} />
+
       <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-6">
-          <Mascot mood="idle" size={80} />
-
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             Créer un compte
           </h1>

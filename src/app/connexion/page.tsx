@@ -40,11 +40,11 @@ export default function Connexion() {
   }
 
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center bg-cream px-4 py-12 dark:bg-black">
+    <div className="flex min-h-screen flex-1 flex-col items-center justify-center gap-6 bg-cream px-4 py-12 dark:bg-black">
+      <Mascot mood="idle" size={80} />
+
       <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-6">
-          <Mascot mood="idle" size={80} />
-
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             Se connecter
           </h1>
