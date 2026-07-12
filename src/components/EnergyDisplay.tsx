@@ -3,7 +3,12 @@
 import { useEffect, useId, useState } from "react";
 import { IconBoltFilled } from "@tabler/icons-react";
 import { useProgress } from "@/lib/progress-context";
-import { computeCurrentEnergy, isUnlimitedEnergyActive, ENERGY_MAX } from "@/lib/energy";
+import {
+  computeCurrentEnergy,
+  isUnlimitedEnergyActive,
+  formatEnergy,
+  ENERGY_MAX,
+} from "@/lib/energy";
 
 // Proportions calquees sur le glyphe de batterie iOS moderne (coque bien
 // arrondie, encoche fine) plutot qu'un rectangle "vieux telephone".
@@ -42,7 +47,7 @@ export function EnergyDisplay() {
   return (
     <div
       className="flex items-center gap-1.5"
-      title={unlimited ? "Énergie illimitée" : `${displayEnergy}/${ENERGY_MAX} énergie`}
+      title={unlimited ? "Énergie illimitée" : `${formatEnergy(displayEnergy)}/${ENERGY_MAX} énergie`}
     >
       <IconBoltFilled size={14} className="shrink-0 text-orange-500" />
 
@@ -83,7 +88,7 @@ export function EnergyDisplay() {
       </svg>
 
       <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-        {unlimited ? "∞" : `${displayEnergy}/${ENERGY_MAX}`}
+        {unlimited ? "∞" : `${formatEnergy(displayEnergy)}/${ENERGY_MAX}`}
       </span>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { IconBoltFilled } from "@tabler/icons-react";
 import { createClient } from "@/lib/supabase/client";
 import { useProgress } from "@/lib/progress-context";
 import { useSoundSettings } from "@/lib/sound-settings";
@@ -16,6 +17,7 @@ import {
   getCelebrateMessage,
 } from "@/lib/mascot-messages";
 import { buttonClasses } from "@/lib/button-styles";
+import { ENERGY_STREAK_BONUS_AMOUNT } from "@/lib/energy";
 import type { Question } from "@/lib/types";
 import { Qcm } from "@/components/exercises/Qcm";
 import { Associer } from "@/components/exercises/Associer";
@@ -43,6 +45,7 @@ export function LeconRunner({
   const { applyCompletion, setEnergy } = useProgress();
   const { soundEnabled, vibrationEnabled } = useSoundSettings();
   const totalQuestions = questions.length;
+  const [showEnergyBonus, setShowEnergyBonus] = useState(false);
 
   useEffect(() => {
     setEnergy(energyAfterStart.energy, energyAfterStart.energyUpdatedAt);
@@ -94,6 +97,23 @@ export function LeconRunner({
       if (soundEnabled) playIncorrectSound();
       if (vibrationEnabled) vibrate(40);
     }
+
+    // L'énergie baisse (ou remonte, en cas de bonus de série) au fil des
+    // réponses plutôt qu'en un forfait unique au lancement de la leçon —
+    // jamais bloquant : même à 0, la leçon en cours se termine normalement.
+    (async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc("record_answer", {
+        p_lecon_id: leconId,
+        p_is_correct: isCorrect,
+      });
+      if (error || !data) return;
+      setEnergy(data.energy, data.energy_updated_at);
+      if (data.bonus_awarded) {
+        setShowEnergyBonus(true);
+        setTimeout(() => setShowEnergyBonus(false), 2500);
+      }
+    })();
   }
 
   function handleContinue() {
@@ -156,6 +176,15 @@ export function LeconRunner({
 
   return (
     <div className="flex min-h-[calc(100vh-125px)] flex-col">
+      {showEnergyBonus && (
+        <div className="fixed left-1/2 top-20 z-50 -translate-x-1/2 animate-fade-up">
+          <div className="flex items-center gap-1.5 rounded-full bg-orange-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-orange-900/20">
+            <IconBoltFilled size={16} />
+            +{ENERGY_STREAK_BONUS_AMOUNT} énergie — belle série !
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto flex w-full max-w-md items-center gap-3 px-6 pt-6 md:max-w-xl lg:max-w-2xl">
         <BackButton href={`/filiere/${filiereSlug}`} />
         <div className="h-3 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">

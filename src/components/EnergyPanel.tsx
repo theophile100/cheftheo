@@ -7,6 +7,7 @@ import {
   computeCurrentEnergy,
   secondsUntilNextPoint,
   formatEta,
+  formatEnergy,
   isUnlimitedEnergyActive,
   ENERGY_MAX,
 } from "@/lib/energy";
@@ -42,7 +43,7 @@ export function EnergyPanel({
       <div className="flex items-center gap-2">
         <IconBoltFilled size={40} className="text-orange-500" />
         <span className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-50">
-          {unlimited ? "∞" : `${currentEnergy}/${ENERGY_MAX}`}
+          {unlimited ? "∞" : `${formatEnergy(currentEnergy)}/${ENERGY_MAX}`}
         </span>
       </div>
 

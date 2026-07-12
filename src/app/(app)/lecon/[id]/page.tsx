@@ -10,7 +10,6 @@ interface StartLeconResult {
   already_completed: boolean;
   energy: number;
   energy_updated_at: string;
-  available_at?: string;
 }
 
 export default async function Lecon({
@@ -48,11 +47,37 @@ export default async function Lecon({
   const result = startResult as StartLeconResult;
 
   if (!result.ok) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { data: completions } = await supabase
+      .from("user_lecons")
+      .select("lecon_id, completed_at, lecons(title, filieres(name))")
+      .eq("user_id", user!.id)
+      .order("completed_at", { ascending: false })
+      .limit(6);
+
+    const completedLessons = (completions ?? []).map((c) => {
+      const leconRelation = c.lecons as
+        | { title: string; filieres: { name: string } | { name: string }[] }
+        | { title: string; filieres: { name: string } | { name: string }[] }[];
+      const leconData = Array.isArray(leconRelation) ? leconRelation[0] : leconRelation;
+      const filiereData = leconData?.filieres;
+      const filiereName = Array.isArray(filiereData) ? filiereData[0]?.name : filiereData?.name;
+      return {
+        id: c.lecon_id,
+        title: leconData?.title ?? "",
+        filiereName: filiereName ?? "",
+      };
+    });
+
     return (
       <EnergyBlockedScreen
         filiereSlug={slug ?? ""}
         energy={result.energy}
-        availableAt={result.available_at!}
+        energyUpdatedAt={result.energy_updated_at}
+        completedLessons={completedLessons}
       />
     );
   }
