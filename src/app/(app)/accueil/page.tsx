@@ -3,9 +3,11 @@ import { FiliereGrid } from "@/components/FiliereGrid";
 import { Mascot } from "@/components/Mascot";
 import { SpeechBubble } from "@/components/SpeechBubble";
 import { getEncouragementMessage } from "@/lib/mascot-messages";
+import { getServerTranslation } from "@/i18n/server";
 
 export default async function Accueil() {
   const supabase = await createClient();
+  const { t } = await getServerTranslation();
 
   const { data: filieres } = await supabase
     .from("filieres")
@@ -20,7 +22,7 @@ export default async function Accueil() {
       </div>
 
       <h1 className="mt-8 text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
-        Choisissez une filière
+        {t("accueil.chooseFiliere")}
       </h1>
 
       <FiliereGrid filieres={filieres ?? []} />

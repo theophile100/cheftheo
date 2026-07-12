@@ -1,0 +1,61 @@
+{
+  "landing": {
+    "title": "Chef Théo",
+    "tagline": "Apprenez les métiers de l'hôtellerie et de la restauration, leçon par leçon.",
+    "signup": "Créer un compte",
+    "login": "Se connecter"
+  },
+  "auth": {
+    "login": {
+      "title": "Se connecter",
+      "emailLabel": "Adresse email",
+      "emailPlaceholder": "vous@exemple.com",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Votre mot de passe",
+      "submit": "Se connecter",
+      "submitLoading": "Connexion...",
+      "noAccount": "Pas encore de compte ?",
+      "signupLink": "Créer un compte"
+    },
+    "signup": {
+      "title": "Créer un compte",
+      "emailLabel": "Adresse email",
+      "emailPlaceholder": "vous@exemple.com",
+      "displayNameLabel": "Nom d'affichage",
+      "displayNamePlaceholder": "Le pseudo affiché aux autres",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "6 caractères minimum",
+      "countryLabel": "Pays",
+      "countryPlaceholder": "Sélectionnez votre pays",
+      "phoneLabel": "Numéro de téléphone",
+      "phonePlaceholder": "06 12 34 56 78",
+      "submit": "Continuer",
+      "submitLoading": "Création en cours...",
+      "haveAccount": "Déjà un compte ?",
+      "loginLink": "Se connecter",
+      "confirmTitle": "Vérifiez vos emails",
+      "confirmMessage": "Nous avons envoyé un lien de confirmation à {email}. Cliquez dessus pour activer votre compte, puis connectez-vous.",
+      "confirmCta": "Aller à la connexion"
+    }
+  },
+  "nav": {
+    "learn": "Apprendre",
+    "discover": "Découvrir",
+    "profile": "Profil"
+  },
+  "sideMenu": {
+    "close": "Fermer",
+    "xp": "XP",
+    "streak": "Série",
+    "admin": "Admin",
+    "settingsTitle": "Réglages",
+    "darkMode": "Mode sombre",
+    "sound": "Son",
+    "vibrations": "Vibrations",
+    "language": "Langue",
+    "signOut": "Déconnexion"
+  },
+  "accueil": {
+    "chooseFiliere": "Choisissez une filière"
+  }
+}

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { LeconTree } from "@/components/LeconTree";
 import { FiliereIcon } from "@/components/FiliereIcon";
 import { BackButton } from "@/components/BackButton";
+import { LanguagePicker } from "@/components/LanguagePicker";
 
 export default async function Filiere({
   params,
@@ -22,18 +23,22 @@ export default async function Filiere({
     notFound();
   }
 
-  const [{ data: lecons }, { data: unites }] = await Promise.all([
-    supabase
-      .from("lecons")
-      .select("id, title, position, unite_id")
-      .eq("filiere_id", filiere.id)
-      .order("position"),
-    supabase
-      .from("unites")
-      .select("id, title, position")
-      .eq("filiere_id", filiere.id)
-      .order("position"),
-  ]);
+  const isLangues = filiere.slug === "langues";
+
+  const [{ data: lecons }, { data: unites }] = isLangues
+    ? [{ data: [] }, { data: [] }]
+    : await Promise.all([
+        supabase
+          .from("lecons")
+          .select("id, title, position, unite_id")
+          .eq("filiere_id", filiere.id)
+          .order("position"),
+        supabase
+          .from("unites")
+          .select("id, title, position")
+          .eq("filiere_id", filiere.id)
+          .order("position"),
+      ]);
 
   return (
     <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
@@ -48,7 +53,11 @@ export default async function Filiere({
         </h1>
       </div>
 
-      <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug={filiere.slug} />
+      {isLangues ? (
+        <LanguagePicker />
+      ) : (
+        <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug={filiere.slug} />
+      )}
     </main>
   );
 }

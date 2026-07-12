@@ -6,6 +6,8 @@ import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { useProgress } from "@/lib/progress-context";
 import { useSoundSettings } from "@/lib/sound-settings";
+import { useTranslation } from "@/lib/i18n-context";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 function Switch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
@@ -39,6 +41,7 @@ export function SideMenu({
   const { displayName, xpTotal, currentStreak, isAdmin } = useProgress();
   const { soundEnabled, vibrationEnabled, toggleSound, toggleVibration } =
     useSoundSettings();
+  const { t } = useTranslation();
 
   if (!open) return null;
 
@@ -59,25 +62,29 @@ export function SideMenu({
           </p>
           <button
             type="button"
-            aria-label="Fermer le menu"
+            aria-label={t("sideMenu.close")}
             onClick={onClose}
             className="flex shrink-0 items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4">
               <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
             </svg>
-            Fermer
+            {t("sideMenu.close")}
           </button>
         </div>
 
         <div className="mt-4 flex gap-3">
           <div className="flex-1 rounded-2xl bg-orange-50 p-3 text-center dark:bg-zinc-800">
             <p className="text-lg font-bold text-orange-500">{xpTotal}</p>
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">XP</p>
+            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              {t("sideMenu.xp")}
+            </p>
           </div>
           <div className="flex-1 rounded-2xl bg-orange-50 p-3 text-center dark:bg-zinc-800">
             <p className="text-lg font-bold text-orange-500">{currentStreak}</p>
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Série</p>
+            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              {t("sideMenu.streak")}
+            </p>
           </div>
         </div>
 
@@ -88,18 +95,18 @@ export function SideMenu({
               onClick={onClose}
               className="rounded-2xl px-3 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
-              Admin
+              {t("sideMenu.admin")}
             </Link>
           </nav>
         )}
 
         <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-          Réglages
+          {t("sideMenu.settingsTitle")}
         </p>
         <div className="mt-2 flex flex-col gap-1">
           <div className="flex items-center justify-between rounded-2xl px-3 py-2.5">
             <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-              Mode sombre
+              {t("sideMenu.darkMode")}
             </span>
             <Switch
               on={theme === "dark"}
@@ -108,16 +115,17 @@ export function SideMenu({
           </div>
           <div className="flex items-center justify-between rounded-2xl px-3 py-2.5">
             <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-              Son
+              {t("sideMenu.sound")}
             </span>
             <Switch on={soundEnabled} onToggle={toggleSound} />
           </div>
           <div className="flex items-center justify-between rounded-2xl px-3 py-2.5">
             <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-              Vibrations
+              {t("sideMenu.vibrations")}
             </span>
             <Switch on={vibrationEnabled} onToggle={toggleVibration} />
           </div>
+          <LanguageSelector />
         </div>
 
         <div className="flex-1" />
@@ -127,7 +135,7 @@ export function SideMenu({
           onClick={handleSignOut}
           className="rounded-2xl px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
         >
-          Déconnexion
+          {t("sideMenu.signOut")}
         </button>
       </div>
     </>

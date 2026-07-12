@@ -82,15 +82,31 @@ export async function createLecon(formData: FormData) {
     const filiereId = formData.get("filiere_id") as string;
     const title = (formData.get("title") as string)?.trim();
     const position = Number(formData.get("position"));
+    const langueCode = (formData.get("langue_code") as string) || null;
 
     if (!filiereId || !title || !Number.isFinite(position)) {
       throw new Error("Merci de remplir tous les champs.");
     }
 
     const admin = createAdminClient();
-    const { error } = await admin
-      .from("lecons")
-      .insert({ filiere_id: filiereId, title, position });
+
+    const { data: filiere } = await admin
+      .from("filieres")
+      .select("slug")
+      .eq("id", filiereId)
+      .single();
+    const isLangues = filiere?.slug === "langues";
+
+    if (isLangues && !langueCode) {
+      throw new Error("Sélectionnez la langue de cette leçon.");
+    }
+
+    const { error } = await admin.from("lecons").insert({
+      filiere_id: filiereId,
+      title,
+      position,
+      langue_code: isLangues ? langueCode : null,
+    });
 
     if (error) throw new Error(error.message);
   } catch (e) {

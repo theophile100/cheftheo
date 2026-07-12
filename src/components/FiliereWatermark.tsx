@@ -14,6 +14,9 @@ import {
   IconBed,
   IconKey,
   IconLuggage,
+  IconLanguage,
+  IconWorld,
+  IconVocabulary,
   type Icon,
 } from "@tabler/icons-react";
 
@@ -23,6 +26,7 @@ const WATERMARK_ICONS: Record<string, Icon[]> = {
   "bar-et-vins": [IconGlassCocktail, IconBottle, IconGlassChampagne],
   service: [IconBellRinging, IconToolsKitchen, IconCoffee],
   hotellerie: [IconBed, IconKey, IconLuggage],
+  langues: [IconLanguage, IconWorld, IconVocabulary],
 };
 
 // Icons start sparse near the top and get progressively denser toward the

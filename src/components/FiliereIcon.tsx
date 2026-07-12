@@ -4,6 +4,7 @@ import {
   IconGlassCocktail,
   IconBell,
   IconBed,
+  IconLanguage,
   type Icon,
 } from "@tabler/icons-react";
 
@@ -13,6 +14,7 @@ const DEFAULT_ICONS: Record<string, Icon> = {
   "bar-et-vins": IconGlassCocktail,
   service: IconBell,
   hotellerie: IconBed,
+  langues: IconLanguage,
 };
 
 export function FiliereIcon({

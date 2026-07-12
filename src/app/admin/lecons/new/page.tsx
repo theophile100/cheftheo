@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { buttonClasses } from "@/lib/button-styles";
 import { createLecon } from "../../actions";
+import { LeconFiliereFields } from "@/components/admin/LeconFiliereFields";
 
 export default async function NewLecon({
   searchParams,
@@ -11,7 +12,7 @@ export default async function NewLecon({
   const supabase = await createClient();
   const { data: filieres } = await supabase
     .from("filieres")
-    .select("id, name")
+    .select("id, slug, name")
     .order("position");
 
   return (
@@ -24,22 +25,7 @@ export default async function NewLecon({
         action={createLecon}
         className="mt-6 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
       >
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Filière
-          </label>
-          <select
-            name="filiere_id"
-            required
-            className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-          >
-            {(filieres ?? []).map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <LeconFiliereFields filieres={filieres ?? []} />
 
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">

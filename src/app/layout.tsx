@@ -6,6 +6,8 @@ import { LogoProvider } from "@/lib/logo-context";
 import { TapFeedback } from "@/components/TapFeedback";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { createClient } from "@/lib/supabase/server";
+import { getServerTranslation } from "@/i18n/server";
+import { I18nProvider } from "@/lib/i18n-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -69,10 +71,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const logoUrl = await getLogoUrl();
+  const { locale, dir, dict } = await getServerTranslation();
 
   return (
     <html
-      lang="fr"
+      lang={locale}
+      dir={dir}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
@@ -83,15 +87,17 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LogoProvider url={logoUrl}>
-            <SoundSettingsProvider>
-              <TapFeedback />
-              <ServiceWorkerRegister />
-              {children}
-            </SoundSettingsProvider>
-          </LogoProvider>
-        </ThemeProvider>
+        <I18nProvider locale={locale} dict={dict}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <LogoProvider url={logoUrl}>
+              <SoundSettingsProvider>
+                <TapFeedback />
+                <ServiceWorkerRegister />
+                {children}
+              </SoundSettingsProvider>
+            </LogoProvider>
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

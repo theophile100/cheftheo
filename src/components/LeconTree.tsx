@@ -13,6 +13,7 @@ import {
   IconGlassFullFilled,
   IconBellRingingFilled,
   IconKeyFilled,
+  IconLanguage,
   type Icon,
 } from "@tabler/icons-react";
 
@@ -25,6 +26,7 @@ const ACTIVE_LESSON_ICONS: Record<string, Icon> = {
   "bar-et-vins": IconGlassFullFilled,
   service: IconBellRingingFilled,
   hotellerie: IconKeyFilled,
+  langues: IconLanguage,
 };
 
 interface Unite {

@@ -7,12 +7,14 @@ import { createClient } from "@/lib/supabase/client";
 import { countries } from "@/data/countries";
 import { buttonClasses } from "@/lib/button-styles";
 import { Mascot } from "@/components/Mascot";
+import { useTranslation } from "@/lib/i18n-context";
 
 const inputClasses =
   "rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3.5 text-base text-zinc-900 outline-none transition-colors focus:border-orange-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
 
 export default function Inscription() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -52,26 +54,25 @@ export default function Inscription() {
   }
 
   if (submitted) {
+    const [confirmBefore, confirmAfter] = t("auth.signup.confirmMessage").split("{email}");
     return (
       <div className="flex min-h-screen flex-1 flex-col items-center justify-center gap-6 bg-cream px-4 py-12 dark:bg-black">
         <Mascot mood="idle" size={80} />
 
         <div className="w-full max-w-sm rounded-3xl bg-white p-8 text-center shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
-            Vérifiez vos emails
+            {t("auth.signup.confirmTitle")}
           </h1>
           <p className="mt-3 text-base text-zinc-600 dark:text-zinc-400">
-            Nous avons envoyé un lien de confirmation à{" "}
-            <span className="font-semibold text-zinc-900 dark:text-zinc-50">
-              {email}
-            </span>
-            . Cliquez dessus pour activer votre compte, puis connectez-vous.
+            {confirmBefore}
+            <span className="font-semibold text-zinc-900 dark:text-zinc-50">{email}</span>
+            {confirmAfter}
           </p>
           <Link
             href="/connexion"
             className={buttonClasses("primary", "mt-7 w-full")}
           >
-            Aller à la connexion
+            {t("auth.signup.confirmCta")}
           </Link>
         </div>
       </div>
@@ -85,7 +86,7 @@ export default function Inscription() {
       <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
         <div className="flex flex-col items-center gap-6">
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
-            Créer un compte
+            {t("auth.signup.title")}
           </h1>
 
           <form onSubmit={handleSubmit} className="flex w-full flex-col gap-5">
@@ -94,7 +95,7 @@ export default function Inscription() {
                 htmlFor="email"
                 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
               >
-                Adresse email
+                {t("auth.signup.emailLabel")}
               </label>
               <input
                 id="email"
@@ -103,7 +104,7 @@ export default function Inscription() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="vous@exemple.com"
+                placeholder={t("auth.signup.emailPlaceholder")}
                 className={inputClasses}
               />
             </div>
@@ -113,7 +114,7 @@ export default function Inscription() {
                 htmlFor="displayName"
                 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
               >
-                Nom d&apos;affichage
+                {t("auth.signup.displayNameLabel")}
               </label>
               <input
                 id="displayName"
@@ -123,7 +124,7 @@ export default function Inscription() {
                 maxLength={30}
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Le pseudo affiché aux autres"
+                placeholder={t("auth.signup.displayNamePlaceholder")}
                 className={inputClasses}
               />
             </div>
@@ -133,7 +134,7 @@ export default function Inscription() {
                 htmlFor="password"
                 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
               >
-                Mot de passe
+                {t("auth.signup.passwordLabel")}
               </label>
               <input
                 id="password"
@@ -143,7 +144,7 @@ export default function Inscription() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="6 caractères minimum"
+                placeholder={t("auth.signup.passwordPlaceholder")}
                 className={inputClasses}
               />
             </div>
@@ -153,7 +154,7 @@ export default function Inscription() {
                 htmlFor="pays"
                 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
               >
-                Pays
+                {t("auth.signup.countryLabel")}
               </label>
               <select
                 id="pays"
@@ -164,7 +165,7 @@ export default function Inscription() {
                 className={inputClasses}
               >
                 <option value="" disabled>
-                  Sélectionnez votre pays
+                  {t("auth.signup.countryPlaceholder")}
                 </option>
                 {countries.map((c) => (
                   <option key={c} value={c}>
@@ -179,7 +180,7 @@ export default function Inscription() {
                 htmlFor="telephone"
                 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
               >
-                Numéro de téléphone
+                {t("auth.signup.phoneLabel")}
               </label>
               <input
                 id="telephone"
@@ -187,7 +188,7 @@ export default function Inscription() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="06 12 34 56 78"
+                placeholder={t("auth.signup.phonePlaceholder")}
                 className={inputClasses}
               />
             </div>
@@ -203,16 +204,16 @@ export default function Inscription() {
               disabled={loading}
               className={buttonClasses("primary", "mt-2 w-full")}
             >
-              {loading ? "Création en cours..." : "Continuer"}
+              {loading ? t("auth.signup.submitLoading") : t("auth.signup.submit")}
             </button>
 
             <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
-              Déjà un compte ?{" "}
+              {t("auth.signup.haveAccount")}{" "}
               <Link
                 href="/connexion"
                 className="font-semibold text-orange-500 hover:text-orange-600"
               >
-                Se connecter
+                {t("auth.signup.loginLink")}
               </Link>
             </p>
           </form>

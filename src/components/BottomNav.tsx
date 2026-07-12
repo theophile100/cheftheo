@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconHome, IconCompass, IconUser, type Icon } from "@tabler/icons-react";
+import { useTranslation } from "@/lib/i18n-context";
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
   icon: Icon;
   isActive: (pathname: string) => boolean;
 }
@@ -16,7 +17,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   {
     href: "/accueil",
-    label: "Apprendre",
+    labelKey: "nav.learn",
     icon: IconHome,
     isActive: (pathname) =>
       pathname === "/accueil" ||
@@ -25,13 +26,13 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     href: "/decouvrir",
-    label: "Découvrir",
+    labelKey: "nav.discover",
     icon: IconCompass,
     isActive: (pathname) => pathname.startsWith("/decouvrir"),
   },
   {
     href: "/profil",
-    label: "Profil",
+    labelKey: "nav.profile",
     icon: IconUser,
     isActive: (pathname) => pathname.startsWith("/profil"),
   },
@@ -39,6 +40,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-20 rounded-t-3xl border-t border-zinc-100 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.08)] backdrop-blur dark:border-zinc-800 dark:bg-black/95">
@@ -63,7 +65,7 @@ export function BottomNav() {
                   active ? "text-orange-500" : "text-zinc-500 dark:text-zinc-400"
                 }`}
               >
-                {item.label}
+                {t(item.labelKey)}
               </span>
             </Link>
           );
