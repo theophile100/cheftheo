@@ -88,7 +88,7 @@ export function EnergyDisplay() {
       </svg>
 
       <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-        {unlimited ? "∞" : `${formatEnergy(displayEnergy)}/${ENERGY_MAX}`}
+        {unlimited ? "∞" : Math.floor(displayEnergy)}
       </span>
     </div>
   );
