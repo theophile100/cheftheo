@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
-import { SideMenu } from "@/components/SideMenu";
 import { EnergyDisplay } from "@/components/EnergyDisplay";
 import { StatPanel } from "@/components/StatPanel";
 import { StreakPanel } from "@/components/StreakPanel";
@@ -22,7 +21,6 @@ export function Header() {
     isAdmin,
     unlimitedEnergyUntil,
   } = useProgress();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [activePanel, setActivePanel] = useState<PanelName>(null);
 
   return (
@@ -63,30 +61,17 @@ export function Header() {
                 {xpTotal}
               </span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePanel("energy")}
-              className="rounded-full px-1.5 py-0.5 transition-colors active:bg-zinc-100 dark:active:bg-zinc-800"
-            >
-              <EnergyDisplay />
-            </button>
           </div>
 
           <button
             type="button"
-            aria-label="Menu"
-            onClick={() => setMenuOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            onClick={() => setActivePanel("energy")}
+            className="flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors active:bg-zinc-100 dark:active:bg-zinc-800"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-              <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-            </svg>
+            <EnergyDisplay />
           </button>
         </div>
       </header>
-
-      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
       {activePanel === "streak" && (
         <StatPanel title="Série" onClose={() => setActivePanel(null)}>

@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
+import { ProfileIdentity } from "@/components/ProfileIdentity";
 import { ProfileStats } from "@/components/ProfileStats";
 import { ProfileEditForm } from "@/components/ProfileEditForm";
-import { FiliereProgressList } from "@/components/FiliereProgressList";
-import { AvatarUpload } from "@/components/AvatarUpload";
+import { AccountSettings } from "@/components/AccountSettings";
+import { FiliereProgressRings } from "@/components/FiliereProgressRings";
 import { BackButton } from "@/components/BackButton";
 import { countries } from "@/data/countries";
 
@@ -36,8 +37,8 @@ export default async function Profil() {
         <div className="w-10" />
       </div>
 
-      <div className="mt-6 flex justify-center">
-        <AvatarUpload initialUrl={profile?.avatar_url ?? null} />
+      <div className="mt-6">
+        <ProfileIdentity initialAvatarUrl={profile?.avatar_url ?? null} />
       </div>
 
       <div className="mt-6">
@@ -58,9 +59,18 @@ export default async function Profil() {
       </div>
 
       <h2 className="mt-9 text-xs font-bold uppercase tracking-wide text-zinc-400">
+        Paramètres
+      </h2>
+      <div className="mt-2">
+        <AccountSettings />
+      </div>
+
+      <h2 className="mt-9 text-xs font-bold uppercase tracking-wide text-zinc-400">
         Progression par filière
       </h2>
-      <FiliereProgressList filieres={filieres ?? []} lecons={lecons ?? []} />
+      <div className="mt-2">
+        <FiliereProgressRings filieres={filieres ?? []} lecons={lecons ?? []} />
+      </div>
     </main>
   );
 }
