@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useMemo, useState } from "react";
 
+export type NiveauEtude = "cap" | "bts";
+
 export interface ProfileData {
   email: string;
   displayName: string;
@@ -12,6 +14,7 @@ export interface ProfileData {
   energy: number;
   energyUpdatedAt: string;
   unlimitedEnergyUntil: string | null;
+  niveauEtude: NiveauEtude;
 }
 
 export interface CompletionRecord {
@@ -34,6 +37,7 @@ interface ProgressContextValue extends ProfileData {
   ) => void;
   setEnergy: (energy: number, energyUpdatedAt?: string) => void;
   setDisplayName: (displayName: string) => void;
+  setNiveauEtude: (niveauEtude: NiveauEtude) => void;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -89,6 +93,10 @@ export function ProgressProvider({
     setProfile((prev) => ({ ...prev, displayName }));
   }
 
+  function setNiveauEtude(niveauEtude: NiveauEtude) {
+    setProfile((prev) => ({ ...prev, niveauEtude }));
+  }
+
   const value = useMemo(
     () => ({
       ...profile,
@@ -97,6 +105,7 @@ export function ProgressProvider({
       applyCompletion,
       setEnergy,
       setDisplayName,
+      setNiveauEtude,
     }),
     [profile, completedLeconIds, completions],
   );

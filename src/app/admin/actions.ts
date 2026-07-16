@@ -83,6 +83,7 @@ export async function createLecon(formData: FormData) {
     const title = (formData.get("title") as string)?.trim();
     const position = Number(formData.get("position"));
     const langueCode = (formData.get("langue_code") as string) || null;
+    const niveauEtude = (formData.get("niveau_etude") as string) || null;
 
     if (!filiereId || !title || !Number.isFinite(position)) {
       throw new Error("Merci de remplir tous les champs.");
@@ -100,12 +101,16 @@ export async function createLecon(formData: FormData) {
     if (isLangues && !langueCode) {
       throw new Error("Sélectionnez la langue de cette leçon.");
     }
+    if (!isLangues && !niveauEtude) {
+      throw new Error("Sélectionnez le niveau d'études de cette leçon.");
+    }
 
     const { error } = await admin.from("lecons").insert({
       filiere_id: filiereId,
       title,
       position,
       langue_code: isLangues ? langueCode : null,
+      niveau_etude: isLangues ? null : niveauEtude,
     });
 
     if (error) throw new Error(error.message);

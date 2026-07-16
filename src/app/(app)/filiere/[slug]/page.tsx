@@ -4,6 +4,7 @@ import { LeconTree } from "@/components/LeconTree";
 import { FiliereIcon } from "@/components/FiliereIcon";
 import { BackButton } from "@/components/BackButton";
 import { LanguagePicker } from "@/components/LanguagePicker";
+import { Mascot } from "@/components/Mascot";
 
 export default async function Filiere({
   params,
@@ -13,17 +14,30 @@ export default async function Filiere({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: filiere } = await supabase
-    .from("filieres")
-    .select("id, name, slug, icon_url, position")
-    .eq("slug", slug)
-    .single();
+  const [{ data: filiere }, { data: { user } }] = await Promise.all([
+    supabase
+      .from("filieres")
+      .select("id, name, slug, icon_url, position")
+      .eq("slug", slug)
+      .single(),
+    supabase.auth.getUser(),
+  ]);
 
   if (!filiere) {
     notFound();
   }
 
   const isLangues = filiere.slug === "langues";
+
+  let niveauEtude: "cap" | "bts" = "cap";
+  if (!isLangues && user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("niveau_etude")
+      .eq("id", user.id)
+      .single();
+    niveauEtude = (profile?.niveau_etude as "cap" | "bts") ?? "cap";
+  }
 
   const [{ data: lecons }, { data: unites }] = isLangues
     ? [{ data: [] }, { data: [] }]
@@ -32,13 +46,17 @@ export default async function Filiere({
           .from("lecons")
           .select("id, title, position, unite_id")
           .eq("filiere_id", filiere.id)
+          .eq("niveau_etude", niveauEtude)
           .order("position"),
         supabase
           .from("unites")
           .select("id, title, position")
           .eq("filiere_id", filiere.id)
+          .eq("niveau_etude", niveauEtude)
           .order("position"),
       ]);
+
+  const hasLecons = (lecons?.length ?? 0) > 0;
 
   return (
     <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">
@@ -55,8 +73,15 @@ export default async function Filiere({
 
       {isLangues ? (
         <LanguagePicker />
-      ) : (
+      ) : hasLecons ? (
         <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug={filiere.slug} />
+      ) : (
+        <div className="mt-16 flex flex-col items-center gap-4 text-center">
+          <Mascot mood="idle" size={80} />
+          <p className="max-w-xs text-zinc-600 dark:text-zinc-400">
+            Contenu bientôt disponible.
+          </p>
+        </div>
       )}
     </main>
   );

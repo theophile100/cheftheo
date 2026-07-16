@@ -54,6 +54,18 @@ export function LeconFiliereFields({ filieres }: { filieres: Filiere[] }) {
           </select>
         </div>
       )}
+
+      {!isLangues && (
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            Niveau d&apos;études
+          </label>
+          <select name="niveau_etude" required defaultValue="cap" className={selectClasses}>
+            <option value="cap">CAP</option>
+            <option value="bts">BTS</option>
+          </select>
+        </div>
+      )}
     </>
   );
 }

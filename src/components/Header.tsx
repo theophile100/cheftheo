@@ -7,8 +7,9 @@ import { StatPanel } from "@/components/StatPanel";
 import { StreakPanel } from "@/components/StreakPanel";
 import { XpPanel } from "@/components/XpPanel";
 import { EnergyPanel } from "@/components/EnergyPanel";
+import { NiveauEtudePanel } from "@/components/NiveauEtudePanel";
 
-type PanelName = "streak" | "xp" | "energy" | null;
+type PanelName = "streak" | "xp" | "energy" | "niveau" | null;
 
 export function Header() {
   const {
@@ -20,6 +21,7 @@ export function Header() {
     completions,
     isAdmin,
     unlimitedEnergyUntil,
+    niveauEtude,
   } = useProgress();
   const [activePanel, setActivePanel] = useState<PanelName>(null);
 
@@ -65,6 +67,15 @@ export function Header() {
 
           <button
             type="button"
+            onClick={() => setActivePanel("niveau")}
+            aria-label="Changer de niveau d'études"
+            className="rounded-full bg-orange-50 px-3 py-1 text-sm font-extrabold uppercase tracking-wide text-orange-600 transition-colors active:bg-orange-100 dark:bg-orange-500/10 dark:text-orange-400 dark:active:bg-orange-500/20"
+          >
+            {niveauEtude}
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActivePanel("energy")}
             className="flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors active:bg-zinc-100 dark:active:bg-zinc-800"
           >
@@ -96,6 +107,11 @@ export function Header() {
             unlimitedEnergyUntil={unlimitedEnergyUntil}
             onNavigate={() => setActivePanel(null)}
           />
+        </StatPanel>
+      )}
+      {activePanel === "niveau" && (
+        <StatPanel title="Niveau d'études" onClose={() => setActivePanel(null)}>
+          <NiveauEtudePanel onNavigate={() => setActivePanel(null)} />
         </StatPanel>
       )}
     </>
