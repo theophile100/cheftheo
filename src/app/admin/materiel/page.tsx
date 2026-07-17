@@ -4,11 +4,15 @@ import { MaterielClient } from "@/components/admin/MaterielClient";
 export default async function AdminMateriel() {
   const supabase = await createClient();
 
-  const [{ data: filieres }, { data: items }] = await Promise.all([
+  const [{ data: filieres }, { data: items }, { data: recetteIngredients }] = await Promise.all([
     supabase.from("filieres").select("id, slug, name").order("position"),
     supabase
       .from("materiel_items")
       .select("id, filiere_id, name, position, image_url, categorie, sous_groupe, ingredients")
+      .order("position"),
+    supabase
+      .from("recette_ingredients")
+      .select("recette_id, ingredient_id, position")
       .order("position"),
   ]);
 
@@ -21,7 +25,11 @@ export default async function AdminMateriel() {
         images une fois en place.
       </p>
       <div className="mt-6">
-        <MaterielClient filieres={filieres ?? []} items={items ?? []} />
+        <MaterielClient
+          filieres={filieres ?? []}
+          items={items ?? []}
+          recetteIngredients={recetteIngredients ?? []}
+        />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IconPhoto } from "@tabler/icons-react";
-import { updateMaterielImage, updateMaterielIngredients } from "@/app/admin/actions";
+import { updateMaterielImage } from "@/app/admin/actions";
 import { ImageSlot } from "@/components/admin/ImageSlot";
 import { FiliereIcon } from "@/components/FiliereIcon";
 
@@ -23,55 +23,55 @@ interface MaterielItem {
   ingredients: string | null;
 }
 
-function IngredientsField({ itemId, initialValue }: { itemId: string; initialValue: string | null }) {
-  const [value, setValue] = useState(initialValue ?? "");
-  const [savedValue, setSavedValue] = useState(initialValue ?? "");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [savedFlash, setSavedFlash] = useState(false);
+interface RecetteIngredient {
+  recette_id: string;
+  ingredient_id: string;
+  position: number;
+}
 
-  const dirty = value !== savedValue;
+// Un ingredient lie a une recette : sa propre image (televersee une seule
+// fois depuis sa fiche "Legumes et ingredients" / "Fruits") s'affiche donc
+// automatiquement partout ou il est utilise, sans rien televerser ici.
+function LinkedIngredients({
+  recetteId,
+  recetteIngredients,
+  itemById,
+}: {
+  recetteId: string;
+  recetteIngredients: RecetteIngredient[];
+  itemById: Map<string, MaterielItem>;
+}) {
+  const links = recetteIngredients
+    .filter((ri) => ri.recette_id === recetteId)
+    .sort((a, b) => a.position - b.position)
+    .map((ri) => itemById.get(ri.ingredient_id))
+    .filter((item): item is MaterielItem => Boolean(item));
 
-  async function handleSave() {
-    setSaving(true);
-    setError(null);
-    const result = await updateMaterielIngredients(itemId, value);
-    setSaving(false);
-
-    if (result.error) {
-      setError(result.error);
-      return;
-    }
-    setSavedValue(value);
-    setSavedFlash(true);
-    setTimeout(() => setSavedFlash(false), 2500);
-  }
+  if (links.length === 0) return null;
 
   return (
     <div className="mt-3 flex flex-col gap-1.5">
-      <label className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
-        Ingrédients
-      </label>
-      <textarea
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        rows={2}
-        className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-      />
-      {dirty && (
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving}
-          className="self-start text-sm font-semibold text-green-600 hover:text-green-700 disabled:opacity-50 dark:text-green-400"
-        >
-          {saving ? "Enregistrement..." : "Enregistrer"}
-        </button>
-      )}
-      {savedFlash && (
-        <p className="text-xs font-semibold text-green-600 dark:text-green-400">Enregistré !</p>
-      )}
-      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Ingrédients</p>
+      <div className="flex flex-wrap gap-2">
+        {links.map((ingredient) => (
+          <div
+            key={ingredient.id}
+            className="flex items-center gap-1.5 rounded-full bg-orange-50 py-1 pl-1 pr-3 dark:bg-zinc-800"
+          >
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-orange-400 dark:bg-zinc-900">
+              {ingredient.image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={ingredient.image_url} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <IconPhoto size={12} stroke={1.5} />
+              )}
+            </div>
+            <span className="text-xs font-medium text-zinc-700 dark:text-zinc-200">
+              {ingredient.name}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -79,14 +79,22 @@ function IngredientsField({ itemId, initialValue }: { itemId: string; initialVal
 export function MaterielClient({
   filieres,
   items,
+  recetteIngredients,
 }: {
   filieres: Filiere[];
   items: MaterielItem[];
+  recetteIngredients: RecetteIngredient[];
 }) {
   const defaultFiliere = filieres.find((f) => f.slug === "service") ?? filieres[0];
   const [activeFiliereId, setActiveFiliereId] = useState(defaultFiliere?.id ?? "");
   const [imagesByItem, setImagesByItem] = useState<Record<string, string | null>>(
     Object.fromEntries(items.map((i) => [i.id, i.image_url])),
+  );
+
+  // Vue a jour de chaque item (image comprise) pour que les vignettes
+  // d'ingredients liees reagissent immediatement a un televersement.
+  const itemById = new Map(
+    items.map((i) => [i.id, { ...i, image_url: imagesByItem[i.id] ?? null }]),
   );
 
   const activeItems = items
@@ -134,7 +142,11 @@ export function MaterielClient({
           }}
         />
         {item.categorie === "Recettes" && (
-          <IngredientsField itemId={item.id} initialValue={item.ingredients} />
+          <LinkedIngredients
+            recetteId={item.id}
+            recetteIngredients={recetteIngredients}
+            itemById={itemById}
+          />
         )}
       </div>
     );
