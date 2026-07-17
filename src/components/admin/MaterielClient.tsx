@@ -18,6 +18,8 @@ interface MaterielItem {
   name: string;
   position: number;
   image_url: string | null;
+  categorie: string | null;
+  sous_groupe: string | null;
 }
 
 export function MaterielClient({
@@ -36,6 +38,50 @@ export function MaterielClient({
   const activeItems = items
     .filter((i) => i.filiere_id === activeFiliereId)
     .sort((a, b) => a.position - b.position);
+
+  const ungrouped = activeItems.filter((i) => !i.categorie);
+
+  // Ordre de premiere apparition (les items arrivent deja tries par
+  // position, donc l'ordre d'iteration reflete l'ordre voulu des groupes).
+  const categories: { name: string; sousGroupes: { name: string | null; items: MaterielItem[] }[] }[] = [];
+  for (const item of activeItems) {
+    if (!item.categorie) continue;
+    let categorie = categories.find((c) => c.name === item.categorie);
+    if (!categorie) {
+      categorie = { name: item.categorie, sousGroupes: [] };
+      categories.push(categorie);
+    }
+    let sousGroupe = categorie.sousGroupes.find((sg) => sg.name === item.sous_groupe);
+    if (!sousGroupe) {
+      sousGroupe = { name: item.sous_groupe, items: [] };
+      categorie.sousGroupes.push(sousGroupe);
+    }
+    sousGroupe.items.push(item);
+  }
+
+  function renderItemCard(item: MaterielItem) {
+    return (
+      <div
+        key={item.id}
+        className="rounded-3xl bg-white p-4 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
+      >
+        <p className="mb-3 font-semibold text-zinc-900 dark:text-zinc-50">{item.name}</p>
+        <ImageSlot
+          value={imagesByItem[item.id] ?? null}
+          bucket="materiel"
+          boxSize={64}
+          placeholder={<IconPhoto size={26} stroke={1.5} />}
+          onSave={async (url) => {
+            const result = await updateMaterielImage(item.id, url);
+            if (!result.error) {
+              setImagesByItem((prev) => ({ ...prev, [item.id]: url }));
+            }
+            return result;
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -71,29 +117,31 @@ export function MaterielClient({
         })}
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {activeItems.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-3xl bg-white p-4 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
-          >
-            <p className="mb-3 font-semibold text-zinc-900 dark:text-zinc-50">{item.name}</p>
-            <ImageSlot
-              value={imagesByItem[item.id] ?? null}
-              bucket="materiel"
-              boxSize={64}
-              placeholder={<IconPhoto size={26} stroke={1.5} />}
-              onSave={async (url) => {
-                const result = await updateMaterielImage(item.id, url);
-                if (!result.error) {
-                  setImagesByItem((prev) => ({ ...prev, [item.id]: url }));
-                }
-                return result;
-              }}
-            />
-          </div>
-        ))}
-      </div>
+      {ungrouped.length > 0 && (
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {ungrouped.map((item) => renderItemCard(item))}
+        </div>
+      )}
+
+      {categories.map((categorie) => (
+        <div key={categorie.name} className="mt-8">
+          <h2 className="rounded-2xl bg-gradient-to-r from-orange-50 to-cream px-4 py-2.5 text-lg font-extrabold text-zinc-900 dark:from-zinc-900 dark:to-zinc-900 dark:text-zinc-50">
+            {categorie.name}
+          </h2>
+          {categorie.sousGroupes.map((sousGroupe) => (
+            <div key={sousGroupe.name ?? "__none__"} className="mt-4">
+              {sousGroupe.name && (
+                <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-orange-600 dark:text-orange-400">
+                  {sousGroupe.name}
+                </h3>
+              )}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {sousGroupe.items.map((item) => renderItemCard(item))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
