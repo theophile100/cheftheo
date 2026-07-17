@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IconPhoto } from "@tabler/icons-react";
-import { updateMaterielImage } from "@/app/admin/actions";
+import { updateMaterielImage, updateMaterielIngredients } from "@/app/admin/actions";
 import { ImageSlot } from "@/components/admin/ImageSlot";
 import { FiliereIcon } from "@/components/FiliereIcon";
 
@@ -20,6 +20,60 @@ interface MaterielItem {
   image_url: string | null;
   categorie: string | null;
   sous_groupe: string | null;
+  ingredients: string | null;
+}
+
+function IngredientsField({ itemId, initialValue }: { itemId: string; initialValue: string | null }) {
+  const [value, setValue] = useState(initialValue ?? "");
+  const [savedValue, setSavedValue] = useState(initialValue ?? "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [savedFlash, setSavedFlash] = useState(false);
+
+  const dirty = value !== savedValue;
+
+  async function handleSave() {
+    setSaving(true);
+    setError(null);
+    const result = await updateMaterielIngredients(itemId, value);
+    setSaving(false);
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+    setSavedValue(value);
+    setSavedFlash(true);
+    setTimeout(() => setSavedFlash(false), 2500);
+  }
+
+  return (
+    <div className="mt-3 flex flex-col gap-1.5">
+      <label className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+        Ingrédients
+      </label>
+      <textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        rows={2}
+        className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+      />
+      {dirty && (
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          className="self-start text-sm font-semibold text-green-600 hover:text-green-700 disabled:opacity-50 dark:text-green-400"
+        >
+          {saving ? "Enregistrement..." : "Enregistrer"}
+        </button>
+      )}
+      {savedFlash && (
+        <p className="text-xs font-semibold text-green-600 dark:text-green-400">Enregistré !</p>
+      )}
+      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+    </div>
+  );
 }
 
 export function MaterielClient({
@@ -79,6 +133,9 @@ export function MaterielClient({
             return result;
           }}
         />
+        {item.categorie === "Recettes" && (
+          <IngredientsField itemId={item.id} initialValue={item.ingredients} />
+        )}
       </div>
     );
   }

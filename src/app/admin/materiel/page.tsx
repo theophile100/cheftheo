@@ -8,7 +8,7 @@ export default async function AdminMateriel() {
     supabase.from("filieres").select("id, slug, name").order("position"),
     supabase
       .from("materiel_items")
-      .select("id, filiere_id, name, position, image_url, categorie, sous_groupe")
+      .select("id, filiere_id, name, position, image_url, categorie, sous_groupe, ingredients")
       .order("position"),
   ]);
 

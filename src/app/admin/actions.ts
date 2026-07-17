@@ -293,6 +293,28 @@ export async function updateMaterielImage(
   return {};
 }
 
+export async function updateMaterielIngredients(
+  itemId: string,
+  ingredients: string,
+): Promise<{ error?: string }> {
+  try {
+    await assertAdmin();
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("materiel_items")
+    .update({ ingredients })
+    .eq("id", itemId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/materiel");
+  return {};
+}
+
 // ---------- Questions ----------
 
 export async function createQuestion(
