@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { useProgress } from "@/lib/progress-context";
 import { useSoundSettings } from "@/lib/sound-settings";
 import { playCorrectSound, playIncorrectSound, playCompleteSound } from "@/lib/sound";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -11,10 +12,12 @@ import { Mascot } from "@/components/Mascot";
 import { SpeechBubble } from "@/components/SpeechBubble";
 import { getCorrectMessage, getIncorrectMessage, getCelebrateMessage } from "@/lib/mascot-messages";
 import { buttonClasses } from "@/lib/button-styles";
+import { isUnlimitedEnergyActive } from "@/lib/energy";
 import type { Question } from "@/lib/types";
 import { Qcm } from "@/components/exercises/Qcm";
 import { Associer } from "@/components/exercises/Associer";
 import { Ordonner } from "@/components/exercises/Ordonner";
+import { ExplanationBlock } from "@/components/ExplanationBlock";
 
 function vibrate(pattern: number | number[]) {
   if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -35,6 +38,8 @@ export function RevisionRunner({
   sessionSeed: string;
 }) {
   const { soundEnabled, vibrationEnabled } = useSoundSettings();
+  const { isAdmin, unlimitedEnergyUntil } = useProgress();
+  const hasFullExplanationAccess = isAdmin || isUnlimitedEnergyActive(unlimitedEnergyUntil);
   const total = questions.length;
 
   const [queue, setQueue] = useState<Question[]>(questions);
@@ -157,19 +162,11 @@ export function RevisionRunner({
         )}
 
         {answered && current.explanation && (
-          <div
-            className={`mt-3 rounded-3xl p-4 ${
-              lastCorrect ? "bg-green-50 dark:bg-green-900/30" : "bg-red-50 dark:bg-red-900/30"
-            }`}
-          >
-            <p
-              className={`text-sm font-medium ${
-                lastCorrect ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"
-              }`}
-            >
-              {current.explanation}
-            </p>
-          </div>
+          <ExplanationBlock
+            explanation={current.explanation}
+            lastCorrect={lastCorrect}
+            hasFullAccess={hasFullExplanationAccess}
+          />
         )}
 
         <div className="flex-1" />

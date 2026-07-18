@@ -23,6 +23,8 @@ import { Qcm } from "@/components/exercises/Qcm";
 import { Associer } from "@/components/exercises/Associer";
 import { Ordonner } from "@/components/exercises/Ordonner";
 import { EnergyBlockedScreen } from "@/components/EnergyBlockedScreen";
+import { ExplanationBlock } from "@/components/ExplanationBlock";
+import { isUnlimitedEnergyActive } from "@/lib/energy";
 
 function vibrate(pattern: number | number[]) {
   if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -45,7 +47,9 @@ export function LeconRunner({
   energyAfterStart: { energy: number; energyUpdatedAt: string };
   alreadyCompleted: boolean;
 }) {
-  const { applyCompletion, setEnergy, energy, energyUpdatedAt } = useProgress();
+  const { applyCompletion, setEnergy, energy, energyUpdatedAt, isAdmin, unlimitedEnergyUntil } =
+    useProgress();
+  const hasFullExplanationAccess = isAdmin || isUnlimitedEnergyActive(unlimitedEnergyUntil);
   const { soundEnabled, vibrationEnabled } = useSoundSettings();
   const totalQuestions = questions.length;
   const [showEnergyBonus, setShowEnergyBonus] = useState(false);
@@ -286,23 +290,11 @@ export function LeconRunner({
         )}
 
         {answered && current.explanation && (
-          <div
-            className={`mt-3 rounded-3xl p-4 ${
-              lastCorrect
-                ? "bg-green-50 dark:bg-green-900/30"
-                : "bg-red-50 dark:bg-red-900/30"
-            }`}
-          >
-            <p
-              className={`text-sm font-medium ${
-                lastCorrect
-                  ? "text-green-700 dark:text-green-300"
-                  : "text-red-700 dark:text-red-300"
-              }`}
-            >
-              {current.explanation}
-            </p>
-          </div>
+          <ExplanationBlock
+            explanation={current.explanation}
+            lastCorrect={lastCorrect}
+            hasFullAccess={hasFullExplanationAccess}
+          />
         )}
 
         <div className="flex-1" />
