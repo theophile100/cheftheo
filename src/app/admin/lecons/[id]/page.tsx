@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { ReorderButtons } from "@/components/admin/ReorderButtons";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { buttonClasses } from "@/lib/button-styles";
 import { courseLanguageLabel } from "@/lib/course-languages";
 import {
@@ -77,6 +78,7 @@ export default async function EditLecon({
 
   return (
     <div className="mx-auto max-w-2xl">
+      <AdminBackLink href="/admin" />
       <p className="text-sm text-zinc-400">
         {filiereName} · {scopeLabel} · Niveau {lecon.parcours_niveau}
       </p>

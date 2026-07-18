@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { buttonClasses } from "@/lib/button-styles";
 import { courseLanguageLabel } from "@/lib/course-languages";
 import { updateUnite, deleteUnite } from "../../actions";
@@ -46,6 +47,7 @@ export default async function EditUnite({
 
   return (
     <div className="mx-auto max-w-2xl">
+      <AdminBackLink href="/admin" />
       <p className="text-sm text-zinc-400">
         {filiereName} · {scopeLabel} · Niveau {unite.parcours_niveau}
       </p>

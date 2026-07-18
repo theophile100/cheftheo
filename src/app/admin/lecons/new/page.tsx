@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { buttonClasses } from "@/lib/button-styles";
 import { createLecon } from "../../actions";
 import { LeconScopeFields } from "@/components/admin/LeconScopeFields";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 
 export default async function NewLecon({
   searchParams,
@@ -20,6 +21,7 @@ export default async function NewLecon({
 
   return (
     <div className="mx-auto max-w-md">
+      <AdminBackLink href="/admin" />
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
         Nouvelle leçon
       </h1>

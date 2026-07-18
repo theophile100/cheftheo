@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { QuestionImportForm } from "@/components/admin/QuestionImportForm";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 
 const JSON_EXAMPLE = `[
   {
@@ -51,6 +52,7 @@ export default async function ImportQuestions({
 
   return (
     <div className="mx-auto max-w-2xl">
+      <AdminBackLink href={`/admin/lecons/${id}`} />
       <p className="text-sm text-zinc-400">{lecon.title}</p>
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
         Importer des questions

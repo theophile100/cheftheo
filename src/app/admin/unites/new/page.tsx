@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { buttonClasses } from "@/lib/button-styles";
 import { createUnite } from "../../actions";
 import { FiliereScopeFields } from "@/components/admin/FiliereScopeFields";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 
 export default async function NewUnite({
   searchParams,
@@ -17,6 +18,7 @@ export default async function NewUnite({
 
   return (
     <div className="mx-auto max-w-md">
+      <AdminBackLink href="/admin" />
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
         Nouvelle unité
       </h1>

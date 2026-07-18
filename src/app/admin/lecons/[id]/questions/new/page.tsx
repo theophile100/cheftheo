@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { QuestionForm } from "@/components/admin/QuestionForm";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { createQuestion } from "@/app/admin/actions";
 
 export default async function NewQuestion({
@@ -26,6 +27,7 @@ export default async function NewQuestion({
 
   return (
     <div className="mx-auto max-w-xl">
+      <AdminBackLink href={`/admin/lecons/${id}`} />
       <p className="text-sm text-zinc-400">{lecon.title}</p>
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
         Nouvelle question

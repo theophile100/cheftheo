@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { QuestionForm } from "@/components/admin/QuestionForm";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { updateQuestion } from "@/app/admin/actions";
 import type { Question } from "@/lib/types";
 
@@ -28,6 +29,7 @@ export default async function EditQuestion({
 
   return (
     <div className="mx-auto max-w-xl">
+      <AdminBackLink href={`/admin/lecons/${question.lecon_id}`} />
       <p className="text-sm text-zinc-400">{leconTitle}</p>
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
         Modifier la question
