@@ -5,13 +5,18 @@ import { FiliereIcon } from "@/components/FiliereIcon";
 import { BackButton } from "@/components/BackButton";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { Mascot } from "@/components/Mascot";
+import { NiveauParcoursTabs } from "@/components/NiveauParcoursTabs";
 
 export default async function Filiere({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ niveau?: string }>;
 }) {
   const { slug } = await params;
+  const { niveau: niveauParam } = await searchParams;
+  const parcoursNiveau = niveauParam === "2" ? 2 : 1;
   const supabase = await createClient();
 
   const [{ data: filiere }, { data: { user } }] = await Promise.all([
@@ -58,6 +63,7 @@ export default async function Filiere({
           .select("id, title, position, unite_id")
           .eq("filiere_id", filiere.id)
           .eq("niveau_etude", niveauEtude)
+          .eq("parcours_niveau", parcoursNiveau)
           .or(niveauDifficulteFilter)
           .order("position"),
         supabase
@@ -65,6 +71,7 @@ export default async function Filiere({
           .select("id, title, position")
           .eq("filiere_id", filiere.id)
           .eq("niveau_etude", niveauEtude)
+          .eq("parcours_niveau", parcoursNiveau)
           .or(niveauDifficulteFilter)
           .order("position"),
       ]);
@@ -86,15 +93,20 @@ export default async function Filiere({
 
       {isLangues ? (
         <LanguagePicker />
-      ) : hasLecons ? (
-        <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug={filiere.slug} />
       ) : (
-        <div className="mt-16 flex flex-col items-center gap-4 text-center">
-          <Mascot mood="idle" size={80} />
-          <p className="max-w-xs text-zinc-600 dark:text-zinc-400">
-            Contenu bientôt disponible.
-          </p>
-        </div>
+        <>
+          <NiveauParcoursTabs basePath={`/filiere/${filiere.slug}`} current={parcoursNiveau} />
+          {hasLecons ? (
+            <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug={filiere.slug} />
+          ) : (
+            <div className="mt-16 flex flex-col items-center gap-4 text-center">
+              <Mascot mood="idle" size={80} />
+              <p className="max-w-xs text-zinc-600 dark:text-zinc-400">
+                Contenu bientôt disponible.
+              </p>
+            </div>
+          )}
+        </>
       )}
     </main>
   );

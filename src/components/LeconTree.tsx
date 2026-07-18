@@ -150,14 +150,11 @@ export function LeconTree({
           <div key={group.key} className={`flex flex-col items-center ${groupIndex > 0 ? "mt-8" : ""}`}>
             {group.unite && (
               <div className="mb-6 flex items-center gap-4 rounded-3xl bg-gradient-to-r from-orange-50 to-cream px-5 py-4 shadow-sm dark:from-zinc-900 dark:to-zinc-900">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-2xl font-extrabold text-white shadow-[0_3px_0_0_#c86f1e]">
-                  {group.unite.position}
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-[0_3px_0_0_#c86f1e]">
+                  <ActiveIcon size={26} strokeWidth={2} />
                 </div>
                 <div className="text-left">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
-                    Niveau {group.unite.position}
-                  </p>
-                  <p className="mt-0.5 max-w-[180px] text-base font-bold leading-snug text-zinc-800 dark:text-zinc-100">
+                  <p className="max-w-[180px] text-base font-bold leading-snug text-zinc-800 dark:text-zinc-100">
                     {group.unite.title}
                   </p>
                 </div>

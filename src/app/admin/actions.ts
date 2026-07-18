@@ -85,6 +85,8 @@ export async function createLecon(formData: FormData) {
     const langueCode = (formData.get("langue_code") as string) || null;
     const niveauEtude = (formData.get("niveau_etude") as string) || null;
     const niveauDifficulte = (formData.get("niveau_difficulte") as string) || null;
+    const parcoursNiveau = Number(formData.get("parcours_niveau")) || 1;
+    const uniteId = (formData.get("unite_id") as string) || null;
 
     if (!filiereId || !title || !Number.isFinite(position)) {
       throw new Error("Merci de remplir tous les champs.");
@@ -113,6 +115,8 @@ export async function createLecon(formData: FormData) {
       langue_code: isLangues ? langueCode : null,
       niveau_etude: isLangues ? null : niveauEtude,
       niveau_difficulte: niveauDifficulte,
+      parcours_niveau: parcoursNiveau,
+      unite_id: uniteId,
     });
 
     if (error) throw new Error(error.message);
@@ -130,6 +134,8 @@ export async function updateLecon(id: string, formData: FormData) {
 
     const title = (formData.get("title") as string)?.trim();
     const position = Number(formData.get("position"));
+    const niveauDifficulte = (formData.get("niveau_difficulte") as string) || null;
+    const uniteId = (formData.get("unite_id") as string) || null;
 
     if (!title || !Number.isFinite(position)) {
       throw new Error("Merci de remplir tous les champs.");
@@ -138,7 +144,7 @@ export async function updateLecon(id: string, formData: FormData) {
     const admin = createAdminClient();
     const { error } = await admin
       .from("lecons")
-      .update({ title, position })
+      .update({ title, position, niveau_difficulte: niveauDifficulte, unite_id: uniteId })
       .eq("id", id);
 
     if (error) throw new Error(error.message);
@@ -159,6 +165,175 @@ export async function deleteLecon(id: string) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin");
+}
+
+// Echange la position de deux leçons (ou unites, ou questions) adjacentes.
+// Un swap direct violerait la contrainte d'unicite (les deux lignes se
+// disputeraient temporairement la meme position) : on passe par une valeur
+// sentinelle negative, impossible en usage normal, le temps de l'echange.
+async function swapPositions(
+  table: "lecons" | "unites" | "questions",
+  idA: string,
+  posA: number,
+  idB: string,
+  posB: number,
+) {
+  const admin = createAdminClient();
+  await admin.from(table).update({ position: -1 }).eq("id", idA);
+  await admin.from(table).update({ position: posA }).eq("id", idB);
+  const { error } = await admin.from(table).update({ position: posB }).eq("id", idA);
+  if (error) throw new Error(error.message);
+}
+
+// ---------- Unités ----------
+
+export async function createUnite(formData: FormData) {
+  try {
+    await assertAdmin();
+
+    const filiereId = formData.get("filiere_id") as string;
+    const title = (formData.get("title") as string)?.trim();
+    const position = Number(formData.get("position"));
+    const langueCode = (formData.get("langue_code") as string) || null;
+    const niveauEtude = (formData.get("niveau_etude") as string) || null;
+    const niveauDifficulte = (formData.get("niveau_difficulte") as string) || null;
+    const parcoursNiveau = Number(formData.get("parcours_niveau")) || 1;
+
+    if (!filiereId || !title || !Number.isFinite(position)) {
+      throw new Error("Merci de remplir tous les champs.");
+    }
+
+    const admin = createAdminClient();
+
+    const { data: filiere } = await admin
+      .from("filieres")
+      .select("slug")
+      .eq("id", filiereId)
+      .single();
+    const isLangues = filiere?.slug === "langues";
+
+    if (isLangues && !langueCode) {
+      throw new Error("Sélectionnez la langue de cette unité.");
+    }
+    if (!isLangues && !niveauEtude) {
+      throw new Error("Sélectionnez le niveau d'études de cette unité.");
+    }
+
+    const { error } = await admin.from("unites").insert({
+      filiere_id: filiereId,
+      title,
+      position,
+      langue_code: isLangues ? langueCode : null,
+      niveau_etude: isLangues ? null : niveauEtude,
+      niveau_difficulte: niveauDifficulte,
+      parcours_niveau: parcoursNiveau,
+    });
+
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    redirect(`/admin/unites/new?error=${encodeURIComponent((e as Error).message)}`);
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin");
+}
+
+export async function updateUnite(id: string, formData: FormData) {
+  try {
+    await assertAdmin();
+
+    const title = (formData.get("title") as string)?.trim();
+    const position = Number(formData.get("position"));
+    const niveauDifficulte = (formData.get("niveau_difficulte") as string) || null;
+
+    if (!title || !Number.isFinite(position)) {
+      throw new Error("Merci de remplir tous les champs.");
+    }
+
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from("unites")
+      .update({ title, position, niveau_difficulte: niveauDifficulte })
+      .eq("id", id);
+
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    redirect(`/admin/unites/${id}?error=${encodeURIComponent((e as Error).message)}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath(`/admin/unites/${id}`);
+  redirect(`/admin/unites/${id}`);
+}
+
+export async function deleteUnite(id: string) {
+  await assertAdmin();
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("unites").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+}
+
+export async function swapUnitePosition(
+  idA: string,
+  posA: number,
+  idB: string,
+  posB: number,
+) {
+  await assertAdmin();
+  await swapPositions("unites", idA, posA, idB, posB);
+  revalidatePath("/admin");
+}
+
+export async function swapLeconPosition(
+  idA: string,
+  posA: number,
+  idB: string,
+  posB: number,
+) {
+  await assertAdmin();
+  await swapPositions("lecons", idA, posA, idB, posB);
+  revalidatePath("/admin");
+}
+
+export async function swapQuestionPosition(
+  leconId: string,
+  idA: string,
+  posA: number,
+  idB: string,
+  posB: number,
+) {
+  await assertAdmin();
+  await swapPositions("questions", idA, posA, idB, posB);
+  revalidatePath(`/admin/lecons/${leconId}`);
+}
+
+// ---------- Galerie d'images ----------
+
+// Liste les images deja televersees dans un bucket, pour permettre de
+// reutiliser une image existante (ex. sur une nouvelle question) plutot que
+// de la re-televerser.
+export async function listUploadedImages(
+  bucket: "lesson-images" | "materiel" = "lesson-images",
+): Promise<{ url: string; name: string }[]> {
+  await assertAdmin();
+
+  const admin = createAdminClient();
+  const { data, error } = await admin.storage.from(bucket).list("", {
+    limit: 200,
+    sortBy: { column: "created_at", order: "desc" },
+  });
+
+  if (error || !data) return [];
+
+  return data
+    .filter((f) => f.name && !f.name.endsWith("/"))
+    .map((f) => ({
+      name: f.name,
+      url: admin.storage.from(bucket).getPublicUrl(f.name).data.publicUrl,
+    }));
 }
 
 // ---------- Images ----------
@@ -332,6 +507,15 @@ export async function createQuestion(
   if (validationError) return { error: validationError };
 
   const admin = createAdminClient();
+
+  const { count } = await admin
+    .from("questions")
+    .select("id", { count: "exact", head: true })
+    .eq("lecon_id", input.leconId);
+  if ((count ?? 0) >= 10) {
+    return { error: "Une leçon ne peut pas dépasser 10 questions." };
+  }
+
   const { error } = await admin.from("questions").insert({
     lecon_id: input.leconId,
     type: input.type,

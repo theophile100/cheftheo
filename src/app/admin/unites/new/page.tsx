@@ -1,38 +1,31 @@
 import { createClient } from "@/lib/supabase/server";
 import { buttonClasses } from "@/lib/button-styles";
-import { createLecon } from "../../actions";
-import { LeconScopeFields } from "@/components/admin/LeconScopeFields";
+import { createUnite } from "../../actions";
+import { FiliereScopeFields } from "@/components/admin/FiliereScopeFields";
 
-export default async function NewLecon({
+export default async function NewUnite({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string; filiere_id?: string }>;
 }) {
   const { error, filiere_id: defaultFiliereId } = await searchParams;
   const supabase = await createClient();
-  const [{ data: filieres }, { data: unites }] = await Promise.all([
-    supabase.from("filieres").select("id, slug, name").order("position"),
-    supabase
-      .from("unites")
-      .select("id, title, filiere_id, niveau_etude, langue_code, parcours_niveau")
-      .order("position"),
-  ]);
+  const { data: filieres } = await supabase
+    .from("filieres")
+    .select("id, slug, name")
+    .order("position");
 
   return (
     <div className="mx-auto max-w-md">
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-        Nouvelle leçon
+        Nouvelle unité
       </h1>
 
       <form
-        action={createLecon}
+        action={createUnite}
         className="mt-6 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
       >
-        <LeconScopeFields
-          filieres={filieres ?? []}
-          unites={unites ?? []}
-          defaultFiliereId={defaultFiliereId}
-        />
+        <FiliereScopeFields filieres={filieres ?? []} defaultFiliereId={defaultFiliereId} />
 
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -41,7 +34,7 @@ export default async function NewLecon({
           <input
             name="title"
             required
-            placeholder="Leçon 6"
+            placeholder="Les cuissons"
             className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
           />
         </div>
@@ -67,7 +60,7 @@ export default async function NewLecon({
         )}
 
         <button type="submit" className={buttonClasses("primary", "mt-2")}>
-          Créer la leçon
+          Créer l&apos;unité
         </button>
       </form>
     </div>

@@ -3,14 +3,19 @@ import { createClient } from "@/lib/supabase/server";
 import { LeconTree } from "@/components/LeconTree";
 import { BackButton } from "@/components/BackButton";
 import { Mascot } from "@/components/Mascot";
+import { NiveauParcoursTabs } from "@/components/NiveauParcoursTabs";
 import { isCourseLanguageCode, courseLanguageLabel } from "@/lib/course-languages";
 
 export default async function LangueParcours({
   params,
+  searchParams,
 }: {
   params: Promise<{ langue: string }>;
+  searchParams: Promise<{ niveau?: string }>;
 }) {
   const { langue } = await params;
+  const { niveau: niveauParam } = await searchParams;
+  const parcoursNiveau = niveauParam === "2" ? 2 : 1;
 
   if (!isCourseLanguageCode(langue)) {
     notFound();
@@ -34,12 +39,14 @@ export default async function LangueParcours({
       .select("id, title, position, unite_id")
       .eq("filiere_id", filiere.id)
       .eq("langue_code", langue)
+      .eq("parcours_niveau", parcoursNiveau)
       .order("position"),
     supabase
       .from("unites")
       .select("id, title, position")
       .eq("filiere_id", filiere.id)
       .eq("langue_code", langue)
+      .eq("parcours_niveau", parcoursNiveau)
       .order("position"),
   ]);
 
@@ -54,6 +61,8 @@ export default async function LangueParcours({
           {courseLanguageLabel(langue)}
         </h1>
       </div>
+
+      <NiveauParcoursTabs basePath={`/filiere/langues/${langue}`} current={parcoursNiveau} />
 
       {hasLecons ? (
         <LeconTree lecons={lecons ?? []} unites={unites ?? []} filiereSlug="langues" />

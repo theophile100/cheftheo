@@ -151,6 +151,7 @@ export function QuestionForm({
         value={imageUrl}
         onChange={setImageUrl}
         label="Image de la question (optionnelle)"
+        showGallery
       />
 
       <div className="flex flex-col gap-1.5">
@@ -231,6 +232,7 @@ export function QuestionForm({
                       ),
                     )
                   }
+                  showGallery
                 />
               </div>
               {qcmOptions.length > 2 && (
