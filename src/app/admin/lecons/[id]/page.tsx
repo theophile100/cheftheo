@@ -164,12 +164,20 @@ export default async function EditLecon({
           Questions ({sortedQuestions.length}/10)
         </h2>
         {sortedQuestions.length < 10 && (
-          <Link
-            href={`/admin/lecons/${id}/questions/new`}
-            className={buttonClasses("dark", "text-sm px-5 py-2.5")}
-          >
-            + Nouvelle question
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/admin/lecons/${id}/questions/import`}
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
+            >
+              Importer un fichier
+            </Link>
+            <Link
+              href={`/admin/lecons/${id}/questions/new`}
+              className={buttonClasses("dark", "text-sm px-5 py-2.5")}
+            >
+              + Nouvelle question
+            </Link>
+          </div>
         )}
       </div>
 

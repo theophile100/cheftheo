@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkImageSize } from "@/lib/upload-constraints";
 import type { AssocierData, OrdonnerData, QcmData } from "@/lib/types";
+import { parseQuestionsFile, toQuestionData } from "@/lib/question-import";
 
 export interface QuestionInput {
   leconId: string;
@@ -572,4 +573,85 @@ export async function deleteQuestion(id: string, leconId: string) {
   if (error) throw new Error(error.message);
 
   revalidatePath(`/admin/lecons/${leconId}`);
+}
+
+export interface ImportResult {
+  imported: number;
+  errors: { index: number; message: string }[];
+}
+
+// Importe en masse les questions d'un fichier JSON ou CSV dans une leçon.
+// Les lignes invalides sont ignorées individuellement (avec leur numero et
+// la raison) plutot que de faire echouer tout le fichier -- et le plafond
+// de 10 questions/leçon (voir createQuestion) s'applique aussi ici.
+export async function importQuestions(
+  leconId: string,
+  filename: string,
+  fileText: string,
+): Promise<ImportResult> {
+  await assertAdmin();
+
+  const admin = createAdminClient();
+
+  const { count: existingCount } = await admin
+    .from("questions")
+    .select("id", { count: "exact", head: true })
+    .eq("lecon_id", leconId);
+  const { data: existingQuestions } = await admin
+    .from("questions")
+    .select("position")
+    .eq("lecon_id", leconId)
+    .order("position", { ascending: false })
+    .limit(1);
+
+  let nextPosition = (existingQuestions?.[0]?.position ?? 0) + 1;
+  let remainingSlots = 10 - (existingCount ?? 0);
+
+  const rows = parseQuestionsFile(filename, fileText);
+  const errors: { index: number; message: string }[] = [];
+  const toInsert: {
+    lecon_id: string;
+    type: string;
+    position: number;
+    prompt: string;
+    explanation: string | null;
+    image_url: string | null;
+    data: QcmData | AssocierData | OrdonnerData;
+  }[] = [];
+
+  for (const row of rows) {
+    if (row.error || !row.question) {
+      errors.push({ index: row.index, message: row.error ?? "Ligne invalide." });
+      continue;
+    }
+    if (remainingSlots <= 0) {
+      errors.push({
+        index: row.index,
+        message: "Ignorée : la leçon a déjà atteint la limite de 10 questions.",
+      });
+      continue;
+    }
+
+    toInsert.push({
+      lecon_id: leconId,
+      type: row.question.type,
+      position: nextPosition,
+      prompt: row.question.prompt,
+      explanation: row.question.explanation || null,
+      image_url: row.question.image || null,
+      data: toQuestionData(row.question) as QcmData | AssocierData | OrdonnerData,
+    });
+    nextPosition += 1;
+    remainingSlots -= 1;
+  }
+
+  if (toInsert.length > 0) {
+    const { error } = await admin.from("questions").insert(toInsert);
+    if (error) {
+      return { imported: 0, errors: [{ index: 0, message: `Échec de l'import : ${error.message}` }] };
+    }
+  }
+
+  revalidatePath(`/admin/lecons/${leconId}`);
+  return { imported: toInsert.length, errors };
 }
