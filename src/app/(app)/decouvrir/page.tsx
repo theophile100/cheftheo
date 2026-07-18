@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProduitTile } from "@/components/ProduitTile";
 import { Mascot } from "@/components/Mascot";
@@ -7,6 +8,10 @@ export default async function Decouvrir() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/connexion?next=/decouvrir");
+  }
 
   const [{ data: produits }, { data: profile }] = await Promise.all([
     supabase

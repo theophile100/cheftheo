@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { buttonClasses } from "@/lib/button-styles";
 import { createClient } from "@/lib/supabase/client";
 import { useProgress } from "@/lib/progress-context";
-import { TrustedEmbed } from "@/components/TrustedEmbed";
 
 interface ClaimResult {
   energy_added: number;
@@ -31,7 +31,6 @@ export function ProduitCta({
   const { energy, setEnergy } = useProgress();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [embedRevealed, setEmbedRevealed] = useState(false);
 
   function trackClick() {
     const supabase = createClient();
@@ -85,26 +84,17 @@ export function ProduitCta({
     );
   }
 
+  // Le snap Chariow ne s'affiche jamais sur la fiche produit : le clic
+  // envoie vers une page dédiée au paiement, où l'embed se charge seul.
   if (ctaType === "embed" && chariowEmbedCode) {
-    if (!embedRevealed) {
-      return (
-        <button
-          type="button"
-          onClick={() => {
-            trackClick();
-            setEmbedRevealed(true);
-          }}
-          className={buttonClasses("primary", "mt-2 w-full")}
-        >
-          Obtenir
-        </button>
-      );
-    }
-
     return (
-      <div className="mt-2">
-        <TrustedEmbed html={chariowEmbedCode} />
-      </div>
+      <Link
+        href={`/decouvrir/${produitId}/paiement`}
+        onClick={trackClick}
+        className={buttonClasses("primary", "mt-2 w-full")}
+      >
+        Obtenir
+      </Link>
     );
   }
 

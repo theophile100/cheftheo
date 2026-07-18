@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BackButton } from "@/components/BackButton";
 import { ProduitCta } from "@/components/ProduitCta";
@@ -18,6 +18,10 @@ export default async function ProduitDetail({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/connexion?next=/decouvrir/${id}`);
+  }
 
   const [
     { data: produit },
