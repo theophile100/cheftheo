@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileIdentity } from "@/components/ProfileIdentity";
 import { ProfileStats } from "@/components/ProfileStats";
@@ -13,6 +14,10 @@ export default async function Profil() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/connexion?next=/profil");
+  }
 
   const [{ data: profile }, { data: filieres }, { data: lecons }] = await Promise.all([
     supabase

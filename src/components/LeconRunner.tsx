@@ -22,6 +22,7 @@ import type { Question } from "@/lib/types";
 import { Qcm } from "@/components/exercises/Qcm";
 import { Associer } from "@/components/exercises/Associer";
 import { Ordonner } from "@/components/exercises/Ordonner";
+import { EnergyBlockedScreen } from "@/components/EnergyBlockedScreen";
 
 function vibrate(pattern: number | number[]) {
   if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -35,17 +36,24 @@ export function LeconRunner({
   questions,
   sessionSeed,
   energyAfterStart,
+  alreadyCompleted,
 }: {
   leconId: string;
   filiereSlug: string;
   questions: Question[];
   sessionSeed: string;
   energyAfterStart: { energy: number; energyUpdatedAt: string };
+  alreadyCompleted: boolean;
 }) {
-  const { applyCompletion, setEnergy } = useProgress();
+  const { applyCompletion, setEnergy, energy, energyUpdatedAt } = useProgress();
   const { soundEnabled, vibrationEnabled } = useSoundSettings();
   const totalQuestions = questions.length;
   const [showEnergyBonus, setShowEnergyBonus] = useState(false);
+  // Revoir une leçon déjà réussie ne coûte jamais d'énergie (voir
+  // record_answer côté serveur) : ce blocage ne s'applique donc jamais à
+  // une relecture, seulement à une leçon suivie pour la première fois.
+  const [energyDepleted, setEnergyDepleted] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
     setEnergy(energyAfterStart.energy, energyAfterStart.energyUpdatedAt);
@@ -113,6 +121,9 @@ export function LeconRunner({
         setShowEnergyBonus(true);
         setTimeout(() => setShowEnergyBonus(false), 2500);
       }
+      if (!alreadyCompleted && !data.unlimited && data.energy <= 0) {
+        setEnergyDepleted(true);
+      }
     })();
 
     // Chaque question vue entre (ou avance) dans la répétition espacée,
@@ -132,6 +143,13 @@ export function LeconRunner({
   function handleContinue() {
     const rest = queue.slice(1);
 
+    // L'énergie vient de tomber à zéro : on arrête avant d'afficher la
+    // question suivante plutôt qu'au milieu d'une question déjà commencée.
+    if (energyDepleted && rest.length > 0) {
+      setBlocked(true);
+      return;
+    }
+
     if (lastCorrect) {
       setCompleted((c) => c + 1);
       setQueue(rest);
@@ -144,6 +162,16 @@ export function LeconRunner({
 
     setAnswered(false);
     setRound((r) => r + 1);
+  }
+
+  if (blocked) {
+    return (
+      <EnergyBlockedScreen
+        filiereSlug={filiereSlug}
+        energy={energy}
+        energyUpdatedAt={energyUpdatedAt}
+      />
+    );
   }
 
   if (!current) {

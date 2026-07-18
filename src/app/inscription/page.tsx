@@ -2,18 +2,21 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { countries } from "@/data/countries";
 import { buttonClasses } from "@/lib/button-styles";
 import { Mascot } from "@/components/Mascot";
 import { useTranslation } from "@/lib/i18n-context";
+import { safeNextPath } from "@/lib/safe-next-path";
 
 const inputClasses =
   "rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3.5 text-base text-zinc-900 outline-none transition-colors focus:border-orange-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
 
 export default function Inscription() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = safeNextPath(searchParams.get("next"));
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +48,7 @@ export default function Inscription() {
 
     if (data.session) {
       // Email confirmation is off: signUp already returned an active session.
-      router.push("/accueil");
+      router.push(next ?? "/accueil");
       router.refresh();
       return;
     }
@@ -69,7 +72,7 @@ export default function Inscription() {
             {confirmAfter}
           </p>
           <Link
-            href="/connexion"
+            href={next ? `/connexion?next=${encodeURIComponent(next)}` : "/connexion"}
             className={buttonClasses("primary", "mt-7 w-full")}
           >
             {t("auth.signup.confirmCta")}
@@ -210,7 +213,7 @@ export default function Inscription() {
             <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
               {t("auth.signup.haveAccount")}{" "}
               <Link
-                href="/connexion"
+                href={next ? `/connexion?next=${encodeURIComponent(next)}` : "/connexion"}
                 className="font-semibold text-orange-500 hover:text-orange-600"
               >
                 {t("auth.signup.loginLink")}

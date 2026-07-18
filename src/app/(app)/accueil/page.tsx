@@ -16,11 +16,13 @@ export default async function Accueil() {
 
   const [{ data: filieres }, { count: dueCount }] = await Promise.all([
     supabase.from("filieres").select("id, slug, name, icon_url, position").order("position"),
-    supabase
-      .from("question_reviews")
-      .select("question_id", { count: "exact", head: true })
-      .eq("user_id", user!.id)
-      .lte("next_review_date", new Date().toISOString().slice(0, 10)),
+    user
+      ? supabase
+          .from("question_reviews")
+          .select("question_id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .lte("next_review_date", new Date().toISOString().slice(0, 10))
+      : Promise.resolve({ count: 0 }),
   ]);
 
   return (

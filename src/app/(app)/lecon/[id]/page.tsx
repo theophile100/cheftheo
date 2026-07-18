@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LeconRunner } from "@/components/LeconRunner";
 import { EnergyBlockedScreen } from "@/components/EnergyBlockedScreen";
+import { AuthRequiredScreen } from "@/components/AuthRequiredScreen";
 import { randomShuffle, randomSeed } from "@/lib/shuffle";
 import type { Question } from "@/lib/types";
 
@@ -35,6 +36,14 @@ export default async function Lecon({
     ? filiereRelation[0]?.slug
     : filiereRelation?.slug;
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return <AuthRequiredScreen next={`/lecon/${id}`} />;
+  }
+
   const { data: startResult, error: startError } = await supabase.rpc(
     "start_lecon",
     { p_lecon_id: id },
@@ -47,37 +56,11 @@ export default async function Lecon({
   const result = startResult as StartLeconResult;
 
   if (!result.ok) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    const { data: completions } = await supabase
-      .from("user_lecons")
-      .select("lecon_id, completed_at, lecons(title, filieres(name))")
-      .eq("user_id", user!.id)
-      .order("completed_at", { ascending: false })
-      .limit(6);
-
-    const completedLessons = (completions ?? []).map((c) => {
-      const leconRelation = c.lecons as
-        | { title: string; filieres: { name: string } | { name: string }[] }
-        | { title: string; filieres: { name: string } | { name: string }[] }[];
-      const leconData = Array.isArray(leconRelation) ? leconRelation[0] : leconRelation;
-      const filiereData = leconData?.filieres;
-      const filiereName = Array.isArray(filiereData) ? filiereData[0]?.name : filiereData?.name;
-      return {
-        id: c.lecon_id,
-        title: leconData?.title ?? "",
-        filiereName: filiereName ?? "",
-      };
-    });
-
     return (
       <EnergyBlockedScreen
         filiereSlug={slug ?? ""}
         energy={result.energy}
         energyUpdatedAt={result.energy_updated_at}
-        completedLessons={completedLessons}
       />
     );
   }
@@ -103,6 +86,7 @@ export default async function Lecon({
       filiereSlug={slug ?? ""}
       questions={randomShuffle(questions as Question[])}
       sessionSeed={sessionSeed}
+      alreadyCompleted={result.already_completed}
       energyAfterStart={{
         energy: result.energy,
         energyUpdatedAt: result.energy_updated_at,
