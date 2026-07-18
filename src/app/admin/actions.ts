@@ -84,6 +84,7 @@ export async function createLecon(formData: FormData) {
     const position = Number(formData.get("position"));
     const langueCode = (formData.get("langue_code") as string) || null;
     const niveauEtude = (formData.get("niveau_etude") as string) || null;
+    const niveauDifficulte = (formData.get("niveau_difficulte") as string) || null;
 
     if (!filiereId || !title || !Number.isFinite(position)) {
       throw new Error("Merci de remplir tous les champs.");
@@ -111,6 +112,7 @@ export async function createLecon(formData: FormData) {
       position,
       langue_code: isLangues ? langueCode : null,
       niveau_etude: isLangues ? null : niveauEtude,
+      niveau_difficulte: niveauDifficulte,
     });
 
     if (error) throw new Error(error.message);

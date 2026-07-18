@@ -5,6 +5,7 @@ import { ProfileStats } from "@/components/ProfileStats";
 import { ProfileEditForm } from "@/components/ProfileEditForm";
 import { AccountSettings } from "@/components/AccountSettings";
 import { FiliereProgressRings } from "@/components/FiliereProgressRings";
+import { NiveauUtilisateurPanel } from "@/components/NiveauUtilisateurPanel";
 import { BackButton } from "@/components/BackButton";
 import { countries } from "@/data/countries";
 
@@ -61,6 +62,13 @@ export default async function Profil() {
           email={user?.email ?? ""}
           countries={countries}
         />
+      </div>
+
+      <h2 className="mt-9 text-xs font-bold uppercase tracking-wide text-zinc-400">
+        Niveau
+      </h2>
+      <div className="mt-2">
+        <NiveauUtilisateurPanel />
       </div>
 
       <h2 className="mt-9 text-xs font-bold uppercase tracking-wide text-zinc-400">

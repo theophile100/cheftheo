@@ -5,6 +5,7 @@ import { Mascot } from "@/components/Mascot";
 import { SpeechBubble } from "@/components/SpeechBubble";
 import { getEncouragementMessage } from "@/lib/mascot-messages";
 import { getServerTranslation } from "@/i18n/server";
+import { NiveauOnboarding } from "@/components/NiveauOnboarding";
 
 export default async function Accueil() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export default async function Accueil() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: filieres }, { count: dueCount }] = await Promise.all([
+  const [{ data: filieres }, { count: dueCount }, { data: profile }] = await Promise.all([
     supabase.from("filieres").select("id, slug, name, icon_url, position").order("position"),
     user
       ? supabase
@@ -23,7 +24,20 @@ export default async function Accueil() {
           .eq("user_id", user.id)
           .lte("next_review_date", new Date().toISOString().slice(0, 10))
       : Promise.resolve({ count: 0 }),
+    user
+      ? supabase.from("profiles").select("niveau_utilisateur").eq("id", user.id).single()
+      : Promise.resolve({ data: null }),
   ]);
+
+  // A l'entree du jeu, un compte qui n'a encore jamais choisi de niveau
+  // passe par l'onboarding avant de voir la liste des filieres.
+  if (user && !profile?.niveau_utilisateur) {
+    return (
+      <main className="mx-auto max-w-md px-0 py-4 md:max-w-2xl lg:max-w-4xl">
+        <NiveauOnboarding />
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-md px-6 py-10 md:max-w-2xl lg:max-w-4xl">

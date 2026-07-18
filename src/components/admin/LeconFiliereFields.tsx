@@ -66,6 +66,18 @@ export function LeconFiliereFields({ filieres }: { filieres: Filiere[] }) {
           </select>
         </div>
       )}
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          Niveau d&apos;utilisateur (facultatif)
+        </label>
+        <select name="niveau_difficulte" defaultValue="" className={selectClasses}>
+          <option value="">Tous niveaux</option>
+          <option value="debutant">Débutant</option>
+          <option value="intermediaire">Intermédiaire</option>
+          <option value="avance">Avancé</option>
+        </select>
+      </div>
     </>
   );
 }

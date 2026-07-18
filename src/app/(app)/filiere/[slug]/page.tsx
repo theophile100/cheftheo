@@ -30,14 +30,25 @@ export default async function Filiere({
   const isLangues = filiere.slug === "langues";
 
   let niveauEtude: "cap" | "bts" = "cap";
+  let niveauUtilisateur: "debutant" | "intermediaire" | "avance" | null = null;
   if (!isLangues && user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("niveau_etude")
+      .select("niveau_etude, niveau_utilisateur")
       .eq("id", user.id)
       .single();
     niveauEtude = (profile?.niveau_etude as "cap" | "bts") ?? "cap";
+    niveauUtilisateur =
+      (profile?.niveau_utilisateur as "debutant" | "intermediaire" | "avance" | null) ?? null;
   }
+
+  // Une lecon/unite non marquee (niveau_difficulte nul) reste visible pour
+  // tous les niveaux -- pour l'instant, aucun contenu n'est encore reserve
+  // a un niveau precis, donc ce filtre ne change rien de visible tant que
+  // rien n'est marque depuis l'admin.
+  const niveauDifficulteFilter = niveauUtilisateur
+    ? `niveau_difficulte.is.null,niveau_difficulte.eq.${niveauUtilisateur}`
+    : "niveau_difficulte.is.null";
 
   const [{ data: lecons }, { data: unites }] = isLangues
     ? [{ data: [] }, { data: [] }]
@@ -47,12 +58,14 @@ export default async function Filiere({
           .select("id, title, position, unite_id")
           .eq("filiere_id", filiere.id)
           .eq("niveau_etude", niveauEtude)
+          .or(niveauDifficulteFilter)
           .order("position"),
         supabase
           .from("unites")
           .select("id, title, position")
           .eq("filiere_id", filiere.id)
           .eq("niveau_etude", niveauEtude)
+          .or(niveauDifficulteFilter)
           .order("position"),
       ]);
 
