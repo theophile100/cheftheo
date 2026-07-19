@@ -7,7 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { checkImageSize } from "@/lib/upload-constraints";
 import type { AssocierData, OrdonnerData, QcmData } from "@/lib/types";
 import { parseQuestionsFile, toQuestionData } from "@/lib/question-import";
-import { parseUniteImportJson } from "@/lib/unite-import";
+import { parseUniteImportFile } from "@/lib/unite-import";
 
 export interface QuestionInput {
   leconId: string;
@@ -677,11 +677,13 @@ export async function previewUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
+  filename: string,
+  uniteTitleOverride: string,
   fileText: string,
 ): Promise<UniteImportPreview> {
   await assertAdmin();
 
-  const parsed = parseUniteImportJson(fileText);
+  const parsed = parseUniteImportFile(filename, uniteTitleOverride, fileText);
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",
@@ -769,12 +771,14 @@ export async function commitUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
+  filename: string,
+  uniteTitleOverride: string,
   fileText: string,
   mode: "replace" | "create-new",
 ): Promise<UniteImportResult> {
   await assertAdmin();
 
-  const parsed = parseUniteImportJson(fileText);
+  const parsed = parseUniteImportFile(filename, uniteTitleOverride, fileText);
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",

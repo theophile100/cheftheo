@@ -126,7 +126,7 @@ export function parseQuestionsJson(text: string): ImportRow[] {
 // Parseur CSV minimal (RFC4180 : champs entre guillemets, guillemets
 // doublés pour un guillemet litteral) -- suffisant pour le format qcm
 // documente, pas d'ambition de gerer tous les dialectes CSV.
-function parseCsvLine(line: string): string[] {
+export function parseCsvLine(line: string): string[] {
   const fields: string[] = [];
   let current = "";
   let inQuotes = false;
@@ -158,6 +158,44 @@ function parseCsvLine(line: string): string[] {
 
 // CSV : uniquement pour le type qcm (jusqu'à 4 options), une ligne = une
 // question. Pour associer/ordonner, utiliser le format JSON.
+export function csvRowToQuestion(row: Record<string, string>): { question: ImportedQuestion | null; error: string | null } {
+  if (row.type && row.type !== "qcm") {
+    return {
+      question: null,
+      error: `type "${row.type}" non supporté en CSV (seul qcm l'est) — utilisez le format JSON pour associer/ordonner.`,
+    };
+  }
+
+  const options: ImportedOption[] = [];
+  for (let n = 1; n <= 4; n++) {
+    const text = row[`option${n}`];
+    const correct = row[`option${n}_correct`];
+    if (text) {
+      options.push({ text, correct: correct?.toLowerCase() === "true" });
+    }
+  }
+
+  const q: ImportedQuestion = {
+    type: "qcm",
+    prompt: row.prompt,
+    explanation: row.explanation || undefined,
+    image: row.image || undefined,
+    options,
+  };
+
+  const error = validateImportedQuestion(q);
+  return { question: error ? null : q, error };
+}
+
+export function csvLinesToRows(header: string[], lines: string[]): Record<string, string>[] {
+  return lines.map((line) => {
+    const cells = parseCsvLine(line);
+    const row: Record<string, string> = {};
+    header.forEach((h, idx) => (row[h] = (cells[idx] ?? "").trim()));
+    return row;
+  });
+}
+
 export function parseQuestionsCsv(text: string): ImportRow[] {
   const lines = text.split(/\r\n|\n/).filter((l) => l.trim().length > 0);
   if (lines.length < 2) {
@@ -165,41 +203,11 @@ export function parseQuestionsCsv(text: string): ImportRow[] {
   }
 
   const header = parseCsvLine(lines[0]).map((h) => h.trim());
-  const rows = lines.slice(1);
+  const rows = csvLinesToRows(header, lines.slice(1));
 
-  return rows.map((line, i) => {
-    const index = i + 1;
-    const cells = parseCsvLine(line);
-    const row: Record<string, string> = {};
-    header.forEach((h, idx) => (row[h] = (cells[idx] ?? "").trim()));
-
-    if (row.type && row.type !== "qcm") {
-      return {
-        index,
-        question: null,
-        error: `type "${row.type}" non supporté en CSV (seul qcm l'est) — utilisez le format JSON pour associer/ordonner.`,
-      };
-    }
-
-    const options: ImportedOption[] = [];
-    for (let n = 1; n <= 4; n++) {
-      const text = row[`option${n}`];
-      const correct = row[`option${n}_correct`];
-      if (text) {
-        options.push({ text, correct: correct?.toLowerCase() === "true" });
-      }
-    }
-
-    const q: ImportedQuestion = {
-      type: "qcm",
-      prompt: row.prompt,
-      explanation: row.explanation || undefined,
-      image: row.image || undefined,
-      options,
-    };
-
-    const error = validateImportedQuestion(q);
-    return { index, question: error ? null : q, error };
+  return rows.map((row, i) => {
+    const { question, error } = csvRowToQuestion(row);
+    return { index: i + 1, question, error };
   });
 }
 

@@ -1,7 +1,14 @@
 // Format d'import d'une unite complete (titre + leçons + questions), en
-// JSON uniquement -- la structure imbriquee ne se prete pas au CSV.
+// JSON (structure imbriquee complete, tous types de question) ou CSV
+// (aplati : une ligne = une question qcm, regroupee par colonne "lecon").
 // Reutilise le format de question deja etabli par question-import.ts.
-import { type ImportRow, validateQuestionList } from "./question-import";
+import {
+  type ImportRow,
+  validateQuestionList,
+  parseCsvLine,
+  csvLinesToRows,
+  csvRowToQuestion,
+} from "./question-import";
 
 export interface ParsedUniteLecon {
   titre: string;
@@ -62,4 +69,68 @@ export function parseUniteImportJson(text: string): ParsedUniteFile {
   });
 
   return { error: null, uniteTitle: obj.unite.trim(), lecons };
+}
+
+// CSV : une ligne = une question qcm, avec une colonne "lecon" qui indique
+// à quelle leçon elle appartient. L'ordre des leçons suit leur premiere
+// apparition dans le fichier. Le titre de l'unite n'a pas de colonne dediee
+// (il n'y a qu'une unite par fichier) : il est saisi a part, dans le
+// formulaire d'import.
+export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUniteFile {
+  if (!uniteTitle.trim()) {
+    return { error: "Le titre de l'unité est requis pour un import CSV.", uniteTitle: null, lecons: [] };
+  }
+
+  const lines = text.split(/\r\n|\n/).filter((l) => l.trim().length > 0);
+  if (lines.length < 2) {
+    return {
+      error: "Le fichier CSV doit avoir un en-tête et au moins une ligne.",
+      uniteTitle: uniteTitle.trim(),
+      lecons: [],
+    };
+  }
+
+  const header = parseCsvLine(lines[0]).map((h) => h.trim());
+  if (!header.includes("lecon")) {
+    return {
+      error: 'Le fichier CSV doit avoir une colonne "lecon" indiquant la leçon de chaque question.',
+      uniteTitle: uniteTitle.trim(),
+      lecons: [],
+    };
+  }
+
+  const rows = csvLinesToRows(header, lines.slice(1));
+
+  const order: string[] = [];
+  const grouped = new Map<string, { row: Record<string, string>; lineIndex: number }[]>();
+  rows.forEach((row, i) => {
+    const leconTitre = row.lecon?.trim() || `(ligne ${i + 2} sans leçon)`;
+    if (!grouped.has(leconTitre)) {
+      order.push(leconTitre);
+      grouped.set(leconTitre, []);
+    }
+    grouped.get(leconTitre)!.push({ row, lineIndex: i + 1 });
+  });
+
+  const lecons: ParsedUniteLecon[] = order.map((titre) => {
+    const entries = grouped.get(titre)!;
+    const importRows: ImportRow[] = entries.map(({ row, lineIndex }) => {
+      const { question, error } = csvRowToQuestion(row);
+      return { index: lineIndex, question, error };
+    });
+    return { titre, rows: importRows };
+  });
+
+  return { error: null, uniteTitle: uniteTitle.trim(), lecons };
+}
+
+export function parseUniteImportFile(
+  filename: string,
+  uniteTitleOverride: string,
+  text: string,
+): ParsedUniteFile {
+  if (filename.toLowerCase().endsWith(".csv")) {
+    return parseUniteImportCsv(uniteTitleOverride, text);
+  }
+  return parseUniteImportJson(text);
 }
