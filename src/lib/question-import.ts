@@ -81,6 +81,21 @@ export function toQuestionData(q: ImportedQuestion) {
   return { steps: (q.steps ?? []).map((s) => ({ id: newId(), text: s })) };
 }
 
+// Valide une liste deja parsee (utilise directement par l'import d'unite
+// complete, ou indirectement par parseQuestionsJson ci-dessous pour
+// l'import question-par-question).
+export function validateQuestionList(list: unknown[]): ImportRow[] {
+  return list.map((item, i) => {
+    const index = i + 1;
+    if (!item || typeof item !== "object") {
+      return { index, question: null, error: "Élément invalide (doit être un objet)." };
+    }
+    const q = item as ImportedQuestion;
+    const error = validateImportedQuestion(q);
+    return { index, question: error ? null : q, error };
+  });
+}
+
 export function parseQuestionsJson(text: string): ImportRow[] {
   let parsed: unknown;
   try {
@@ -105,15 +120,7 @@ export function parseQuestionsJson(text: string): ImportRow[] {
     ];
   }
 
-  return list.map((item, i) => {
-    const index = i + 1;
-    if (!item || typeof item !== "object") {
-      return { index, question: null, error: "Élément invalide (doit être un objet)." };
-    }
-    const q = item as ImportedQuestion;
-    const error = validateImportedQuestion(q);
-    return { index, question: error ? null : q, error };
-  });
+  return validateQuestionList(list);
 }
 
 // Parseur CSV minimal (RFC4180 : champs entre guillemets, guillemets

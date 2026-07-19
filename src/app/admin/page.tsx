@@ -89,7 +89,13 @@ export default async function AdminHome({
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Filières, unités &amp; leçons
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/admin/unites/import"
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
+          >
+            Importer une unité
+          </Link>
           <Link href="/admin/unites/new" className={buttonClasses("dark", "text-sm px-5 py-2.5")}>
             + Nouvelle unité
           </Link>

@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { checkImageSize } from "@/lib/upload-constraints";
 import type { AssocierData, OrdonnerData, QcmData } from "@/lib/types";
 import { parseQuestionsFile, toQuestionData } from "@/lib/question-import";
+import { parseUniteImportJson } from "@/lib/unite-import";
 
 export interface QuestionInput {
   leconId: string;
@@ -654,4 +655,290 @@ export async function importQuestions(
 
   revalidatePath(`/admin/lecons/${leconId}`);
   return { imported: toInsert.length, errors };
+}
+
+// ---------- Import d'unite complete (titre + leçons + questions) ----------
+
+export interface UniteImportPreview {
+  error?: string;
+  uniteTitle: string;
+  existingUniteId: string | null;
+  existingUniteLeconTitles: string[];
+  lecons: {
+    titre: string;
+    validCount: number;
+    errors: { index: number; message: string }[];
+  }[];
+  nameCollisions: string[];
+}
+
+export async function previewUniteImport(
+  filiereId: string,
+  niveauEtude: string | null,
+  langueCode: string | null,
+  parcoursNiveau: number,
+  fileText: string,
+): Promise<UniteImportPreview> {
+  await assertAdmin();
+
+  const parsed = parseUniteImportJson(fileText);
+  if (parsed.error || !parsed.uniteTitle) {
+    return {
+      error: parsed.error ?? "Fichier invalide.",
+      uniteTitle: "",
+      existingUniteId: null,
+      existingUniteLeconTitles: [],
+      lecons: [],
+      nameCollisions: [],
+    };
+  }
+
+  const admin = createAdminClient();
+
+  // .limit(1) plutot que .maybeSingle() : le nom d'une unite n'est pas
+  // contraint unique en base (on autorise justement "creer separement" a la
+  // resolution d'un conflit), donc plusieurs lignes peuvent partager le
+  // meme titre -- .maybeSingle() erreurait silencieusement dans ce cas.
+  let uniteQuery = admin
+    .from("unites")
+    .select("id")
+    .eq("filiere_id", filiereId)
+    .eq("parcours_niveau", parcoursNiveau)
+    .eq("title", parsed.uniteTitle)
+    .order("position")
+    .limit(1);
+  uniteQuery = niveauEtude ? uniteQuery.eq("niveau_etude", niveauEtude) : uniteQuery.is("niveau_etude", null);
+  uniteQuery = langueCode ? uniteQuery.eq("langue_code", langueCode) : uniteQuery.is("langue_code", null);
+  const { data: existingUnites } = await uniteQuery;
+  const existingUnite = existingUnites?.[0] ?? null;
+
+  let existingUniteLeconTitles: string[] = [];
+  if (existingUnite) {
+    const { data: existingLecons } = await admin
+      .from("lecons")
+      .select("title")
+      .eq("unite_id", existingUnite.id)
+      .order("position");
+    existingUniteLeconTitles = (existingLecons ?? []).map((l) => l.title);
+  }
+
+  let leconsInScopeQuery = admin
+    .from("lecons")
+    .select("title")
+    .eq("filiere_id", filiereId)
+    .eq("parcours_niveau", parcoursNiveau);
+  leconsInScopeQuery = niveauEtude
+    ? leconsInScopeQuery.eq("niveau_etude", niveauEtude)
+    : leconsInScopeQuery.is("niveau_etude", null);
+  leconsInScopeQuery = langueCode
+    ? leconsInScopeQuery.eq("langue_code", langueCode)
+    : leconsInScopeQuery.is("langue_code", null);
+  const { data: leconsInScope } = await leconsInScopeQuery;
+  const existingTitles = new Set((leconsInScope ?? []).map((l) => l.title));
+  const existingUniteLeconTitleSet = new Set(existingUniteLeconTitles);
+
+  const nameCollisions = parsed.lecons
+    .map((l) => l.titre)
+    .filter((t) => existingTitles.has(t) && !existingUniteLeconTitleSet.has(t));
+
+  const lecons = parsed.lecons.map((l) => ({
+    titre: l.titre,
+    validCount: l.rows.filter((r) => r.question).length,
+    errors: l.rows.filter((r) => r.error).map((r) => ({ index: r.index, message: r.error! })),
+  }));
+
+  return {
+    uniteTitle: parsed.uniteTitle,
+    existingUniteId: existingUnite?.id ?? null,
+    existingUniteLeconTitles,
+    lecons,
+    nameCollisions,
+  };
+}
+
+export interface UniteImportResult {
+  error?: string;
+  uniteId: string;
+  leconsCreated: number;
+  questionsImported: number;
+  questionErrors: { leconTitre: string; index: number; message: string }[];
+}
+
+export async function commitUniteImport(
+  filiereId: string,
+  niveauEtude: string | null,
+  langueCode: string | null,
+  parcoursNiveau: number,
+  fileText: string,
+  mode: "replace" | "create-new",
+): Promise<UniteImportResult> {
+  await assertAdmin();
+
+  const parsed = parseUniteImportJson(fileText);
+  if (parsed.error || !parsed.uniteTitle) {
+    return {
+      error: parsed.error ?? "Fichier invalide.",
+      uniteId: "",
+      leconsCreated: 0,
+      questionsImported: 0,
+      questionErrors: [],
+    };
+  }
+
+  const admin = createAdminClient();
+  let uniteId: string;
+
+  if (mode === "replace") {
+    // Meme raisonnement que dans previewUniteImport : plusieurs unites
+    // peuvent partager un titre, on cible la premiere (meme ordre que
+    // l'aperçu) plutot que de planter sur un resultat multiple.
+    let uniteQuery = admin
+      .from("unites")
+      .select("id")
+      .eq("filiere_id", filiereId)
+      .eq("parcours_niveau", parcoursNiveau)
+      .eq("title", parsed.uniteTitle)
+      .order("position")
+      .limit(1);
+    uniteQuery = niveauEtude ? uniteQuery.eq("niveau_etude", niveauEtude) : uniteQuery.is("niveau_etude", null);
+    uniteQuery = langueCode ? uniteQuery.eq("langue_code", langueCode) : uniteQuery.is("langue_code", null);
+    const { data: existingUnites } = await uniteQuery;
+    const existingUnite = existingUnites?.[0] ?? null;
+
+    if (!existingUnite) {
+      return {
+        error: "Unité à remplacer introuvable (a-t-elle été supprimée entre-temps ?).",
+        uniteId: "",
+        leconsCreated: 0,
+        questionsImported: 0,
+        questionErrors: [],
+      };
+    }
+    uniteId = existingUnite.id;
+    // Supprimer les leçons supprime aussi leurs questions (contrainte on
+    // delete cascade) : l'unité elle-même (et son titre/position) reste.
+    await admin.from("lecons").delete().eq("unite_id", uniteId);
+  } else {
+    let maxUniteQuery = admin
+      .from("unites")
+      .select("position")
+      .eq("filiere_id", filiereId)
+      .eq("parcours_niveau", parcoursNiveau)
+      .order("position", { ascending: false })
+      .limit(1);
+    maxUniteQuery = niveauEtude
+      ? maxUniteQuery.eq("niveau_etude", niveauEtude)
+      : maxUniteQuery.is("niveau_etude", null);
+    maxUniteQuery = langueCode ? maxUniteQuery.eq("langue_code", langueCode) : maxUniteQuery.is("langue_code", null);
+    const { data: maxUnite } = await maxUniteQuery;
+    const nextUnitePosition = (maxUnite?.[0]?.position ?? 0) + 1;
+
+    const { data: newUnite, error: uniteError } = await admin
+      .from("unites")
+      .insert({
+        filiere_id: filiereId,
+        title: parsed.uniteTitle,
+        position: nextUnitePosition,
+        niveau_etude: niveauEtude,
+        langue_code: langueCode,
+        parcours_niveau: parcoursNiveau,
+      })
+      .select()
+      .single();
+    if (uniteError || !newUnite) {
+      return {
+        error: uniteError?.message ?? "Échec de la création de l'unité.",
+        uniteId: "",
+        leconsCreated: 0,
+        questionsImported: 0,
+        questionErrors: [],
+      };
+    }
+    uniteId = newUnite.id;
+  }
+
+  let maxLeconQuery = admin
+    .from("lecons")
+    .select("position")
+    .eq("filiere_id", filiereId)
+    .eq("parcours_niveau", parcoursNiveau)
+    .order("position", { ascending: false })
+    .limit(1);
+  maxLeconQuery = niveauEtude ? maxLeconQuery.eq("niveau_etude", niveauEtude) : maxLeconQuery.is("niveau_etude", null);
+  maxLeconQuery = langueCode ? maxLeconQuery.eq("langue_code", langueCode) : maxLeconQuery.is("langue_code", null);
+  const { data: maxLecon } = await maxLeconQuery;
+  let nextLeconPosition = (maxLecon?.[0]?.position ?? 0) + 1;
+
+  let leconsCreated = 0;
+  let questionsImported = 0;
+  const questionErrors: { leconTitre: string; index: number; message: string }[] = [];
+
+  for (const lecon of parsed.lecons) {
+    const { data: newLecon, error: leconError } = await admin
+      .from("lecons")
+      .insert({
+        filiere_id: filiereId,
+        unite_id: uniteId,
+        title: lecon.titre,
+        position: nextLeconPosition,
+        niveau_etude: niveauEtude,
+        langue_code: langueCode,
+        parcours_niveau: parcoursNiveau,
+      })
+      .select()
+      .single();
+    nextLeconPosition += 1;
+
+    if (leconError || !newLecon) {
+      questionErrors.push({
+        leconTitre: lecon.titre,
+        index: 0,
+        message: leconError?.message ?? "Échec de la création de la leçon.",
+      });
+      continue;
+    }
+    leconsCreated += 1;
+
+    const validRows = lecon.rows.filter((r) => r.question);
+    const toInsert = validRows.slice(0, 10).map((r, i) => ({
+      lecon_id: newLecon.id,
+      type: r.question!.type,
+      position: i + 1,
+      prompt: r.question!.prompt,
+      explanation: r.question!.explanation || null,
+      image_url: r.question!.image || null,
+      data: toQuestionData(r.question!) as QcmData | AssocierData | OrdonnerData,
+    }));
+
+    if (validRows.length > 10) {
+      questionErrors.push({
+        leconTitre: lecon.titre,
+        index: 0,
+        message: `${validRows.length - 10} question(s) ignorée(s) : limite de 10 questions par leçon.`,
+      });
+    }
+
+    for (const row of lecon.rows) {
+      if (row.error) {
+        questionErrors.push({ leconTitre: lecon.titre, index: row.index, message: row.error });
+      }
+    }
+
+    if (toInsert.length > 0) {
+      const { error: qError } = await admin.from("questions").insert(toInsert);
+      if (qError) {
+        questionErrors.push({
+          leconTitre: lecon.titre,
+          index: 0,
+          message: `Échec de l'import des questions : ${qError.message}`,
+        });
+      } else {
+        questionsImported += toInsert.length;
+      }
+    }
+  }
+
+  revalidatePath("/admin");
+  revalidatePath(`/admin/unites/${uniteId}`);
+  return { uniteId, leconsCreated, questionsImported, questionErrors };
 }
