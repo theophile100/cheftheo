@@ -5,11 +5,17 @@
 import {
   type ImportRow,
   validateQuestionList,
-  parseCsvLine,
+  parseCsvHeader,
   csvLinesToRows,
   csvRowToQuestion,
   looksLikeJson,
 } from "./question-import";
+
+// Colonne "lecon" acceptee sous plusieurs orthographes/langues courantes,
+// une fois l'en-tete normalise (accents/majuscules retires par
+// parseCsvHeader) -- un admin qui tape "Leçon" ou "Lesson" ne doit pas se
+// heurter a une erreur de format.
+const LECON_COLUMN_ALIASES = ["lecon", "lesson", "titre_lecon", "nom_lecon"];
 
 export interface ParsedUniteLecon {
   titre: string;
@@ -91,10 +97,12 @@ export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUni
     };
   }
 
-  const header = parseCsvLine(lines[0]).map((h) => h.trim());
-  if (!header.includes("lecon")) {
+  const header = parseCsvHeader(lines[0]);
+  const leconColumn = LECON_COLUMN_ALIASES.find((alias) => header.includes(alias));
+  if (!leconColumn) {
     return {
-      error: 'Le fichier CSV doit avoir une colonne "lecon" indiquant la leçon de chaque question.',
+      error:
+        'Le fichier CSV doit avoir une colonne "leçon" (ou "lesson") indiquant la leçon de chaque question.',
       uniteTitle: uniteTitle.trim(),
       lecons: [],
     };
@@ -105,7 +113,7 @@ export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUni
   const order: string[] = [];
   const grouped = new Map<string, { row: Record<string, string>; lineIndex: number }[]>();
   rows.forEach((row, i) => {
-    const leconTitre = row.lecon?.trim() || `(ligne ${i + 2} sans leçon)`;
+    const leconTitre = row[leconColumn]?.trim() || `(ligne ${i + 2} sans leçon)`;
     if (!grouped.has(leconTitre)) {
       order.push(leconTitre);
       grouped.set(leconTitre, []);

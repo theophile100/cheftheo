@@ -187,6 +187,22 @@ export function csvRowToQuestion(row: Record<string, string>): { question: Impor
   return { question: error ? null : q, error };
 }
 
+// Insensible aux accents/majuscules/espaces superflus : un en-tete "Leçon"
+// ou " LECON " doit matcher tout aussi bien que "lecon" -- les admins
+// tapent leurs fichiers a la main, l'orthographe naturelle du francais
+// (accents, majuscules) ne doit pas faire echouer l'import.
+export function normalizeHeader(h: string): string {
+  return h
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+export function parseCsvHeader(line: string): string[] {
+  return parseCsvLine(line).map(normalizeHeader);
+}
+
 export function csvLinesToRows(header: string[], lines: string[]): Record<string, string>[] {
   return lines.map((line) => {
     const cells = parseCsvLine(line);
@@ -202,7 +218,7 @@ export function parseQuestionsCsv(text: string): ImportRow[] {
     return [{ index: 1, question: null, error: "Le fichier CSV doit avoir un en-tête et au moins une ligne." }];
   }
 
-  const header = parseCsvLine(lines[0]).map((h) => h.trim());
+  const header = parseCsvHeader(lines[0]);
   const rows = csvLinesToRows(header, lines.slice(1));
 
   return rows.map((row, i) => {

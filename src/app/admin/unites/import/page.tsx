@@ -48,7 +48,7 @@ const EXAMPLE = `{
   ]
 }`;
 
-const CSV_EXAMPLE = `lecon,type,prompt,explanation,image,option1,option1_correct,option2,option2_correct,option3,option3_correct
+const CSV_EXAMPLE = `Leçon,type,prompt,explanation,image,option1,option1_correct,option2,option2_correct,option3,option3_correct
 Les fonds de base,qcm,Quel est le principal fond blanc utilisé en cuisine ?,Le fond blanc de veau est la base de nombreuses sauces.,,Fond brun,false,Fond blanc de veau,true,Fumet de poisson,false
 Les fonds de base,qcm,Quelle est la couleur d'un fond blanc réussi ?,,,Ambré,false,Clair et limpide,true,,
 Les liaisons,qcm,Le beurre manié sert à...,,,Épaissir en fin de cuisson,true,Colorer une sauce,false,,`;
@@ -93,9 +93,10 @@ export default async function ImportUnite() {
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Un CSV n&apos;a pas de place pour le titre de l&apos;unité : vous le saisissez à part, dans
             un champ dédié qui apparaît dès que le contenu n&apos;est pas reconnu comme du JSON. Chaque
-            ligne est une question à choix multiple ; la colonne <code>lecon</code> indique à quelle
-            leçon elle appartient (les leçons apparaissent dans l&apos;ordre de leur première apparition
-            dans le fichier). Pour associer ou ordonner, utilisez le JSON.
+            ligne est une question à choix multiple ; la colonne <code>leçon</code> (ou{" "}
+            <code>lesson</code>, accents et majuscules acceptés) indique à quelle leçon elle appartient
+            (les leçons apparaissent dans l&apos;ordre de leur première apparition dans le fichier). Pour
+            associer ou ordonner, utilisez le JSON.
           </p>
           <pre className="overflow-x-auto rounded-xl bg-zinc-50 p-4 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             {CSV_EXAMPLE}
