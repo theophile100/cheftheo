@@ -89,6 +89,8 @@ export default async function ImportQuestions({
         </div>
 
         <p className="text-xs text-zinc-400">
+          Le format (JSON ou CSV) est détecté automatiquement dans le contenu — n&apos;importe quel
+          type de fichier convient (.txt compris), ou collez directement le texte sans fichier.
           Les lignes invalides sont signalées et ignorées individuellement — le reste du fichier
           s&apos;importe quand même. La limite de 10 questions par leçon s&apos;applique aussi à
           l&apos;import.

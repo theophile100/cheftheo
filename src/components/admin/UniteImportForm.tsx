@@ -12,7 +12,13 @@ import {
   FiliereScopeFields,
   type FiliereScope,
 } from "@/components/admin/FiliereScopeFields";
+import { ImportSourceInput } from "@/components/admin/ImportSourceInput";
 import { buttonClasses } from "@/lib/button-styles";
+
+function looksLikeJson(text: string): boolean {
+  const trimmed = text.trim();
+  return trimmed.startsWith("{") || trimmed.startsWith("[");
+}
 
 interface Filiere {
   id: string;
@@ -25,7 +31,6 @@ type Step = "form" | "preview" | "result";
 export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   const router = useRouter();
   const [scope, setScope] = useState<FiliereScope | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
   const [fileText, setFileText] = useState<string | null>(null);
   const [csvUniteTitle, setCsvUniteTitle] = useState("");
   const [step, setStep] = useState<Step>("form");
@@ -33,25 +38,17 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   const [result, setResult] = useState<UniteImportResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const isCsv = fileName?.toLowerCase().endsWith(".csv") ?? false;
+  const isCsv = !!fileText && !looksLikeJson(fileText);
   const canPreview = !!fileText && (!isCsv || csvUniteTitle.trim().length > 0);
 
-  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setFileName(file.name);
-    setFileText(await file.text());
-  }
-
   async function handlePreview() {
-    if (!scope || !fileText || !fileName) return;
+    if (!scope || !fileText) return;
     setLoading(true);
     const res = await previewUniteImport(
       scope.filiereId,
       scope.isLangues ? null : scope.niveauEtude,
       scope.isLangues ? scope.langueCode : null,
       scope.parcoursNiveau,
-      fileName,
       csvUniteTitle,
       fileText,
     );
@@ -61,14 +58,13 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   }
 
   async function handleCommit(mode: "replace" | "create-new") {
-    if (!scope || !fileText || !fileName) return;
+    if (!scope || !fileText) return;
     setLoading(true);
     const res = await commitUniteImport(
       scope.filiereId,
       scope.isLangues ? null : scope.niveauEtude,
       scope.isLangues ? scope.langueCode : null,
       scope.parcoursNiveau,
-      fileName,
       csvUniteTitle,
       fileText,
       mode,
@@ -233,13 +229,11 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
       <FiliereScopeFields filieres={filieres} onScopeChange={setScope} />
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Fichier .json ou .csv</label>
-        <input
-          type="file"
-          accept=".json,.csv"
-          onChange={handleFileChange}
-          className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-        />
+        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          Contenu JSON ou CSV (n&apos;importe quel type de fichier — le format est détecté
+          automatiquement)
+        </label>
+        <ImportSourceInput onChange={setFileText} />
       </div>
 
       {isCsv && (

@@ -64,7 +64,9 @@ export default async function ImportUnite() {
         Importer une unité complète
       </h1>
       <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-        Un seul fichier crée l&apos;unité, ses leçons dans l&apos;ordre, et toutes leurs questions.
+        Un seul fichier (n&apos;importe quel type — le format est détecté automatiquement) ou un
+        texte collé directement crée l&apos;unité, ses leçons dans l&apos;ordre, et toutes leurs
+        questions.
       </p>
 
       <div className="mt-6">
@@ -89,11 +91,11 @@ export default async function ImportUnite() {
         <div className="flex flex-col gap-3">
           <h2 className="font-bold text-zinc-900 dark:text-zinc-50">Format CSV (QCM uniquement)</h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Un fichier CSV n&apos;a pas de place pour le titre de l&apos;unité : vous le saisissez à part,
-            dans un champ dédié qui apparaît quand vous choisissez un fichier .csv. Chaque ligne est une
-            question à choix multiple ; la colonne <code>lecon</code> indique à quelle leçon elle
-            appartient (les leçons apparaissent dans l&apos;ordre de leur première apparition dans le
-            fichier). Pour associer ou ordonner, utilisez le JSON.
+            Un CSV n&apos;a pas de place pour le titre de l&apos;unité : vous le saisissez à part, dans
+            un champ dédié qui apparaît dès que le contenu n&apos;est pas reconnu comme du JSON. Chaque
+            ligne est une question à choix multiple ; la colonne <code>lecon</code> indique à quelle
+            leçon elle appartient (les leçons apparaissent dans l&apos;ordre de leur première apparition
+            dans le fichier). Pour associer ou ordonner, utilisez le JSON.
           </p>
           <pre className="overflow-x-auto rounded-xl bg-zinc-50 p-4 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             {CSV_EXAMPLE}

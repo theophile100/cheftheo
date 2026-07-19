@@ -211,7 +211,16 @@ export function parseQuestionsCsv(text: string): ImportRow[] {
   });
 }
 
-export function parseQuestionsFile(filename: string, text: string): ImportRow[] {
-  if (filename.toLowerCase().endsWith(".csv")) return parseQuestionsCsv(text);
-  return parseQuestionsJson(text);
+// Detection par contenu plutôt que par extension de fichier : n'importe
+// quel fichier (ou texte collé directement) fonctionne du moment qu'il
+// contient du JSON ou du CSV valide -- un .txt exporté d'un tableur ou
+// collé depuis un traitement de texte est aussi accepté.
+export function looksLikeJson(text: string): boolean {
+  const trimmed = text.trim();
+  return trimmed.startsWith("{") || trimmed.startsWith("[");
+}
+
+export function parseQuestionsFile(text: string): ImportRow[] {
+  if (looksLikeJson(text)) return parseQuestionsJson(text);
+  return parseQuestionsCsv(text);
 }

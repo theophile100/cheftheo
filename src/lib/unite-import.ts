@@ -8,6 +8,7 @@ import {
   parseCsvLine,
   csvLinesToRows,
   csvRowToQuestion,
+  looksLikeJson,
 } from "./question-import";
 
 export interface ParsedUniteLecon {
@@ -124,13 +125,10 @@ export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUni
   return { error: null, uniteTitle: uniteTitle.trim(), lecons };
 }
 
-export function parseUniteImportFile(
-  filename: string,
-  uniteTitleOverride: string,
-  text: string,
-): ParsedUniteFile {
-  if (filename.toLowerCase().endsWith(".csv")) {
-    return parseUniteImportCsv(uniteTitleOverride, text);
-  }
-  return parseUniteImportJson(text);
+// Detection par contenu (pas par extension de fichier) : accepte n'importe
+// quel fichier ou texte collé directement, du moment que son contenu est
+// du JSON ou du CSV valide.
+export function parseUniteImportFile(uniteTitleOverride: string, text: string): ParsedUniteFile {
+  if (looksLikeJson(text)) return parseUniteImportJson(text);
+  return parseUniteImportCsv(uniteTitleOverride, text);
 }

@@ -587,7 +587,6 @@ export interface ImportResult {
 // de 10 questions/leçon (voir createQuestion) s'applique aussi ici.
 export async function importQuestions(
   leconId: string,
-  filename: string,
   fileText: string,
 ): Promise<ImportResult> {
   await assertAdmin();
@@ -608,7 +607,7 @@ export async function importQuestions(
   let nextPosition = (existingQuestions?.[0]?.position ?? 0) + 1;
   let remainingSlots = 10 - (existingCount ?? 0);
 
-  const rows = parseQuestionsFile(filename, fileText);
+  const rows = parseQuestionsFile(fileText);
   const errors: { index: number; message: string }[] = [];
   const toInsert: {
     lecon_id: string;
@@ -677,13 +676,12 @@ export async function previewUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
-  filename: string,
   uniteTitleOverride: string,
   fileText: string,
 ): Promise<UniteImportPreview> {
   await assertAdmin();
 
-  const parsed = parseUniteImportFile(filename, uniteTitleOverride, fileText);
+  const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",
@@ -771,14 +769,13 @@ export async function commitUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
-  filename: string,
   uniteTitleOverride: string,
   fileText: string,
   mode: "replace" | "create-new",
 ): Promise<UniteImportResult> {
   await assertAdmin();
 
-  const parsed = parseUniteImportFile(filename, uniteTitleOverride, fileText);
+  const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",

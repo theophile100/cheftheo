@@ -3,27 +3,19 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { importQuestions, type ImportResult } from "@/app/admin/actions";
+import { ImportSourceInput } from "@/components/admin/ImportSourceInput";
 import { buttonClasses } from "@/lib/button-styles";
 
 export function QuestionImportForm({ leconId }: { leconId: string }) {
   const router = useRouter();
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [fileText, setFileText] = useState<string | null>(null);
+  const [text, setText] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
 
-  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setResult(null);
-    setFileName(file.name);
-    setFileText(await file.text());
-  }
-
   async function handleImport() {
-    if (!fileName || !fileText) return;
+    if (!text) return;
     setImporting(true);
-    const res = await importQuestions(leconId, fileName, fileText);
+    const res = await importQuestions(leconId, text);
     setImporting(false);
     setResult(res);
     if (res.imported > 0) router.refresh();
@@ -33,19 +25,15 @@ export function QuestionImportForm({ leconId }: { leconId: string }) {
     <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Fichier .json ou .csv
+          Contenu JSON ou CSV (n&apos;importe quel type de fichier — le format est détecté
+          automatiquement)
         </label>
-        <input
-          type="file"
-          accept=".json,.csv"
-          onChange={handleFileChange}
-          className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-        />
+        <ImportSourceInput onChange={setText} />
       </div>
 
       <button
         type="button"
-        disabled={!fileText || importing}
+        disabled={!text || importing}
         onClick={handleImport}
         className={buttonClasses("primary", "disabled:opacity-50")}
       >
