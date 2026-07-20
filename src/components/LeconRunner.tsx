@@ -25,12 +25,7 @@ import { Ordonner } from "@/components/exercises/Ordonner";
 import { EnergyBlockedScreen } from "@/components/EnergyBlockedScreen";
 import { ExplanationBlock } from "@/components/ExplanationBlock";
 import { isUnlimitedEnergyActive } from "@/lib/energy";
-
-function vibrate(pattern: number | number[]) {
-  if (typeof navigator !== "undefined" && navigator.vibrate) {
-    navigator.vibrate(pattern);
-  }
-}
+import { triggerHaptic } from "@/lib/haptics";
 
 export function LeconRunner({
   leconId,
@@ -92,6 +87,7 @@ export function LeconRunner({
       if (data) {
         applyCompletion(data, leconId, totalQuestions * 10);
         if (soundEnabled) playCompleteSound();
+        if (vibrationEnabled) triggerHaptic("unlock");
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,10 +100,10 @@ export function LeconRunner({
 
     if (isCorrect) {
       if (soundEnabled) playCorrectSound();
-      if (vibrationEnabled) vibrate(15);
+      if (vibrationEnabled) triggerHaptic("correct");
     } else {
       if (soundEnabled) playIncorrectSound();
-      if (vibrationEnabled) vibrate(40);
+      if (vibrationEnabled) triggerHaptic("incorrect");
     }
 
     // L'énergie baisse (ou remonte, en cas de bonus de série) au fil des

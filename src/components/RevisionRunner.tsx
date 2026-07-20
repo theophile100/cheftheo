@@ -18,12 +18,7 @@ import { Qcm } from "@/components/exercises/Qcm";
 import { Associer } from "@/components/exercises/Associer";
 import { Ordonner } from "@/components/exercises/Ordonner";
 import { ExplanationBlock } from "@/components/ExplanationBlock";
-
-function vibrate(pattern: number | number[]) {
-  if (typeof navigator !== "undefined" && navigator.vibrate) {
-    navigator.vibrate(pattern);
-  }
-}
+import { triggerHaptic } from "@/lib/haptics";
 
 // Session de revision (repetition espacee) : parcourt une seule fois les
 // questions dues aujourd'hui, sans cout d'energie ni XP -- c'est une
@@ -58,10 +53,10 @@ export function RevisionRunner({
 
     if (isCorrect) {
       if (soundEnabled) playCorrectSound();
-      if (vibrationEnabled) vibrate(15);
+      if (vibrationEnabled) triggerHaptic("correct");
     } else {
       if (soundEnabled) playIncorrectSound();
-      if (vibrationEnabled) vibrate(40);
+      if (vibrationEnabled) triggerHaptic("incorrect");
     }
 
     (async () => {
@@ -82,7 +77,10 @@ export function RevisionRunner({
     setQueue(rest);
     setAnswered(false);
     setRound((r) => r + 1);
-    if (rest.length === 0 && soundEnabled) playCompleteSound();
+    if (rest.length === 0) {
+      if (soundEnabled) playCompleteSound();
+      if (vibrationEnabled) triggerHaptic("correct");
+    }
   }
 
   if (!current) {

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSoundSettings } from "@/lib/sound-settings";
 import { playTapSound } from "@/lib/sound";
+import { triggerHaptic } from "@/lib/haptics";
 
 const INTERACTIVE_SELECTOR = 'button:not(:disabled), a[href], [role="switch"]';
 
@@ -19,9 +20,7 @@ export function TapFeedback() {
       if (interactive.closest('[data-tap-feedback="off"]')) return;
 
       if (soundEnabled) playTapSound();
-      if (vibrationEnabled && typeof navigator !== "undefined" && navigator.vibrate) {
-        navigator.vibrate(8);
-      }
+      if (vibrationEnabled) triggerHaptic("tap");
     }
 
     document.addEventListener("pointerdown", handlePointerDown);
