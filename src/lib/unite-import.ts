@@ -25,6 +25,12 @@ export interface ParsedUniteLecon {
 export interface ParsedUniteFile {
   error: string | null;
   uniteTitle: string | null;
+  // Champ "filiere" optionnel du JSON -- ignore pour un import cible sur
+  // une filiere precise, mais requis quand "Toutes les filieres" est
+  // selectionne (voir resolveFiliereId dans actions.ts). Toujours null
+  // pour un import CSV (une filiere s'y choisit explicitement, jamais
+  // "Toutes les filieres").
+  filiereName: string | null;
   lecons: ParsedUniteLecon[];
 }
 
@@ -33,27 +39,30 @@ export function parseUniteImportJson(text: string): ParsedUniteFile {
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { error: "Fichier JSON invalide (erreur de syntaxe).", uniteTitle: null, lecons: [] };
+    return { error: "Fichier JSON invalide (erreur de syntaxe).", uniteTitle: null, filiereName: null, lecons: [] };
   }
 
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     return {
       error: 'Le JSON doit être un objet { "unite": "...", "lecons": [...] }.',
       uniteTitle: null,
+      filiereName: null,
       lecons: [],
     };
   }
 
-  const obj = parsed as { unite?: unknown; lecons?: unknown };
+  const obj = parsed as { unite?: unknown; filiere?: unknown; lecons?: unknown };
+  const filiereName = typeof obj.filiere === "string" && obj.filiere.trim() ? obj.filiere.trim() : null;
 
   if (!obj.unite || typeof obj.unite !== "string" || !obj.unite.trim()) {
-    return { error: 'Le champ "unite" (titre, texte) est requis.', uniteTitle: null, lecons: [] };
+    return { error: 'Le champ "unite" (titre, texte) est requis.', uniteTitle: null, filiereName, lecons: [] };
   }
 
   if (!Array.isArray(obj.lecons) || obj.lecons.length === 0) {
     return {
       error: 'Le champ "lecons" doit être un tableau non vide.',
       uniteTitle: obj.unite.trim(),
+      filiereName,
       lecons: [],
     };
   }
@@ -75,7 +84,7 @@ export function parseUniteImportJson(text: string): ParsedUniteFile {
     return { titre, rows: validateQuestionList(l.questions) };
   });
 
-  return { error: null, uniteTitle: obj.unite.trim(), lecons };
+  return { error: null, uniteTitle: obj.unite.trim(), filiereName, lecons };
 }
 
 // CSV : une ligne = une question qcm, avec une colonne "lecon" qui indique
@@ -85,7 +94,7 @@ export function parseUniteImportJson(text: string): ParsedUniteFile {
 // formulaire d'import.
 export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUniteFile {
   if (!uniteTitle.trim()) {
-    return { error: "Le titre de l'unité est requis pour un import CSV.", uniteTitle: null, lecons: [] };
+    return { error: "Le titre de l'unité est requis pour un import CSV.", uniteTitle: null, filiereName: null, lecons: [] };
   }
 
   const lines = text.split(/\r\n|\n/).filter((l) => l.trim().length > 0);
@@ -93,6 +102,7 @@ export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUni
     return {
       error: "Le fichier CSV doit avoir un en-tête et au moins une ligne.",
       uniteTitle: uniteTitle.trim(),
+      filiereName: null,
       lecons: [],
     };
   }
@@ -104,6 +114,7 @@ export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUni
       error:
         'Le fichier CSV doit avoir une colonne "leçon" (ou "lesson") indiquant la leçon de chaque question.',
       uniteTitle: uniteTitle.trim(),
+      filiereName: null,
       lecons: [],
     };
   }
@@ -130,7 +141,7 @@ export function parseUniteImportCsv(uniteTitle: string, text: string): ParsedUni
     return { titre, rows: importRows };
   });
 
-  return { error: null, uniteTitle: uniteTitle.trim(), lecons };
+  return { error: null, uniteTitle: uniteTitle.trim(), filiereName: null, lecons };
 }
 
 // Detection par contenu (pas par extension de fichier) : accepte n'importe

@@ -59,10 +59,12 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   const isCsv = !isZip && !!fileText && !looksLikeJson(fileText);
 
   // Recap affiché sur l'écran de résultat : la destination choisie, en
-  // toutes lettres, pour confirmer où le contenu vient d'atterrir.
+  // toutes lettres, pour confirmer où le contenu vient d'atterrir. En mode
+  // "Toutes les filières", chaque unité résout la sienne (voir plus bas) --
+  // ce recap général affiche juste "Toutes les filières".
   const scopeLabel = scope
     ? [
-        filieres.find((f) => f.id === scope.filiereId)?.name ?? "",
+        scope.isAllFilieres ? "Toutes les filières" : (filieres.find((f) => f.id === scope.filiereId)?.name ?? ""),
         scope.isLangues ? courseLanguageLabel(scope.langueCode) : scope.niveauEtude.toUpperCase(),
         `Niveau ${scope.parcoursNiveau}`,
         scope.niveauDifficulte ? NIVEAU_DIFFICULTE_LABELS[scope.niveauDifficulte] : "Tous niveaux",
@@ -70,7 +72,12 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
         .filter(Boolean)
         .join(" · ")
     : "";
-  const canPreview = isZip || (!!fileText && (!isCsv || csvUniteTitle.trim().length > 0));
+  // Un CSV represente toujours une seule unite sans place pour un champ
+  // "filiere" par ligne : "Toutes les filieres" n'a de sens qu'avec du
+  // JSON (fichier seul ou ZIP), ou chaque unite porte deja la sienne.
+  const blockedCsvAllFilieres = isCsv && !!scope?.isAllFilieres;
+  const canPreview =
+    !blockedCsvAllFilieres && (isZip || (!!fileText && (!isCsv || csvUniteTitle.trim().length > 0)));
 
   function handleTextChange(text: string | null) {
     setFileText(text);
@@ -158,6 +165,12 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
                     <p className="text-red-600 dark:text-red-400">{r.error}</p>
                   ) : (
                     <p className="text-zinc-600 dark:text-zinc-400">
+                      {scope?.isAllFilieres && r.filiereName && (
+                        <span className="font-medium text-orange-600 dark:text-orange-400">
+                          {r.filiereName}
+                          {" — "}
+                        </span>
+                      )}
                       {r.leconsCreated} leçon{r.leconsCreated > 1 ? "s" : ""}, {r.questionsImported}{" "}
                       question{r.questionsImported > 1 ? "s" : ""}
                       {r.uniteId && (
@@ -259,6 +272,12 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
                   <p className="text-red-600 dark:text-red-400">{p.error}</p>
                 ) : (
                   <p className="text-zinc-600 dark:text-zinc-400">
+                    {scope?.isAllFilieres && p.filiereName && (
+                      <span className="font-medium text-orange-600 dark:text-orange-400">
+                        {p.filiereName}
+                        {" — "}
+                      </span>
+                    )}
                     « {p.uniteTitle} » — {p.lecons.length} leçon{p.lecons.length > 1 ? "s" : ""},{" "}
                     {totalQuestions} question{totalQuestions > 1 ? "s" : ""}
                     {p.existingUniteId && (
@@ -436,7 +455,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
 
   return (
     <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
-      <FiliereScopeFields filieres={filieres} onScopeChange={setScope} />
+      <FiliereScopeFields filieres={filieres} onScopeChange={setScope} allowAllFilieres />
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -464,6 +483,13 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
             className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
           />
         </div>
+      )}
+
+      {blockedCsvAllFilieres && (
+        <p className="rounded-xl bg-orange-50 px-4 py-3 text-sm text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+          Choisissez une filière précise pour un import CSV — « Toutes les filières » n&apos;est
+          disponible que pour un fichier JSON (ou un ZIP), où chaque unité indique la sienne.
+        </p>
       )}
 
       <button

@@ -4,6 +4,7 @@ import { AdminBackLink } from "@/components/admin/AdminBackLink";
 
 const EXAMPLE = `{
   "unite": "Les fonds et sauces",
+  "filiere": "Cuisine",
   "lecons": [
     {
       "titre": "Les fonds de base",
@@ -83,7 +84,9 @@ export default async function ImportUnite() {
             format que l&apos;import question-par-question (types <code>qcm</code>, <code>associer</code>,{" "}
             <code>ordonner</code> ; jusqu&apos;à 10 questions par leçon ; <code>image</code> optionnelle =
             adresse d&apos;une image déjà téléversée dans l&apos;admin). Le titre de l&apos;unité est repris
-            automatiquement du champ <code>unite</code> — aucune saisie à faire.
+            automatiquement du champ <code>unite</code> — aucune saisie à faire. Le champ{" "}
+            <code>filiere</code> est facultatif : ignoré si vous avez choisi une filière précise dans
+            le formulaire, mais requis si vous avez choisi « Toutes les filières » (voir plus bas).
           </p>
           <pre className="overflow-x-auto rounded-xl bg-zinc-50 p-4 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             {EXAMPLE}
@@ -113,6 +116,15 @@ export default async function ImportUnite() {
             qu&apos;il contient sont analysées et listées avant import, avec leur nombre de leçons et de
             questions. Si certaines existent déjà, un seul choix (remplacer ou créer séparément)
             s&apos;applique à toutes celles en conflit ; les autres se créent normalement.
+          </p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Pour mélanger plusieurs filières dans un même ZIP (par exemple des unités de Cuisine et
+            de Service), choisissez <strong>« Toutes les filières »</strong> en haut du menu Filière :
+            chaque fichier doit alors préciser la sienne via son champ <code>filiere</code> (« Cuisine »,
+            « Pâtisserie », « Bar et Vins », « Service » ou « Hôtellerie » — Langues n&apos;est pas
+            proposée ici, elle se choisit directement). Un fichier sans ce champ, ou avec un nom de
+            filière introuvable, est signalé en erreur mais n&apos;empêche pas les autres d&apos;être
+            importés.
           </p>
         </div>
 

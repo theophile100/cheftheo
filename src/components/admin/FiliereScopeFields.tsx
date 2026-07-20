@@ -10,7 +10,8 @@ interface Filiere {
 }
 
 export interface FiliereScope {
-  filiereId: string;
+  filiereId: string | null;
+  isAllFilieres: boolean;
   isLangues: boolean;
   niveauEtude: string;
   langueCode: string;
@@ -26,26 +27,45 @@ const selectClasses =
 // (1 ou 2), et selon la filiere soit une langue (Langues) soit un niveau
 // d'etudes CAP/BTS (les 5 autres filieres). onScopeChange permet au
 // formulaire de leçon de filtrer sa liste d'unites en fonction de ces choix.
+//
+// allowAllFilieres n'est propose que par le formulaire d'import (jamais
+// par la creation manuelle, ou une unite/leçon doit toujours appartenir a
+// une seule filiere precise) : il ajoute un choix "Toutes les filieres"
+// pour importer un ZIP qui melange plusieurs filieres, chaque fichier
+// indiquant alors la sienne via un champ "filiere" dans son JSON.
 export function FiliereScopeFields({
   filieres,
   defaultFiliereId,
   onScopeChange,
+  allowAllFilieres = false,
 }: {
   filieres: Filiere[];
   defaultFiliereId?: string;
   onScopeChange?: (scope: FiliereScope) => void;
+  allowAllFilieres?: boolean;
 }) {
-  const [filiereId, setFiliereId] = useState(defaultFiliereId ?? filieres[0]?.id ?? "");
+  const [filiereId, setFiliereId] = useState(
+    defaultFiliereId ?? (allowAllFilieres ? "" : (filieres[0]?.id ?? "")),
+  );
   const [niveauEtude, setNiveauEtude] = useState("cap");
   const [langueCode, setLangueCode] = useState(COURSE_LANGUAGES[0].code as string);
   const [parcoursNiveau, setParcoursNiveau] = useState<1 | 2>(1);
   const [niveauDifficulte, setNiveauDifficulte] = useState("");
+  const isAllFilieres = allowAllFilieres && filiereId === "";
   const isLangues = filieres.find((f) => f.id === filiereId)?.slug === "langues";
 
   useEffect(() => {
-    onScopeChange?.({ filiereId, isLangues, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte });
+    onScopeChange?.({
+      filiereId: isAllFilieres ? null : filiereId,
+      isAllFilieres,
+      isLangues,
+      niveauEtude,
+      langueCode,
+      parcoursNiveau,
+      niveauDifficulte,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filiereId, isLangues, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte]);
+  }, [filiereId, isAllFilieres, isLangues, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte]);
 
   return (
     <>
@@ -55,11 +75,14 @@ export function FiliereScopeFields({
         </label>
         <select
           name="filiere_id"
-          required
+          required={!allowAllFilieres}
           value={filiereId}
           onChange={(e) => setFiliereId(e.target.value)}
           className={selectClasses}
         >
+          {allowAllFilieres && (
+            <option value="">Toutes les filières (hors Langues)</option>
+          )}
           {filieres.map((f) => (
             <option key={f.id} value={f.id}>
               {f.name}

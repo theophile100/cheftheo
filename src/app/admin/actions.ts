@@ -697,6 +697,7 @@ export async function importQuestions(
 export interface UniteImportPreview {
   error?: string;
   uniteTitle: string;
+  filiereName: string;
   existingUniteId: string | null;
   existingUniteLeconTitles: string[];
   lecons: {
@@ -710,6 +711,7 @@ export interface UniteImportPreview {
 export interface UniteImportResult {
   error?: string;
   uniteId: string;
+  filiereName: string;
   leconsCreated: number;
   questionsImported: number;
   questionErrors: { leconTitre: string; index: number; message: string }[];
@@ -729,6 +731,49 @@ interface UniteScope {
 }
 
 type AdminClient = ReturnType<typeof createAdminClient>;
+
+interface FiliereLookup {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+// Quand "Toutes les filieres" est choisi cote import (filiereId absent),
+// chaque fichier doit indiquer la sienne via son propre champ "filiere" --
+// resolue ici par nom ou slug (Langues exclue, son axe langue_code/pas de
+// niveau_etude ne s'y prete pas). Quand une filiere precise est deja
+// choisie, on se contente de retrouver son nom pour le recapitulatif.
+function resolveFiliereForImport(
+  filieresList: FiliereLookup[],
+  filiereId: string | null,
+  parsedFiliereName: string | null,
+): { id: string; name: string } | { error: string } {
+  if (filiereId) {
+    const match = filieresList.find((f) => f.id === filiereId);
+    if (!match) return { error: "Filière introuvable." };
+    return { id: match.id, name: match.name };
+  }
+
+  if (!parsedFiliereName) {
+    return {
+      error:
+        'Le champ "filiere" est requis dans le fichier quand "Toutes les filières" est sélectionné (ex. "Cuisine", "Service"...).',
+    };
+  }
+
+  const normalized = parsedFiliereName.trim().toLowerCase();
+  const match = filieresList.find(
+    (f) => f.slug !== "langues" && (f.name.toLowerCase() === normalized || f.slug === normalized),
+  );
+  if (!match) {
+    const names = filieresList
+      .filter((f) => f.slug !== "langues")
+      .map((f) => f.name)
+      .join(", ");
+    return { error: `Filière "${parsedFiliereName}" introuvable (attendu : ${names}).` };
+  }
+  return { id: match.id, name: match.name };
+}
 
 // .limit(1) plutot que .maybeSingle() : le nom d'une unite n'est pas
 // contraint unique en base (on autorise justement "creer separement" a la
@@ -760,12 +805,14 @@ async function findExistingUnite(admin: AdminClient, scope: UniteScope, title: s
 async function buildUnitePreview(
   admin: AdminClient,
   scope: UniteScope,
+  filiereName: string,
   parsed: ReturnType<typeof parseUniteImportFile>,
 ): Promise<UniteImportPreview> {
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",
       uniteTitle: "",
+      filiereName,
       existingUniteId: null,
       existingUniteLeconTitles: [],
       lecons: [],
@@ -815,6 +862,7 @@ async function buildUnitePreview(
 
   return {
     uniteTitle: parsed.uniteTitle,
+    filiereName,
     existingUniteId: existingUnite?.id ?? null,
     existingUniteLeconTitles,
     lecons,
@@ -825,6 +873,7 @@ async function buildUnitePreview(
 async function commitParsedUnite(
   admin: AdminClient,
   scope: UniteScope,
+  filiereName: string,
   parsed: ReturnType<typeof parseUniteImportFile>,
   mode: "replace" | "create-new",
 ): Promise<UniteImportResult> {
@@ -832,6 +881,7 @@ async function commitParsedUnite(
     return {
       error: parsed.error ?? "Fichier invalide.",
       uniteId: "",
+      filiereName,
       leconsCreated: 0,
       questionsImported: 0,
       questionErrors: [],
@@ -846,6 +896,7 @@ async function commitParsedUnite(
       return {
         error: "Unité à remplacer introuvable (a-t-elle été supprimée entre-temps ?).",
         uniteId: "",
+        filiereName,
         leconsCreated: 0,
         questionsImported: 0,
         questionErrors: [],
@@ -889,6 +940,7 @@ async function commitParsedUnite(
       return {
         error: uniteError?.message ?? "Échec de la création de l'unité.",
         uniteId: "",
+        filiereName,
         leconsCreated: 0,
         questionsImported: 0,
         questionErrors: [],
@@ -985,11 +1037,11 @@ async function commitParsedUnite(
 
   revalidatePath("/admin");
   revalidatePath(`/admin/unites/${uniteId}`);
-  return { uniteId, leconsCreated, questionsImported, questionErrors };
+  return { uniteId, filiereName, leconsCreated, questionsImported, questionErrors };
 }
 
 export async function previewUniteImport(
-  filiereId: string,
+  filiereId: string | null,
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
@@ -999,13 +1051,20 @@ export async function previewUniteImport(
 ): Promise<UniteImportPreview> {
   await assertAdmin();
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
   const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
-  return buildUnitePreview(admin, scope, parsed);
+
+  const { data: filieresList } = await admin.from("filieres").select("id, name, slug");
+  const resolved = resolveFiliereForImport(filieresList ?? [], filiereId, parsed.filiereName);
+  if ("error" in resolved) {
+    return { error: resolved.error, uniteTitle: "", filiereName: "", existingUniteId: null, existingUniteLeconTitles: [], lecons: [], nameCollisions: [] };
+  }
+
+  const scope: UniteScope = { filiereId: resolved.id, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
+  return buildUnitePreview(admin, scope, resolved.name, parsed);
 }
 
 export async function commitUniteImport(
-  filiereId: string,
+  filiereId: string | null,
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
@@ -1016,9 +1075,16 @@ export async function commitUniteImport(
 ): Promise<UniteImportResult> {
   await assertAdmin();
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
   const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
-  return commitParsedUnite(admin, scope, parsed, mode);
+
+  const { data: filieresList } = await admin.from("filieres").select("id, name, slug");
+  const resolved = resolveFiliereForImport(filieresList ?? [], filiereId, parsed.filiereName);
+  if ("error" in resolved) {
+    return { error: resolved.error, uniteId: "", filiereName: "", leconsCreated: 0, questionsImported: 0, questionErrors: [] };
+  }
+
+  const scope: UniteScope = { filiereId: resolved.id, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
+  return commitParsedUnite(admin, scope, resolved.name, parsed, mode);
 }
 
 // ---------- Import ZIP (plusieurs unites en un depot) ----------
@@ -1034,7 +1100,7 @@ export interface ZipUniteImportPreview {
 }
 
 export async function previewZipUniteImport(
-  filiereId: string,
+  filiereId: string | null,
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
@@ -1050,12 +1116,23 @@ export async function previewZipUniteImport(
   }
 
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
+  const { data: filieresList } = await admin.from("filieres").select("id, name, slug");
 
   const entries: ZipUniteEntryPreview[] = [];
   for (const file of files.files) {
     const parsed = parseUniteImportFile("", file.text);
-    const preview = await buildUnitePreview(admin, scope, parsed);
+    // Chaque fichier resout sa propre filiere : en mode "Toutes les
+    // filieres", un ZIP peut melanger Cuisine, Service, etc.
+    const resolved = resolveFiliereForImport(filieresList ?? [], filiereId, parsed.filiereName);
+    if ("error" in resolved) {
+      entries.push({
+        filename: file.filename,
+        preview: { error: resolved.error, uniteTitle: parsed.uniteTitle ?? "", filiereName: "", existingUniteId: null, existingUniteLeconTitles: [], lecons: [], nameCollisions: [] },
+      });
+      continue;
+    }
+    const scope: UniteScope = { filiereId: resolved.id, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
+    const preview = await buildUnitePreview(admin, scope, resolved.name, parsed);
     entries.push({ filename: file.filename, preview });
   }
 
@@ -1068,7 +1145,7 @@ export interface ZipUniteImportResult {
 }
 
 export async function commitZipUniteImport(
-  filiereId: string,
+  filiereId: string | null,
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
@@ -1082,17 +1159,26 @@ export async function commitZipUniteImport(
   if (files.error) return { error: files.error, results: [] };
 
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
+  const { data: filieresList } = await admin.from("filieres").select("id, name, slug");
 
   const results: { filename: string; result: UniteImportResult }[] = [];
   for (const file of files.files) {
     const parsed = parseUniteImportFile("", file.text);
+    const resolved = resolveFiliereForImport(filieresList ?? [], filiereId, parsed.filiereName);
+    if ("error" in resolved) {
+      results.push({
+        filename: file.filename,
+        result: { error: resolved.error, uniteId: "", filiereName: "", leconsCreated: 0, questionsImported: 0, questionErrors: [] },
+      });
+      continue;
+    }
+    const scope: UniteScope = { filiereId: resolved.id, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
     // Une unite en conflit suit conflictMode (choisi une seule fois pour
     // tout le ZIP) ; une unite sans conflit se cree normalement quel que
     // soit ce choix -- pas de decision individuelle a rendre par fichier.
     const existingUnite = parsed.uniteTitle ? await findExistingUnite(admin, scope, parsed.uniteTitle) : null;
     const mode = existingUnite ? conflictMode : "create-new";
-    const result = await commitParsedUnite(admin, scope, parsed, mode);
+    const result = await commitParsedUnite(admin, scope, resolved.name, parsed, mode);
     results.push({ filename: file.filename, result });
   }
 
