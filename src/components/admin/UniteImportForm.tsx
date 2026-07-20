@@ -5,8 +5,12 @@ import { useState } from "react";
 import {
   previewUniteImport,
   commitUniteImport,
+  previewZipUniteImport,
+  commitZipUniteImport,
   type UniteImportPreview,
   type UniteImportResult,
+  type ZipUniteImportPreview,
+  type ZipUniteImportResult,
 } from "@/app/admin/actions";
 import {
   FiliereScopeFields,
@@ -32,49 +36,131 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   const router = useRouter();
   const [scope, setScope] = useState<FiliereScope | null>(null);
   const [fileText, setFileText] = useState<string | null>(null);
+  const [zipBase64, setZipBase64] = useState<string | null>(null);
+  const [zipFilename, setZipFilename] = useState<string | null>(null);
   const [csvUniteTitle, setCsvUniteTitle] = useState("");
   const [step, setStep] = useState<Step>("form");
   const [preview, setPreview] = useState<UniteImportPreview | null>(null);
+  const [zipPreview, setZipPreview] = useState<ZipUniteImportPreview | null>(null);
   const [result, setResult] = useState<UniteImportResult | null>(null);
+  const [zipResult, setZipResult] = useState<ZipUniteImportResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const isCsv = !!fileText && !looksLikeJson(fileText);
-  const canPreview = !!fileText && (!isCsv || csvUniteTitle.trim().length > 0);
+  const isZip = !!zipBase64;
+  // Un ZIP ne contient que du JSON (chaque fichier porte deja son titre) :
+  // le champ "Titre de l'unite" ne concerne donc que le CSV, hors ZIP.
+  const isCsv = !isZip && !!fileText && !looksLikeJson(fileText);
+  const canPreview = isZip || (!!fileText && (!isCsv || csvUniteTitle.trim().length > 0));
 
-  async function handlePreview() {
-    if (!scope || !fileText) return;
-    setLoading(true);
-    const res = await previewUniteImport(
+  function handleTextChange(text: string | null) {
+    setFileText(text);
+    setZipBase64(null);
+    setZipFilename(null);
+  }
+
+  function handleZipFile(base64: string, filename: string) {
+    setZipBase64(base64);
+    setZipFilename(filename);
+    setFileText(null);
+  }
+
+  function scopeArgs() {
+    if (!scope) return null;
+    return [
       scope.filiereId,
       scope.isLangues ? null : scope.niveauEtude,
       scope.isLangues ? scope.langueCode : null,
       scope.parcoursNiveau,
-      csvUniteTitle,
-      fileText,
-    );
+    ] as const;
+  }
+
+  async function handlePreview() {
+    const args = scopeArgs();
+    if (!args) return;
+    setLoading(true);
+    if (isZip && zipBase64) {
+      const res = await previewZipUniteImport(...args, zipBase64);
+      setZipPreview(res);
+    } else if (fileText) {
+      const res = await previewUniteImport(...args, csvUniteTitle, fileText);
+      setPreview(res);
+    }
     setLoading(false);
-    setPreview(res);
     setStep("preview");
   }
 
   async function handleCommit(mode: "replace" | "create-new") {
-    if (!scope || !fileText) return;
+    const args = scopeArgs();
+    if (!args) return;
     setLoading(true);
-    const res = await commitUniteImport(
-      scope.filiereId,
-      scope.isLangues ? null : scope.niveauEtude,
-      scope.isLangues ? scope.langueCode : null,
-      scope.parcoursNiveau,
-      csvUniteTitle,
-      fileText,
-      mode,
-    );
+    if (isZip && zipBase64) {
+      const res = await commitZipUniteImport(...args, zipBase64, mode);
+      setZipResult(res);
+    } else if (fileText) {
+      const res = await commitUniteImport(...args, csvUniteTitle, fileText, mode);
+      setResult(res);
+    }
     setLoading(false);
-    setResult(res);
     setStep("result");
     router.refresh();
   }
 
+  function reset() {
+    setStep("form");
+    setPreview(null);
+    setZipPreview(null);
+  }
+
+  // ---------- Résultat (ZIP) ----------
+  if (step === "result" && zipResult) {
+    return (
+      <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+        {zipResult.error ? (
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            {zipResult.error}
+          </p>
+        ) : (
+          <>
+            <h2 className="font-bold text-zinc-900 dark:text-zinc-50">
+              {zipResult.results.length} unité{zipResult.results.length > 1 ? "s" : ""} traitée
+              {zipResult.results.length > 1 ? "s" : ""}
+            </h2>
+            <ul className="flex flex-col gap-2">
+              {zipResult.results.map(({ filename, result: r }, i) => (
+                <li
+                  key={i}
+                  className="rounded-xl bg-zinc-50 px-4 py-3 text-sm dark:bg-zinc-800"
+                >
+                  <p className="font-medium text-zinc-800 dark:text-zinc-100">{filename}</p>
+                  {r.error ? (
+                    <p className="text-red-600 dark:text-red-400">{r.error}</p>
+                  ) : (
+                    <p className="text-zinc-600 dark:text-zinc-400">
+                      {r.leconsCreated} leçon{r.leconsCreated > 1 ? "s" : ""}, {r.questionsImported}{" "}
+                      question{r.questionsImported > 1 ? "s" : ""}
+                      {r.uniteId && (
+                        <>
+                          {" — "}
+                          <a href={`/admin/unites/${r.uniteId}`} className="text-orange-500 hover:text-orange-600">
+                            Voir
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <a href="/admin" className={buttonClasses("primary", "w-full text-center")}>
+              Retour à l&apos;admin
+            </a>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ---------- Résultat (fichier unique) ----------
   if (step === "result" && result) {
     return (
       <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
@@ -114,6 +200,105 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
     );
   }
 
+  // ---------- Aperçu (ZIP) ----------
+  if (step === "preview" && zipPreview) {
+    if (zipPreview.error) {
+      return (
+        <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            {zipPreview.error}
+          </p>
+          <button type="button" onClick={reset} className={buttonClasses("secondary", "")}>
+            Retour
+          </button>
+        </div>
+      );
+    }
+
+    const conflicting = zipPreview.entries.filter((e) => e.preview.existingUniteId);
+
+    return (
+      <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+        <h2 className="font-bold text-zinc-900 dark:text-zinc-50">
+          {zipPreview.entries.length} unité{zipPreview.entries.length > 1 ? "s" : ""} détectée
+          {zipPreview.entries.length > 1 ? "s" : ""} dans le ZIP
+        </h2>
+
+        <ul className="flex flex-col gap-2">
+          {zipPreview.entries.map((entry, i) => {
+            const p = entry.preview;
+            const totalQuestions = p.lecons.reduce((s, l) => s + l.validCount, 0);
+            return (
+              <li key={i} className="rounded-xl bg-zinc-50 px-4 py-3 text-sm dark:bg-zinc-800">
+                <p className="font-medium text-zinc-800 dark:text-zinc-100">{entry.filename}</p>
+                {p.error ? (
+                  <p className="text-red-600 dark:text-red-400">{p.error}</p>
+                ) : (
+                  <p className="text-zinc-600 dark:text-zinc-400">
+                    « {p.uniteTitle} » — {p.lecons.length} leçon{p.lecons.length > 1 ? "s" : ""},{" "}
+                    {totalQuestions} question{totalQuestions > 1 ? "s" : ""}
+                    {p.existingUniteId && (
+                      <span className="text-red-600 dark:text-red-400"> — existe déjà</span>
+                    )}
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        {conflicting.length > 0 ? (
+          <div className="flex flex-col gap-3 rounded-xl bg-red-50 p-4 dark:bg-red-900/20">
+            <p className="text-sm text-red-700 dark:text-red-300">
+              {conflicting.length} unité{conflicting.length > 1 ? "s" : ""} du ZIP porte
+              {conflicting.length > 1 ? "nt" : ""} un nom déjà utilisé ({conflicting
+                .map((e) => e.preview.uniteTitle)
+                .join(", ")}
+              ). Ce choix s&apos;applique à toutes les unités en conflit ; les autres se créent
+              normalement.
+            </p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => handleCommit("replace")}
+                className={buttonClasses("danger", "flex-1")}
+              >
+                {loading ? "..." : "Remplacer les unités existantes"}
+              </button>
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => handleCommit("create-new")}
+                className={buttonClasses("secondary", "flex-1")}
+              >
+                {loading ? "..." : "Créer des unités séparées"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => handleCommit("create-new")}
+            className={buttonClasses("primary", "")}
+          >
+            {loading ? "Import en cours..." : "Confirmer l'import du ZIP"}
+          </button>
+        )}
+
+        <button
+          type="button"
+          onClick={reset}
+          className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
+        >
+          Annuler
+        </button>
+      </div>
+    );
+  }
+
+  // ---------- Aperçu (fichier unique) ----------
   if (step === "preview" && preview) {
     if (preview.error) {
       return (
@@ -121,7 +306,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
             {preview.error}
           </p>
-          <button type="button" onClick={() => setStep("form")} className={buttonClasses("secondary", "")}>
+          <button type="button" onClick={reset} className={buttonClasses("secondary", "")}>
             Retour
           </button>
         </div>
@@ -215,7 +400,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
 
         <button
           type="button"
-          onClick={() => setStep("form")}
+          onClick={reset}
           className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
         >
           Annuler
@@ -230,11 +415,17 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Contenu JSON ou CSV (n&apos;importe quel type de fichier — le format est détecté
-          automatiquement)
+          Contenu JSON ou CSV pour une unité, ou fichier ZIP pour en importer plusieurs d&apos;un coup
+          (n&apos;importe quel type de fichier — le format est détecté automatiquement)
         </label>
-        <ImportSourceInput onChange={setFileText} />
+        <ImportSourceInput onChange={handleTextChange} onZipFile={handleZipFile} />
       </div>
+
+      {zipFilename && (
+        <p className="rounded-xl bg-orange-50 px-4 py-3 text-sm text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+          ZIP sélectionné : {zipFilename}
+        </p>
+      )}
 
       {isCsv && (
         <div className="flex flex-col gap-1.5">

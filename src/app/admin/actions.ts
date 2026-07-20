@@ -8,6 +8,7 @@ import { checkImageSize } from "@/lib/upload-constraints";
 import type { AssocierData, OrdonnerData, QcmData } from "@/lib/types";
 import { parseQuestionsFile, toQuestionData } from "@/lib/question-import";
 import { parseUniteImportFile } from "@/lib/unite-import";
+import { extractJsonFilesFromZip } from "@/lib/zip-import";
 
 export interface QuestionInput {
   leconId: string;
@@ -671,17 +672,52 @@ export interface UniteImportPreview {
   nameCollisions: string[];
 }
 
-export async function previewUniteImport(
-  filiereId: string,
-  niveauEtude: string | null,
-  langueCode: string | null,
-  parcoursNiveau: number,
-  uniteTitleOverride: string,
-  fileText: string,
-): Promise<UniteImportPreview> {
-  await assertAdmin();
+export interface UniteImportResult {
+  error?: string;
+  uniteId: string;
+  leconsCreated: number;
+  questionsImported: number;
+  questionErrors: { leconTitre: string; index: number; message: string }[];
+}
 
-  const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
+interface UniteScope {
+  filiereId: string;
+  niveauEtude: string | null;
+  langueCode: string | null;
+  parcoursNiveau: number;
+}
+
+type AdminClient = ReturnType<typeof createAdminClient>;
+
+// .limit(1) plutot que .maybeSingle() : le nom d'une unite n'est pas
+// contraint unique en base (on autorise justement "creer separement" a la
+// resolution d'un conflit), donc plusieurs lignes peuvent partager le meme
+// titre -- .maybeSingle() erreurait silencieusement dans ce cas. Reutilise
+// entre l'aperçu et le commit (mode "replace") pour cibler la meme ligne.
+async function findExistingUnite(admin: AdminClient, scope: UniteScope, title: string) {
+  let uniteQuery = admin
+    .from("unites")
+    .select("id")
+    .eq("filiere_id", scope.filiereId)
+    .eq("parcours_niveau", scope.parcoursNiveau)
+    .eq("title", title)
+    .order("position")
+    .limit(1);
+  uniteQuery = scope.niveauEtude
+    ? uniteQuery.eq("niveau_etude", scope.niveauEtude)
+    : uniteQuery.is("niveau_etude", null);
+  uniteQuery = scope.langueCode
+    ? uniteQuery.eq("langue_code", scope.langueCode)
+    : uniteQuery.is("langue_code", null);
+  const { data } = await uniteQuery;
+  return data?.[0] ?? null;
+}
+
+async function buildUnitePreview(
+  admin: AdminClient,
+  scope: UniteScope,
+  parsed: ReturnType<typeof parseUniteImportFile>,
+): Promise<UniteImportPreview> {
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",
@@ -693,24 +729,7 @@ export async function previewUniteImport(
     };
   }
 
-  const admin = createAdminClient();
-
-  // .limit(1) plutot que .maybeSingle() : le nom d'une unite n'est pas
-  // contraint unique en base (on autorise justement "creer separement" a la
-  // resolution d'un conflit), donc plusieurs lignes peuvent partager le
-  // meme titre -- .maybeSingle() erreurait silencieusement dans ce cas.
-  let uniteQuery = admin
-    .from("unites")
-    .select("id")
-    .eq("filiere_id", filiereId)
-    .eq("parcours_niveau", parcoursNiveau)
-    .eq("title", parsed.uniteTitle)
-    .order("position")
-    .limit(1);
-  uniteQuery = niveauEtude ? uniteQuery.eq("niveau_etude", niveauEtude) : uniteQuery.is("niveau_etude", null);
-  uniteQuery = langueCode ? uniteQuery.eq("langue_code", langueCode) : uniteQuery.is("langue_code", null);
-  const { data: existingUnites } = await uniteQuery;
-  const existingUnite = existingUnites?.[0] ?? null;
+  const existingUnite = await findExistingUnite(admin, scope, parsed.uniteTitle);
 
   let existingUniteLeconTitles: string[] = [];
   if (existingUnite) {
@@ -725,13 +744,13 @@ export async function previewUniteImport(
   let leconsInScopeQuery = admin
     .from("lecons")
     .select("title")
-    .eq("filiere_id", filiereId)
-    .eq("parcours_niveau", parcoursNiveau);
-  leconsInScopeQuery = niveauEtude
-    ? leconsInScopeQuery.eq("niveau_etude", niveauEtude)
+    .eq("filiere_id", scope.filiereId)
+    .eq("parcours_niveau", scope.parcoursNiveau);
+  leconsInScopeQuery = scope.niveauEtude
+    ? leconsInScopeQuery.eq("niveau_etude", scope.niveauEtude)
     : leconsInScopeQuery.is("niveau_etude", null);
-  leconsInScopeQuery = langueCode
-    ? leconsInScopeQuery.eq("langue_code", langueCode)
+  leconsInScopeQuery = scope.langueCode
+    ? leconsInScopeQuery.eq("langue_code", scope.langueCode)
     : leconsInScopeQuery.is("langue_code", null);
   const { data: leconsInScope } = await leconsInScopeQuery;
   const existingTitles = new Set((leconsInScope ?? []).map((l) => l.title));
@@ -756,26 +775,12 @@ export async function previewUniteImport(
   };
 }
 
-export interface UniteImportResult {
-  error?: string;
-  uniteId: string;
-  leconsCreated: number;
-  questionsImported: number;
-  questionErrors: { leconTitre: string; index: number; message: string }[];
-}
-
-export async function commitUniteImport(
-  filiereId: string,
-  niveauEtude: string | null,
-  langueCode: string | null,
-  parcoursNiveau: number,
-  uniteTitleOverride: string,
-  fileText: string,
+async function commitParsedUnite(
+  admin: AdminClient,
+  scope: UniteScope,
+  parsed: ReturnType<typeof parseUniteImportFile>,
   mode: "replace" | "create-new",
 ): Promise<UniteImportResult> {
-  await assertAdmin();
-
-  const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
   if (parsed.error || !parsed.uniteTitle) {
     return {
       error: parsed.error ?? "Fichier invalide.",
@@ -786,26 +791,10 @@ export async function commitUniteImport(
     };
   }
 
-  const admin = createAdminClient();
   let uniteId: string;
 
   if (mode === "replace") {
-    // Meme raisonnement que dans previewUniteImport : plusieurs unites
-    // peuvent partager un titre, on cible la premiere (meme ordre que
-    // l'aperçu) plutot que de planter sur un resultat multiple.
-    let uniteQuery = admin
-      .from("unites")
-      .select("id")
-      .eq("filiere_id", filiereId)
-      .eq("parcours_niveau", parcoursNiveau)
-      .eq("title", parsed.uniteTitle)
-      .order("position")
-      .limit(1);
-    uniteQuery = niveauEtude ? uniteQuery.eq("niveau_etude", niveauEtude) : uniteQuery.is("niveau_etude", null);
-    uniteQuery = langueCode ? uniteQuery.eq("langue_code", langueCode) : uniteQuery.is("langue_code", null);
-    const { data: existingUnites } = await uniteQuery;
-    const existingUnite = existingUnites?.[0] ?? null;
-
+    const existingUnite = await findExistingUnite(admin, scope, parsed.uniteTitle);
     if (!existingUnite) {
       return {
         error: "Unité à remplacer introuvable (a-t-elle été supprimée entre-temps ?).",
@@ -823,26 +812,28 @@ export async function commitUniteImport(
     let maxUniteQuery = admin
       .from("unites")
       .select("position")
-      .eq("filiere_id", filiereId)
-      .eq("parcours_niveau", parcoursNiveau)
+      .eq("filiere_id", scope.filiereId)
+      .eq("parcours_niveau", scope.parcoursNiveau)
       .order("position", { ascending: false })
       .limit(1);
-    maxUniteQuery = niveauEtude
-      ? maxUniteQuery.eq("niveau_etude", niveauEtude)
+    maxUniteQuery = scope.niveauEtude
+      ? maxUniteQuery.eq("niveau_etude", scope.niveauEtude)
       : maxUniteQuery.is("niveau_etude", null);
-    maxUniteQuery = langueCode ? maxUniteQuery.eq("langue_code", langueCode) : maxUniteQuery.is("langue_code", null);
+    maxUniteQuery = scope.langueCode
+      ? maxUniteQuery.eq("langue_code", scope.langueCode)
+      : maxUniteQuery.is("langue_code", null);
     const { data: maxUnite } = await maxUniteQuery;
     const nextUnitePosition = (maxUnite?.[0]?.position ?? 0) + 1;
 
     const { data: newUnite, error: uniteError } = await admin
       .from("unites")
       .insert({
-        filiere_id: filiereId,
+        filiere_id: scope.filiereId,
         title: parsed.uniteTitle,
         position: nextUnitePosition,
-        niveau_etude: niveauEtude,
-        langue_code: langueCode,
-        parcours_niveau: parcoursNiveau,
+        niveau_etude: scope.niveauEtude,
+        langue_code: scope.langueCode,
+        parcours_niveau: scope.parcoursNiveau,
       })
       .select()
       .single();
@@ -861,12 +852,16 @@ export async function commitUniteImport(
   let maxLeconQuery = admin
     .from("lecons")
     .select("position")
-    .eq("filiere_id", filiereId)
-    .eq("parcours_niveau", parcoursNiveau)
+    .eq("filiere_id", scope.filiereId)
+    .eq("parcours_niveau", scope.parcoursNiveau)
     .order("position", { ascending: false })
     .limit(1);
-  maxLeconQuery = niveauEtude ? maxLeconQuery.eq("niveau_etude", niveauEtude) : maxLeconQuery.is("niveau_etude", null);
-  maxLeconQuery = langueCode ? maxLeconQuery.eq("langue_code", langueCode) : maxLeconQuery.is("langue_code", null);
+  maxLeconQuery = scope.niveauEtude
+    ? maxLeconQuery.eq("niveau_etude", scope.niveauEtude)
+    : maxLeconQuery.is("niveau_etude", null);
+  maxLeconQuery = scope.langueCode
+    ? maxLeconQuery.eq("langue_code", scope.langueCode)
+    : maxLeconQuery.is("langue_code", null);
   const { data: maxLecon } = await maxLeconQuery;
   let nextLeconPosition = (maxLecon?.[0]?.position ?? 0) + 1;
 
@@ -878,13 +873,13 @@ export async function commitUniteImport(
     const { data: newLecon, error: leconError } = await admin
       .from("lecons")
       .insert({
-        filiere_id: filiereId,
+        filiere_id: scope.filiereId,
         unite_id: uniteId,
         title: lecon.titre,
         position: nextLeconPosition,
-        niveau_etude: niveauEtude,
-        langue_code: langueCode,
-        parcours_niveau: parcoursNiveau,
+        niveau_etude: scope.niveauEtude,
+        langue_code: scope.langueCode,
+        parcours_niveau: scope.parcoursNiveau,
       })
       .select()
       .single();
@@ -942,4 +937,111 @@ export async function commitUniteImport(
   revalidatePath("/admin");
   revalidatePath(`/admin/unites/${uniteId}`);
   return { uniteId, leconsCreated, questionsImported, questionErrors };
+}
+
+export async function previewUniteImport(
+  filiereId: string,
+  niveauEtude: string | null,
+  langueCode: string | null,
+  parcoursNiveau: number,
+  uniteTitleOverride: string,
+  fileText: string,
+): Promise<UniteImportPreview> {
+  await assertAdmin();
+  const admin = createAdminClient();
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+  const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
+  return buildUnitePreview(admin, scope, parsed);
+}
+
+export async function commitUniteImport(
+  filiereId: string,
+  niveauEtude: string | null,
+  langueCode: string | null,
+  parcoursNiveau: number,
+  uniteTitleOverride: string,
+  fileText: string,
+  mode: "replace" | "create-new",
+): Promise<UniteImportResult> {
+  await assertAdmin();
+  const admin = createAdminClient();
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+  const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
+  return commitParsedUnite(admin, scope, parsed, mode);
+}
+
+// ---------- Import ZIP (plusieurs unites en un depot) ----------
+
+export interface ZipUniteEntryPreview {
+  filename: string;
+  preview: UniteImportPreview;
+}
+
+export interface ZipUniteImportPreview {
+  error?: string;
+  entries: ZipUniteEntryPreview[];
+}
+
+export async function previewZipUniteImport(
+  filiereId: string,
+  niveauEtude: string | null,
+  langueCode: string | null,
+  parcoursNiveau: number,
+  zipBase64: string,
+): Promise<ZipUniteImportPreview> {
+  await assertAdmin();
+
+  const files = await extractJsonFilesFromZip(zipBase64);
+  if (files.error) return { error: files.error, entries: [] };
+  if (files.files.length === 0) {
+    return { error: "Le fichier ZIP ne contient aucun fichier .json.", entries: [] };
+  }
+
+  const admin = createAdminClient();
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+
+  const entries: ZipUniteEntryPreview[] = [];
+  for (const file of files.files) {
+    const parsed = parseUniteImportFile("", file.text);
+    const preview = await buildUnitePreview(admin, scope, parsed);
+    entries.push({ filename: file.filename, preview });
+  }
+
+  return { entries };
+}
+
+export interface ZipUniteImportResult {
+  error?: string;
+  results: { filename: string; result: UniteImportResult }[];
+}
+
+export async function commitZipUniteImport(
+  filiereId: string,
+  niveauEtude: string | null,
+  langueCode: string | null,
+  parcoursNiveau: number,
+  zipBase64: string,
+  conflictMode: "replace" | "create-new",
+): Promise<ZipUniteImportResult> {
+  await assertAdmin();
+
+  const files = await extractJsonFilesFromZip(zipBase64);
+  if (files.error) return { error: files.error, results: [] };
+
+  const admin = createAdminClient();
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+
+  const results: { filename: string; result: UniteImportResult }[] = [];
+  for (const file of files.files) {
+    const parsed = parseUniteImportFile("", file.text);
+    // Une unite en conflit suit conflictMode (choisi une seule fois pour
+    // tout le ZIP) ; une unite sans conflit se cree normalement quel que
+    // soit ce choix -- pas de decision individuelle a rendre par fichier.
+    const existingUnite = parsed.uniteTitle ? await findExistingUnite(admin, scope, parsed.uniteTitle) : null;
+    const mode = existingUnite ? conflictMode : "create-new";
+    const result = await commitParsedUnite(admin, scope, parsed, mode);
+    results.push({ filename: file.filename, result });
+  }
+
+  return { results };
 }

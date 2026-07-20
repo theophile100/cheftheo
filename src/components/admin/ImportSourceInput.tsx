@@ -2,14 +2,36 @@
 
 import { useState } from "react";
 
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+// Un ZIP commence toujours par les octets "PK" -- suffisant pour le
+// distinguer d'un fichier texte (JSON/CSV) sans se fier a son extension.
+async function isZipFile(file: File): Promise<boolean> {
+  const header = new Uint8Array(await file.slice(0, 2).arrayBuffer());
+  return header[0] === 0x50 && header[1] === 0x4b;
+}
+
 // Bascule entre "deposer un fichier" (n'importe quel type -- la detection
-// du format JSON/CSV se fait sur le contenu, pas sur l'extension) et
+// du format JSON/CSV/ZIP se fait sur le contenu, pas sur l'extension) et
 // "coller le texte" directement, pour ne pas obliger a creer un fichier
 // juste pour tester un import.
 export function ImportSourceInput({
   onChange,
+  onZipFile,
 }: {
   onChange: (text: string | null) => void;
+  // Fourni uniquement par les formulaires qui savent traiter un ZIP
+  // (import d'unite) -- absent, un ZIP depose est simplement ignore par
+  // handleFileChange ci-dessous (aucun risque pour les autres formulaires).
+  onZipFile?: (base64: string, filename: string) => void;
 }) {
   const [mode, setMode] = useState<"file" | "paste">("file");
   const [pasted, setPasted] = useState("");
@@ -17,6 +39,14 @@ export function ImportSourceInput({
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (onZipFile && (await isZipFile(file))) {
+      onChange(null);
+      const base64 = arrayBufferToBase64(await file.arrayBuffer());
+      onZipFile(base64, file.name);
+      return;
+    }
+
     onChange(await file.text());
   }
 

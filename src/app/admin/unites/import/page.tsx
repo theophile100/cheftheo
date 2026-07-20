@@ -66,7 +66,8 @@ export default async function ImportUnite() {
       <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
         Un seul fichier (n&apos;importe quel type — le format est détecté automatiquement) ou un
         texte collé directement crée l&apos;unité, ses leçons dans l&apos;ordre, et toutes leurs
-        questions.
+        questions. Déposez un ZIP contenant plusieurs fichiers .json pour importer plusieurs
+        unités en une fois.
       </p>
 
       <div className="mt-6">
@@ -81,7 +82,8 @@ export default async function ImportUnite() {
             voulu). Chaque leçon a un <code>titre</code> et un tableau <code>questions</code>, au même
             format que l&apos;import question-par-question (types <code>qcm</code>, <code>associer</code>,{" "}
             <code>ordonner</code> ; jusqu&apos;à 10 questions par leçon ; <code>image</code> optionnelle =
-            adresse d&apos;une image déjà téléversée dans l&apos;admin).
+            adresse d&apos;une image déjà téléversée dans l&apos;admin). Le titre de l&apos;unité est repris
+            automatiquement du champ <code>unite</code> — aucune saisie à faire.
           </p>
           <pre className="overflow-x-auto rounded-xl bg-zinc-50 p-4 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             {EXAMPLE}
@@ -101,6 +103,17 @@ export default async function ImportUnite() {
           <pre className="overflow-x-auto rounded-xl bg-zinc-50 p-4 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             {CSV_EXAMPLE}
           </pre>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h2 className="font-bold text-zinc-900 dark:text-zinc-50">Format ZIP (plusieurs unités)</h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Un fichier <code>.zip</code> contenant plusieurs fichiers <code>.json</code> (un par unité,
+            chacun au format ci-dessus). Déposez-le comme n&apos;importe quel fichier : toutes les unités
+            qu&apos;il contient sont analysées et listées avant import, avec leur nombre de leçons et de
+            questions. Si certaines existent déjà, un seul choix (remplacer ou créer séparément)
+            s&apos;applique à toutes celles en conflit ; les autres se créent normalement.
+          </p>
         </div>
 
         <p className="text-xs text-zinc-400">
