@@ -15,6 +15,7 @@ export interface FiliereScope {
   niveauEtude: string;
   langueCode: string;
   parcoursNiveau: 1 | 2;
+  niveauDifficulte: string;
 }
 
 const selectClasses =
@@ -38,12 +39,13 @@ export function FiliereScopeFields({
   const [niveauEtude, setNiveauEtude] = useState("cap");
   const [langueCode, setLangueCode] = useState(COURSE_LANGUAGES[0].code as string);
   const [parcoursNiveau, setParcoursNiveau] = useState<1 | 2>(1);
+  const [niveauDifficulte, setNiveauDifficulte] = useState("");
   const isLangues = filieres.find((f) => f.id === filiereId)?.slug === "langues";
 
   useEffect(() => {
-    onScopeChange?.({ filiereId, isLangues, niveauEtude, langueCode, parcoursNiveau });
+    onScopeChange?.({ filiereId, isLangues, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filiereId, isLangues, niveauEtude, langueCode, parcoursNiveau]);
+  }, [filiereId, isLangues, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte]);
 
   return (
     <>
@@ -125,7 +127,12 @@ export function FiliereScopeFields({
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
           Niveau d&apos;utilisateur (facultatif)
         </label>
-        <select name="niveau_difficulte" defaultValue="" className={selectClasses}>
+        <select
+          name="niveau_difficulte"
+          value={niveauDifficulte}
+          onChange={(e) => setNiveauDifficulte(e.target.value)}
+          className={selectClasses}
+        >
           <option value="">Tous niveaux</option>
           <option value="debutant">Débutant</option>
           <option value="intermediaire">Intermédiaire</option>

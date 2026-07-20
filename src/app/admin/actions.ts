@@ -720,6 +720,12 @@ interface UniteScope {
   niveauEtude: string | null;
   langueCode: string | null;
   parcoursNiveau: number;
+  // Axe de contenu ("Debutant/Intermediaire/Avance"), independant de la
+  // structure de l'arbre : la contrainte d'unicite de position en base ne
+  // le prend PAS en compte (deux niveaux de difficulte partagent le meme
+  // espace de positions), donc il n'entre que dans le titre de l'unite/leçon
+  // et dans la detection de doublon -- jamais dans le calcul de position.
+  niveauDifficulte: string | null;
 }
 
 type AdminClient = ReturnType<typeof createAdminClient>;
@@ -744,6 +750,9 @@ async function findExistingUnite(admin: AdminClient, scope: UniteScope, title: s
   uniteQuery = scope.langueCode
     ? uniteQuery.eq("langue_code", scope.langueCode)
     : uniteQuery.is("langue_code", null);
+  uniteQuery = scope.niveauDifficulte
+    ? uniteQuery.eq("niveau_difficulte", scope.niveauDifficulte)
+    : uniteQuery.is("niveau_difficulte", null);
   const { data } = await uniteQuery;
   return data?.[0] ?? null;
 }
@@ -787,6 +796,9 @@ async function buildUnitePreview(
   leconsInScopeQuery = scope.langueCode
     ? leconsInScopeQuery.eq("langue_code", scope.langueCode)
     : leconsInScopeQuery.is("langue_code", null);
+  leconsInScopeQuery = scope.niveauDifficulte
+    ? leconsInScopeQuery.eq("niveau_difficulte", scope.niveauDifficulte)
+    : leconsInScopeQuery.is("niveau_difficulte", null);
   const { data: leconsInScope } = await leconsInScopeQuery;
   const existingTitles = new Set((leconsInScope ?? []).map((l) => l.title));
   const existingUniteLeconTitleSet = new Set(existingUniteLeconTitles);
@@ -869,6 +881,7 @@ async function commitParsedUnite(
         niveau_etude: scope.niveauEtude,
         langue_code: scope.langueCode,
         parcours_niveau: scope.parcoursNiveau,
+        niveau_difficulte: scope.niveauDifficulte,
       })
       .select()
       .single();
@@ -915,6 +928,7 @@ async function commitParsedUnite(
         niveau_etude: scope.niveauEtude,
         langue_code: scope.langueCode,
         parcours_niveau: scope.parcoursNiveau,
+        niveau_difficulte: scope.niveauDifficulte,
       })
       .select()
       .single();
@@ -979,12 +993,13 @@ export async function previewUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
+  niveauDifficulte: string | null,
   uniteTitleOverride: string,
   fileText: string,
 ): Promise<UniteImportPreview> {
   await assertAdmin();
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
   const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
   return buildUnitePreview(admin, scope, parsed);
 }
@@ -994,13 +1009,14 @@ export async function commitUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
+  niveauDifficulte: string | null,
   uniteTitleOverride: string,
   fileText: string,
   mode: "replace" | "create-new",
 ): Promise<UniteImportResult> {
   await assertAdmin();
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
   const parsed = parseUniteImportFile(uniteTitleOverride, fileText);
   return commitParsedUnite(admin, scope, parsed, mode);
 }
@@ -1022,6 +1038,7 @@ export async function previewZipUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
+  niveauDifficulte: string | null,
   zipBase64: string,
 ): Promise<ZipUniteImportPreview> {
   await assertAdmin();
@@ -1033,7 +1050,7 @@ export async function previewZipUniteImport(
   }
 
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
 
   const entries: ZipUniteEntryPreview[] = [];
   for (const file of files.files) {
@@ -1055,6 +1072,7 @@ export async function commitZipUniteImport(
   niveauEtude: string | null,
   langueCode: string | null,
   parcoursNiveau: number,
+  niveauDifficulte: string | null,
   zipBase64: string,
   conflictMode: "replace" | "create-new",
 ): Promise<ZipUniteImportResult> {
@@ -1064,7 +1082,7 @@ export async function commitZipUniteImport(
   if (files.error) return { error: files.error, results: [] };
 
   const admin = createAdminClient();
-  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau };
+  const scope: UniteScope = { filiereId, niveauEtude, langueCode, parcoursNiveau, niveauDifficulte };
 
   const results: { filename: string; result: UniteImportResult }[] = [];
   for (const file of files.files) {

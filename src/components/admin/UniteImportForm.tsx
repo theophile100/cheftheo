@@ -18,11 +18,18 @@ import {
 } from "@/components/admin/FiliereScopeFields";
 import { ImportSourceInput } from "@/components/admin/ImportSourceInput";
 import { buttonClasses } from "@/lib/button-styles";
+import { courseLanguageLabel } from "@/lib/course-languages";
 
 function looksLikeJson(text: string): boolean {
   const trimmed = text.trim();
   return trimmed.startsWith("{") || trimmed.startsWith("[");
 }
+
+const NIVEAU_DIFFICULTE_LABELS: Record<string, string> = {
+  debutant: "Débutant",
+  intermediaire: "Intermédiaire",
+  avance: "Avancé",
+};
 
 interface Filiere {
   id: string;
@@ -50,6 +57,19 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   // Un ZIP ne contient que du JSON (chaque fichier porte deja son titre) :
   // le champ "Titre de l'unite" ne concerne donc que le CSV, hors ZIP.
   const isCsv = !isZip && !!fileText && !looksLikeJson(fileText);
+
+  // Recap affiché sur l'écran de résultat : la destination choisie, en
+  // toutes lettres, pour confirmer où le contenu vient d'atterrir.
+  const scopeLabel = scope
+    ? [
+        filieres.find((f) => f.id === scope.filiereId)?.name ?? "",
+        scope.isLangues ? courseLanguageLabel(scope.langueCode) : scope.niveauEtude.toUpperCase(),
+        `Niveau ${scope.parcoursNiveau}`,
+        scope.niveauDifficulte ? NIVEAU_DIFFICULTE_LABELS[scope.niveauDifficulte] : "Tous niveaux",
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
   const canPreview = isZip || (!!fileText && (!isCsv || csvUniteTitle.trim().length > 0));
 
   function handleTextChange(text: string | null) {
@@ -71,6 +91,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
       scope.isLangues ? null : scope.niveauEtude,
       scope.isLangues ? scope.langueCode : null,
       scope.parcoursNiveau,
+      scope.niveauDifficulte || null,
     ] as const;
   }
 
@@ -115,6 +136,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   if (step === "result" && zipResult) {
     return (
       <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+        <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">{scopeLabel}</p>
         {zipResult.error ? (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
             {zipResult.error}
@@ -164,6 +186,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
   if (step === "result" && result) {
     return (
       <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+        <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">{scopeLabel}</p>
         {result.error ? (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
             {result.error}
@@ -219,6 +242,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
 
     return (
       <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+        <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">{scopeLabel}</p>
         <h2 className="font-bold text-zinc-900 dark:text-zinc-50">
           {zipPreview.entries.length} unité{zipPreview.entries.length > 1 ? "s" : ""} détectée
           {zipPreview.entries.length > 1 ? "s" : ""} dans le ZIP
@@ -318,6 +342,7 @@ export function UniteImportForm({ filieres }: { filieres: Filiere[] }) {
 
     return (
       <div className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900">
+        <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">{scopeLabel}</p>
         <h2 className="font-bold text-zinc-900 dark:text-zinc-50">
           « {preview.uniteTitle} » — {preview.lecons.length} leçon{preview.lecons.length > 1 ? "s" : ""},{" "}
           {totalQuestions} question{totalQuestions > 1 ? "s" : ""}
