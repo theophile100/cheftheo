@@ -160,7 +160,7 @@ export async function updateLecon(id: string, formData: FormData) {
   redirect(`/admin/lecons/${id}`);
 }
 
-export async function deleteLecon(id: string) {
+export async function deleteLecon(id: string, uniteId?: string) {
   await assertAdmin();
 
   const admin = createAdminClient();
@@ -168,6 +168,19 @@ export async function deleteLecon(id: string) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin");
+  if (uniteId) revalidatePath(`/admin/unites/${uniteId}`);
+}
+
+export async function deleteLecons(ids: string[], uniteId?: string) {
+  await assertAdmin();
+  if (ids.length === 0) return;
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("lecons").delete().in("id", ids);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+  if (uniteId) revalidatePath(`/admin/unites/${uniteId}`);
 }
 
 // Echange la position de deux leçons (ou unites, ou questions) adjacentes.
@@ -274,6 +287,17 @@ export async function deleteUnite(id: string) {
 
   const admin = createAdminClient();
   const { error } = await admin.from("unites").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+}
+
+export async function deleteUnites(ids: string[]) {
+  await assertAdmin();
+  if (ids.length === 0) return;
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("unites").delete().in("id", ids);
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin");
@@ -572,6 +596,17 @@ export async function deleteQuestion(id: string, leconId: string) {
 
   const admin = createAdminClient();
   const { error } = await admin.from("questions").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/admin/lecons/${leconId}`);
+}
+
+export async function deleteQuestions(ids: string[], leconId: string) {
+  await assertAdmin();
+  if (ids.length === 0) return;
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("questions").delete().in("id", ids);
   if (error) throw new Error(error.message);
 
   revalidatePath(`/admin/lecons/${leconId}`);

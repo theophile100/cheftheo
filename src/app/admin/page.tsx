@@ -1,16 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { DeleteButton } from "@/components/admin/DeleteButton";
-import { ReorderButtons } from "@/components/admin/ReorderButtons";
-import { FiliereIcon } from "@/components/FiliereIcon";
+import { FiliereUniteCard } from "@/components/admin/FiliereUniteCard";
 import { buttonClasses } from "@/lib/button-styles";
-import { courseLanguageLabel } from "@/lib/course-languages";
-import {
-  deleteLecon,
-  deleteUnite,
-  swapLeconPosition,
-  swapUnitePosition,
-} from "./actions";
 
 interface Unite {
   id: string;
@@ -149,182 +140,14 @@ export default async function AdminHome({
             .sort((a, b) => a.position - b.position);
 
           return (
-            <div
+            <FiliereUniteCard
               key={filiere.id}
-              className="rounded-3xl bg-white p-5 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50">
-                  <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-orange-50 text-orange-500 dark:bg-zinc-800 dark:text-orange-400">
-                    <FiliereIcon slug={filiere.slug} iconUrl={filiere.icon_url} size={14} />
-                  </span>
-                  {filiere.name}
-                </h2>
-                <div className="flex items-center gap-3">
-                  <Link
-                    href={`/admin/unites/new?filiere_id=${filiere.id}`}
-                    className="text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
-                  >
-                    + Unité
-                  </Link>
-                  <Link
-                    href={`/admin/lecons/new?filiere_id=${filiere.id}`}
-                    className="text-sm font-medium text-orange-500 hover:text-orange-600"
-                  >
-                    + Leçon
-                  </Link>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-col gap-4">
-                {uniteGroups.map(({ unite, lecons: uniteLecons }, uIndex) => (
-                  <div
-                    key={unite.id}
-                    className="rounded-2xl border border-zinc-100 p-3 dark:border-zinc-800"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <ReorderButtons
-                          onUp={
-                            uIndex > 0
-                              ? swapUnitePosition.bind(
-                                  null,
-                                  unite.id,
-                                  unite.position,
-                                  uniteGroups[uIndex - 1].unite.id,
-                                  uniteGroups[uIndex - 1].unite.position,
-                                )
-                              : undefined
-                          }
-                          onDown={
-                            uIndex < uniteGroups.length - 1
-                              ? swapUnitePosition.bind(
-                                  null,
-                                  unite.id,
-                                  unite.position,
-                                  uniteGroups[uIndex + 1].unite.id,
-                                  uniteGroups[uIndex + 1].unite.position,
-                                )
-                              : undefined
-                          }
-                        />
-                        <p className="text-sm font-bold text-zinc-800 dark:text-zinc-100">
-                          {unite.title}
-                        </p>
-                        {isLangues && unite.langue_code && (
-                          <span className="rounded-full bg-orange-50 px-2 py-0.5 text-xs font-semibold text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
-                            {courseLanguageLabel(unite.langue_code)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Link
-                          href={`/admin/unites/${unite.id}`}
-                          className="text-sm font-medium text-orange-500 hover:text-orange-600"
-                        >
-                          Modifier
-                        </Link>
-                        <DeleteButton
-                          onDelete={deleteUnite.bind(null, unite.id)}
-                          confirmMessage={`Supprimer l'unité "${unite.title}" et toutes ses leçons ?`}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-2 flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
-                      {uniteLecons.map((lecon, lIndex) => (
-                        <div key={lecon.id} className="flex items-center justify-between py-2 pl-8">
-                          <span className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
-                            {lecon.title}
-                            {isLangues && lecon.langue_code && (
-                              <span className="text-xs text-zinc-400">
-                                ({courseLanguageLabel(lecon.langue_code)})
-                              </span>
-                            )}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <ReorderButtons
-                              onUp={
-                                lIndex > 0
-                                  ? swapLeconPosition.bind(
-                                      null,
-                                      lecon.id,
-                                      lecon.position,
-                                      uniteLecons[lIndex - 1].id,
-                                      uniteLecons[lIndex - 1].position,
-                                    )
-                                  : undefined
-                              }
-                              onDown={
-                                lIndex < uniteLecons.length - 1
-                                  ? swapLeconPosition.bind(
-                                      null,
-                                      lecon.id,
-                                      lecon.position,
-                                      uniteLecons[lIndex + 1].id,
-                                      uniteLecons[lIndex + 1].position,
-                                    )
-                                  : undefined
-                              }
-                            />
-                            <Link
-                              href={`/admin/lecons/${lecon.id}`}
-                              className="text-sm font-medium text-orange-500 hover:text-orange-600"
-                            >
-                              Gérer
-                            </Link>
-                            <DeleteButton
-                              onDelete={deleteLecon.bind(null, lecon.id)}
-                              confirmMessage={`Supprimer la leçon "${lecon.title}" et toutes ses questions ?`}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                      {uniteLecons.length === 0 && (
-                        <p className="py-2 pl-8 text-xs text-zinc-400">Aucune leçon.</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-
-                {unassignedLecons.length > 0 && (
-                  <div className="rounded-2xl border border-dashed border-zinc-200 p-3 dark:border-zinc-700">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
-                      Sans unité
-                    </p>
-                    <div className="mt-2 flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
-                      {unassignedLecons.map((lecon) => (
-                        <div key={lecon.id} className="flex items-center justify-between py-2">
-                          <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                            {lecon.title}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <Link
-                              href={`/admin/lecons/${lecon.id}`}
-                              className="text-sm font-medium text-orange-500 hover:text-orange-600"
-                            >
-                              Gérer
-                            </Link>
-                            <DeleteButton
-                              onDelete={deleteLecon.bind(null, lecon.id)}
-                              confirmMessage={`Supprimer la leçon "${lecon.title}" et toutes ses questions ?`}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {uniteGroups.length === 0 && unassignedLecons.length === 0 && (
-                  <p className="py-2 text-sm text-zinc-400">
-                    {parcoursNiveau === 2
-                      ? "Niveau 2 réservé — aucun contenu pour l'instant."
-                      : "Aucune unité ni leçon pour l'instant."}
-                  </p>
-                )}
-              </div>
-            </div>
+              filiere={filiere}
+              isLangues={isLangues}
+              uniteGroups={uniteGroups}
+              unassignedLecons={unassignedLecons}
+              parcoursNiveau={parcoursNiveau}
+            />
           );
         })}
       </div>

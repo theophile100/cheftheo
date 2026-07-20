@@ -1,22 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { DeleteButton } from "@/components/admin/DeleteButton";
-import { ReorderButtons } from "@/components/admin/ReorderButtons";
+import { QuestionList } from "@/components/admin/QuestionList";
 import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { buttonClasses } from "@/lib/button-styles";
 import { courseLanguageLabel } from "@/lib/course-languages";
-import {
-  updateLecon,
-  deleteQuestion,
-  swapQuestionPosition,
-} from "../../actions";
-
-const TYPE_LABELS: Record<string, string> = {
-  qcm: "QCM",
-  associer: "Associer",
-  ordonner: "Ordonner",
-};
+import { updateLecon } from "../../actions";
 
 const selectClasses =
   "rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-900 outline-none focus:border-orange-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
@@ -183,63 +172,8 @@ export default async function EditLecon({
         )}
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
-        {sortedQuestions.map((q, index) => (
-          <div
-            key={q.id}
-            className="flex items-center justify-between rounded-3xl bg-white p-4 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
-          >
-            <div>
-              <span className="rounded-full bg-orange-50 px-2 py-0.5 text-xs font-semibold text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
-                {TYPE_LABELS[q.type]}
-              </span>
-              <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                {q.position}. {q.prompt}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <ReorderButtons
-                onUp={
-                  index > 0
-                    ? swapQuestionPosition.bind(
-                        null,
-                        id,
-                        q.id,
-                        q.position,
-                        sortedQuestions[index - 1].id,
-                        sortedQuestions[index - 1].position,
-                      )
-                    : undefined
-                }
-                onDown={
-                  index < sortedQuestions.length - 1
-                    ? swapQuestionPosition.bind(
-                        null,
-                        id,
-                        q.id,
-                        q.position,
-                        sortedQuestions[index + 1].id,
-                        sortedQuestions[index + 1].position,
-                      )
-                    : undefined
-                }
-              />
-              <Link
-                href={`/admin/questions/${q.id}`}
-                className="text-sm font-medium text-orange-500 hover:text-orange-600"
-              >
-                Modifier
-              </Link>
-              <DeleteButton
-                onDelete={deleteQuestion.bind(null, q.id, id)}
-                confirmMessage="Supprimer cette question ?"
-              />
-            </div>
-          </div>
-        ))}
-        {sortedQuestions.length === 0 && (
-          <p className="text-sm text-zinc-400">Aucune question pour l&apos;instant.</p>
-        )}
+      <div className="mt-3">
+        <QuestionList leconId={id} questions={sortedQuestions} />
       </div>
     </div>
   );

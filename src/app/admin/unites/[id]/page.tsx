@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { UniteLeconList } from "@/components/admin/UniteLeconList";
 import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { buttonClasses } from "@/lib/button-styles";
 import { courseLanguageLabel } from "@/lib/course-languages";
@@ -122,26 +123,8 @@ export default async function EditUnite({
         </Link>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
-        {(lecons ?? []).map((lecon) => (
-          <div
-            key={lecon.id}
-            className="flex items-center justify-between rounded-3xl bg-white p-4 shadow-lg shadow-zinc-900/5 dark:bg-zinc-900"
-          >
-            <span className="text-sm text-zinc-700 dark:text-zinc-300">
-              {lecon.position}. {lecon.title}
-            </span>
-            <Link
-              href={`/admin/lecons/${lecon.id}`}
-              className="text-sm font-medium text-orange-500 hover:text-orange-600"
-            >
-              Gérer
-            </Link>
-          </div>
-        ))}
-        {(lecons ?? []).length === 0 && (
-          <p className="text-sm text-zinc-400">Aucune leçon dans cette unité pour l&apos;instant.</p>
-        )}
+      <div className="mt-3">
+        <UniteLeconList uniteId={id} lecons={lecons ?? []} />
       </div>
 
       <div className="mt-8">
