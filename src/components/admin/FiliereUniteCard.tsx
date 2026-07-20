@@ -23,6 +23,7 @@ interface Unite {
   niveau_etude: string | null;
   langue_code: string | null;
   parcours_niveau: number;
+  niveau_difficulte: string | null;
 }
 
 interface Lecon {
@@ -34,6 +35,7 @@ interface Lecon {
   niveau_etude: string | null;
   langue_code: string | null;
   parcours_niveau: number;
+  niveau_difficulte: string | null;
 }
 
 interface Filiere {
@@ -41,6 +43,22 @@ interface Filiere {
   slug: string;
   name: string;
   icon_url: string | null;
+}
+
+const NIVEAU_DIFFICULTE_BADGE: Record<string, { label: string; className: string }> = {
+  debutant: { label: "Débutant", className: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  intermediaire: { label: "Intermédiaire", className: "bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-300" },
+  avance: { label: "Avancé", className: "bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300" },
+};
+
+function NiveauDifficulteBadge({ value }: { value: string | null }) {
+  if (!value || !NIVEAU_DIFFICULTE_BADGE[value]) return null;
+  const badge = NIVEAU_DIFFICULTE_BADGE[value];
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${badge.className}`}>
+      {badge.label}
+    </span>
+  );
 }
 
 export function FiliereUniteCard({
@@ -148,6 +166,7 @@ export function FiliereUniteCard({
                     {courseLanguageLabel(unite.langue_code)}
                   </span>
                 )}
+                <NiveauDifficulteBadge value={unite.niveau_difficulte} />
               </div>
               <div className="flex items-center gap-3">
                 <Link
@@ -171,6 +190,7 @@ export function FiliereUniteCard({
                     {isLangues && lecon.langue_code && (
                       <span className="text-xs text-zinc-400">({courseLanguageLabel(lecon.langue_code)})</span>
                     )}
+                    <NiveauDifficulteBadge value={lecon.niveau_difficulte} />
                   </span>
                   <div className="flex items-center gap-3">
                     <ReorderButtons
@@ -223,7 +243,10 @@ export function FiliereUniteCard({
             <div className="mt-2 flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
               {unassignedLecons.map((lecon) => (
                 <div key={lecon.id} className="flex items-center justify-between py-2">
-                  <span className="text-sm text-zinc-700 dark:text-zinc-300">{lecon.title}</span>
+                  <span className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+                    {lecon.title}
+                    <NiveauDifficulteBadge value={lecon.niveau_difficulte} />
+                  </span>
                   <div className="flex items-center gap-3">
                     <Link
                       href={`/admin/lecons/${lecon.id}`}

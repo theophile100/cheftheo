@@ -11,6 +11,7 @@ interface Unite {
   niveau_etude: string | null;
   langue_code: string | null;
   parcours_niveau: number;
+  niveau_difficulte: string | null;
 }
 
 function TabLink({
@@ -36,14 +37,22 @@ function TabLink({
   );
 }
 
+const NIVEAU_DIFFICULTE_OPTIONS = [
+  { value: "", label: "Tous" },
+  { value: "debutant", label: "Débutant" },
+  { value: "intermediaire", label: "Intermédiaire" },
+  { value: "avance", label: "Avancé" },
+];
+
 export default async function AdminHome({
   searchParams,
 }: {
-  searchParams: Promise<{ diplome?: string; niveau?: string }>;
+  searchParams: Promise<{ diplome?: string; niveau?: string; categorie?: string }>;
 }) {
-  const { diplome: diplomeParam, niveau: niveauParam } = await searchParams;
+  const { diplome: diplomeParam, niveau: niveauParam, categorie: categorieParam } = await searchParams;
   const diplome = diplomeParam === "bts" ? "bts" : "cap";
   const parcoursNiveau = niveauParam === "2" ? 2 : 1;
+  const categorie = NIVEAU_DIFFICULTE_OPTIONS.some((o) => o.value === categorieParam) ? (categorieParam ?? "") : "";
 
   const supabase = await createClient();
 
@@ -56,21 +65,27 @@ export default async function AdminHome({
       supabase
         .from("unites")
         .select(
-          "id, filiere_id, title, position, niveau_etude, langue_code, parcours_niveau",
+          "id, filiere_id, title, position, niveau_etude, langue_code, parcours_niveau, niveau_difficulte",
         )
         .eq("parcours_niveau", parcoursNiveau)
         .order("position"),
       supabase
         .from("lecons")
         .select(
-          "id, filiere_id, unite_id, title, position, niveau_etude, langue_code, parcours_niveau",
+          "id, filiere_id, unite_id, title, position, niveau_etude, langue_code, parcours_niveau, niveau_difficulte",
         )
         .eq("parcours_niveau", parcoursNiveau)
         .order("position"),
     ]);
 
-  const otherParams = (overrides: { diplome?: string; niveau?: string }) => {
-    const p = new URLSearchParams({ diplome, niveau: String(parcoursNiveau), ...overrides });
+  const otherParams = (overrides: { diplome?: string; niveau?: string; categorie?: string }) => {
+    const p = new URLSearchParams({
+      diplome,
+      niveau: String(parcoursNiveau),
+      ...(categorie ? { categorie } : {}),
+      ...overrides,
+    });
+    if (!p.get("categorie")) p.delete("categorie");
     return `/admin?${p.toString()}`;
   };
 
@@ -113,6 +128,13 @@ export default async function AdminHome({
             Niveau 2
           </TabLink>
         </div>
+        <div className="flex items-center gap-1.5 rounded-full bg-zinc-100 p-1 dark:bg-zinc-800">
+          {NIVEAU_DIFFICULTE_OPTIONS.map((o) => (
+            <TabLink key={o.value} href={otherParams({ categorie: o.value })} active={categorie === o.value}>
+              {o.label}
+            </TabLink>
+          ))}
+        </div>
         <p className="text-xs text-zinc-400">
           Langues ignore le diplôme (CAP/BTS) : contenu commun aux deux.
         </p>
@@ -124,10 +146,12 @@ export default async function AdminHome({
 
           const unites = (allUnites ?? [])
             .filter((u) => u.filiere_id === filiere.id)
-            .filter((u) => (isLangues ? true : u.niveau_etude === diplome));
+            .filter((u) => (isLangues ? true : u.niveau_etude === diplome))
+            .filter((u) => !categorie || u.niveau_difficulte === categorie);
           const lecons = (allLecons ?? [])
             .filter((l) => l.filiere_id === filiere.id)
-            .filter((l) => (isLangues ? true : l.niveau_etude === diplome));
+            .filter((l) => (isLangues ? true : l.niveau_etude === diplome))
+            .filter((l) => !categorie || l.niveau_difficulte === categorie);
 
           const uniteGroups = unites.map((u) => ({
             unite: u as Unite,
