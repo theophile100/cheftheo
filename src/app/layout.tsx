@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import { SoundSettingsProvider } from "@/lib/sound-settings";
 import { LogoProvider } from "@/lib/logo-context";
 import { TapFeedback } from "@/components/TapFeedback";
+import { BackForwardRefresh } from "@/components/BackForwardRefresh";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { createClient } from "@/lib/supabase/server";
 import { getServerTranslation } from "@/i18n/server";
@@ -92,6 +93,7 @@ export default async function RootLayout({
             <LogoProvider url={logoUrl}>
               <SoundSettingsProvider>
                 <TapFeedback />
+                <BackForwardRefresh />
                 <ServiceWorkerRegister />
                 {children}
               </SoundSettingsProvider>
