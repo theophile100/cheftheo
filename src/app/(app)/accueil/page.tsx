@@ -7,6 +7,7 @@ import { getEncouragementMessage } from "@/lib/mascot-messages";
 import { getServerTranslation } from "@/i18n/server";
 import { NiveauOnboarding } from "@/components/NiveauOnboarding";
 import { NiveauUtilisateurBadge } from "@/components/NiveauUtilisateurBadge";
+import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 
 export default async function Accueil() {
   const supabase = await createClient();
@@ -47,7 +48,10 @@ export default async function Accueil() {
           <Mascot mood="idle" size={64} />
           <SpeechBubble>{getEncouragementMessage()}</SpeechBubble>
         </div>
-        {user && <NiveauUtilisateurBadge />}
+        <div className="flex items-center gap-2">
+          <ThemeToggleButton />
+          {user && <NiveauUtilisateurBadge />}
+        </div>
       </div>
 
       <DueReviewCard count={dueCount ?? 0} />
