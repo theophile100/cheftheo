@@ -1,7 +1,6 @@
 import fr from "./fr.json";
 import en from "./en.json";
 import de from "./de.json";
-import ar from "./ar.json";
 import type { Locale } from "../config";
 
 // Le francais est la reference : sa forme (les cles) fait foi pour le
@@ -10,7 +9,7 @@ import type { Locale } from "../config";
 // francais (voir deepMerge), donc jamais de texte vide a l'ecran.
 export type Dictionary = typeof fr;
 
-const RAW: Record<Locale, unknown> = { fr, en, de, ar };
+const RAW: Record<Locale, unknown> = { fr, en, de };
 
 function deepMerge<T>(base: T, override: unknown): T {
   if (typeof base !== "object" || base === null || Array.isArray(base)) {

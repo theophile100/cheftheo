@@ -1,11 +1,8 @@
 // Langues proposees dans le parcours "Langues" (vocabulaire metier de
 // l'hotellerie-restauration) — distinct de src/i18n (langue de l'interface).
 export const COURSE_LANGUAGES = [
-  { code: "fr", label: "Français" },
   { code: "en", label: "English" },
   { code: "de", label: "Deutsch" },
-  { code: "es", label: "Español" },
-  { code: "ar", label: "العربية" },
 ] as const;
 
 export type CourseLanguageCode = (typeof COURSE_LANGUAGES)[number]["code"];

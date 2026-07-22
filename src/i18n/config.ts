@@ -1,4 +1,4 @@
-export const LOCALES = ["fr", "en", "de", "ar"] as const;
+export const LOCALES = ["fr", "en", "de"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "fr";
@@ -8,13 +8,12 @@ export const DEFAULT_LOCALE: Locale = "fr";
 // traduite a un utilisateur.
 export const ACTIVE_LOCALES: Locale[] = ["fr", "en"];
 
-export const RTL_LOCALES: Locale[] = ["ar"];
+export const RTL_LOCALES: Locale[] = [];
 
 export const LOCALE_LABELS: Record<Locale, string> = {
   fr: "Français",
   en: "English",
   de: "Deutsch",
-  ar: "العربية",
 };
 
 export const LOCALE_COOKIE = "chef-theo-locale";
