@@ -1,1 +1,61 @@
-{}
+{
+  "landing": {
+    "title": "Chef Théo",
+    "tagline": "Learn hospitality and culinary trades, lesson by lesson.",
+    "signup": "Create an account",
+    "login": "Log in"
+  },
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Log in",
+      "submitLoading": "Logging in...",
+      "noAccount": "Don't have an account yet?",
+      "signupLink": "Create an account"
+    },
+    "signup": {
+      "title": "Create an account",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "displayNameLabel": "Display name",
+      "displayNamePlaceholder": "The nickname shown to others",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "6 characters minimum",
+      "countryLabel": "Country",
+      "countryPlaceholder": "Select your country",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "555 123 4567",
+      "submit": "Continue",
+      "submitLoading": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "confirmTitle": "Check your email",
+      "confirmMessage": "We sent a confirmation link to {email}. Click it to activate your account, then log in.",
+      "confirmCta": "Go to login"
+    }
+  },
+  "nav": {
+    "learn": "Learn",
+    "discover": "Discover",
+    "profile": "Profile"
+  },
+  "sideMenu": {
+    "close": "Close",
+    "xp": "XP",
+    "streak": "Streak",
+    "admin": "Admin",
+    "settingsTitle": "Settings",
+    "darkMode": "Dark mode",
+    "sound": "Sound",
+    "vibrations": "Vibrations",
+    "language": "Language",
+    "signOut": "Sign out"
+  },
+  "accueil": {
+    "chooseFiliere": "Choose a track"
+  }
+}

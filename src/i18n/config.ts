@@ -6,7 +6,7 @@ export const DEFAULT_LOCALE: Locale = "fr";
 // Langues pas encore traduites (dictionnaire vide) : affichees dans le
 // selecteur mais desactivees, pour ne jamais montrer une interface a moitie
 // traduite a un utilisateur.
-export const ACTIVE_LOCALES: Locale[] = ["fr"];
+export const ACTIVE_LOCALES: Locale[] = ["fr", "en"];
 
 export const RTL_LOCALES: Locale[] = ["ar"];
 
