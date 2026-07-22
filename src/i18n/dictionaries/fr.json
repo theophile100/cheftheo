@@ -6,6 +6,10 @@
     "login": "Se connecter"
   },
   "auth": {
+    "orDivider": "ou",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithApple": "Continuer avec Apple",
+    "oauthError": "La connexion a échoué ou a été annulée. Réessayez, ou utilisez l'email et le mot de passe.",
     "login": {
       "title": "Se connecter",
       "emailLabel": "Adresse email",

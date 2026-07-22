@@ -4,11 +4,11 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { countries } from "@/data/countries";
 import { buttonClasses } from "@/lib/button-styles";
 import { Mascot } from "@/components/Mascot";
 import { useTranslation } from "@/lib/i18n-context";
 import { safeNextPath } from "@/lib/safe-next-path";
+import { SocialSignInButtons } from "@/components/SocialSignInButtons";
 
 const inputClasses =
   "rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3.5 text-base text-zinc-900 outline-none transition-colors focus:border-orange-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
@@ -21,8 +21,6 @@ export default function Inscription() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -36,7 +34,7 @@ export default function Inscription() {
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { display_name: displayName, country, phone } },
+      options: { data: { display_name: displayName } },
     });
 
     setLoading(false);
@@ -91,6 +89,16 @@ export default function Inscription() {
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             {t("auth.signup.title")}
           </h1>
+
+          <SocialSignInButtons next={next} />
+
+          <div className="flex w-full items-center gap-3">
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-700" />
+            <span className="text-sm text-zinc-400 dark:text-zinc-500">
+              {t("auth.orDivider")}
+            </span>
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-700" />
+          </div>
 
           <form onSubmit={handleSubmit} className="flex w-full flex-col gap-5">
             <div className="flex flex-col gap-1.5">
@@ -148,50 +156,6 @@ export default function Inscription() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("auth.signup.passwordPlaceholder")}
-                className={inputClasses}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="pays"
-                className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
-              >
-                {t("auth.signup.countryLabel")}
-              </label>
-              <select
-                id="pays"
-                name="pays"
-                required
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                className={inputClasses}
-              >
-                <option value="" disabled>
-                  {t("auth.signup.countryPlaceholder")}
-                </option>
-                {countries.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="telephone"
-                className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
-              >
-                {t("auth.signup.phoneLabel")}
-              </label>
-              <input
-                id="telephone"
-                name="telephone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder={t("auth.signup.phonePlaceholder")}
                 className={inputClasses}
               />
             </div>
