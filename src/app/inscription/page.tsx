@@ -8,7 +8,6 @@ import { buttonClasses } from "@/lib/button-styles";
 import { Mascot } from "@/components/Mascot";
 import { useTranslation } from "@/lib/i18n-context";
 import { safeNextPath } from "@/lib/safe-next-path";
-import { SocialSignInButtons } from "@/components/SocialSignInButtons";
 
 const inputClasses =
   "rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3.5 text-base text-zinc-900 outline-none transition-colors focus:border-orange-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
@@ -89,16 +88,6 @@ export default function Inscription() {
           <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">
             {t("auth.signup.title")}
           </h1>
-
-          <SocialSignInButtons next={next} />
-
-          <div className="flex w-full items-center gap-3">
-            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-700" />
-            <span className="text-sm text-zinc-400 dark:text-zinc-500">
-              {t("auth.orDivider")}
-            </span>
-            <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-700" />
-          </div>
 
           <form onSubmit={handleSubmit} className="flex w-full flex-col gap-5">
             <div className="flex flex-col gap-1.5">
