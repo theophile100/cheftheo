@@ -397,8 +397,8 @@ export async function uploadImage(
   return { url: data.publicUrl };
 }
 
-// Same as uploadImage but also accepts PDFs — used for downloadable free
-// products (guide PDF, etc.) in the admin "produits" section.
+// Same as uploadImage but also accepts videos — used for downloadable free
+// products (image or short video clip) in the admin "produits" section.
 export async function uploadProductFile(
   formData: FormData,
 ): Promise<{ url?: string; error?: string }> {
@@ -410,14 +410,14 @@ export async function uploadProductFile(
 
   const file = formData.get("file") as File | null;
   if (!file || file.size === 0) return { error: "Aucun fichier reçu." };
-  if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
-    return { error: "Le fichier doit être une image ou un PDF." };
+  if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+    return { error: "Le fichier doit être une image ou une vidéo." };
   }
   const sizeError = checkImageSize(file);
   if (sizeError) return { error: sizeError };
 
   const admin = createAdminClient();
-  const extension = file.name.split(".").pop() || "pdf";
+  const extension = file.name.split(".").pop() || "bin";
   const path = `${crypto.randomUUID()}.${extension}`;
 
   const { error } = await admin.storage

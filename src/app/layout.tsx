@@ -22,6 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.cheftheo.space"),
   title: "Chef Théo",
   description: "Application d'apprentissage Chef Théo",
   appleWebApp: {

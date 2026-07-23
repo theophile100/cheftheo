@@ -278,7 +278,7 @@ export function ProduitForm({
       ) : (
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Ce que l&apos;utilisateur reçoit
+            Ce que l&apos;utilisateur reçoit (image ou vidéo)
           </label>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
@@ -289,7 +289,7 @@ export function ProduitForm({
                 onChange={() => setFreeType("file")}
                 className="h-4 w-4 accent-orange-500"
               />
-              Image
+              Fichier à téléverser
             </label>
             <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
               <input
@@ -299,7 +299,7 @@ export function ProduitForm({
                 onChange={() => setFreeType("link")}
                 className="h-4 w-4 accent-orange-500"
               />
-              Vidéo
+              Lien
             </label>
           </div>
 
@@ -312,25 +312,29 @@ export function ProduitForm({
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-orange-500 hover:text-orange-600"
                 >
-                  Image actuelle
+                  Fichier actuel
                 </a>
               )}
               <label className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600">
-                {uploadingFile ? "Envoi..." : freeFileUrl ? "Changer l'image" : "Choisir une image"}
+                {uploadingFile ? "Envoi..." : freeFileUrl ? "Changer le fichier" : "Choisir une image ou vidéo"}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   onChange={handleFreeFileChange}
                   disabled={uploadingFile}
                   className="hidden"
                 />
               </label>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                7 Mo maximum. Pour une vidéo plus longue, utilisez plutôt un lien (YouTube,
+                Vimeo, etc.).
+              </p>
             </div>
           ) : (
             <input
               type="url"
               required
-              placeholder="Lien YouTube, Vimeo, etc."
+              placeholder="Lien vers une image ou une vidéo (YouTube, Vimeo, etc.)"
               value={freeLinkUrl}
               onChange={(e) => setFreeLinkUrl(e.target.value)}
               className={inputClasses}
