@@ -15,7 +15,7 @@ export default async function EditProduit({
     supabase
       .from("produits")
       .select(
-        "title, description, cover_url, filiere_id, type, price, cta_type, chariow_url, chariow_embed_code, free_type, free_file_url, free_link_url, likes_enabled, comments_enabled, position",
+        "title, description, cover_url, filiere_id, type, price, cta_type, chariow_url, chariow_embed_code, free_type, free_file_url, free_link_url, cta_label, likes_enabled, comments_enabled, position",
       )
       .eq("id", id)
       .single(),

@@ -29,6 +29,7 @@ interface InitialProduit {
   free_type: "file" | "link" | null;
   free_file_url: string | null;
   free_link_url: string | null;
+  cta_label: string | null;
   likes_enabled: boolean;
   comments_enabled: boolean;
   position: number;
@@ -65,6 +66,7 @@ export function ProduitForm({
   );
   const [freeLinkUrl, setFreeLinkUrl] = useState(initialProduit?.free_link_url ?? "");
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [ctaLabel, setCtaLabel] = useState(initialProduit?.cta_label ?? "");
 
   const [likesEnabled, setLikesEnabled] = useState(initialProduit?.likes_enabled ?? true);
   const [commentsEnabled, setCommentsEnabled] = useState(
@@ -118,6 +120,7 @@ export function ProduitForm({
       freeType,
       freeFileUrl,
       freeLinkUrl,
+      ctaLabel,
       likesEnabled,
       commentsEnabled,
       position,
@@ -286,7 +289,7 @@ export function ProduitForm({
                 onChange={() => setFreeType("file")}
                 className="h-4 w-4 accent-orange-500"
               />
-              Fichier à téléverser (PDF ou image)
+              Image
             </label>
             <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
               <input
@@ -296,7 +299,7 @@ export function ProduitForm({
                 onChange={() => setFreeType("link")}
                 className="h-4 w-4 accent-orange-500"
               />
-              Lien externe
+              Vidéo
             </label>
           </div>
 
@@ -309,14 +312,14 @@ export function ProduitForm({
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-orange-500 hover:text-orange-600"
                 >
-                  Fichier actuel
+                  Image actuelle
                 </a>
               )}
               <label className="cursor-pointer text-sm font-medium text-orange-500 hover:text-orange-600">
-                {uploadingFile ? "Envoi..." : freeFileUrl ? "Changer le fichier" : "Choisir un fichier"}
+                {uploadingFile ? "Envoi..." : freeFileUrl ? "Changer l'image" : "Choisir une image"}
                 <input
                   type="file"
-                  accept="image/*,application/pdf"
+                  accept="image/*"
                   onChange={handleFreeFileChange}
                   disabled={uploadingFile}
                   className="hidden"
@@ -327,7 +330,7 @@ export function ProduitForm({
             <input
               type="url"
               required
-              placeholder="https://..."
+              placeholder="Lien YouTube, Vimeo, etc."
               value={freeLinkUrl}
               onChange={(e) => setFreeLinkUrl(e.target.value)}
               className={inputClasses}
@@ -335,6 +338,21 @@ export function ProduitForm({
           )}
         </div>
       )}
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          Texte du bouton
+        </label>
+        <input
+          value={ctaLabel}
+          onChange={(e) => setCtaLabel(e.target.value)}
+          placeholder={type === "gratuit" ? "Obtenir gratuitement" : "Obtenir"}
+          className={inputClasses}
+        />
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Laissez vide pour le texte par défaut, ou personnalisez (ex. « Regarder la vidéo »).
+        </p>
+      </div>
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">

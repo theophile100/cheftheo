@@ -32,7 +32,7 @@ export default async function ProduitDetail({
     supabase
       .from("produits")
       .select(
-        "id, title, description, cover_url, type, price, cta_type, chariow_url, chariow_embed_code, likes_enabled, comments_enabled, filieres(name)",
+        "id, title, description, cover_url, type, price, cta_type, chariow_url, chariow_embed_code, cta_label, likes_enabled, comments_enabled, filieres(name)",
       )
       .eq("id", id)
       .single(),
@@ -129,6 +129,7 @@ export default async function ProduitDetail({
             ctaType={produit.cta_type}
             chariowUrl={produit.chariow_url}
             chariowEmbedCode={produit.chariow_embed_code}
+            ctaLabel={produit.cta_label}
             userId={user!.id}
           />
         </div>

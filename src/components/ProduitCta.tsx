@@ -19,6 +19,7 @@ export function ProduitCta({
   ctaType,
   chariowUrl,
   chariowEmbedCode,
+  ctaLabel,
   userId,
 }: {
   produitId: string;
@@ -26,6 +27,7 @@ export function ProduitCta({
   ctaType: "url" | "embed" | null;
   chariowUrl: string | null;
   chariowEmbedCode: string | null;
+  ctaLabel: string | null;
   userId: string;
 }) {
   const { energy, setEnergy } = useProgress();
@@ -73,7 +75,7 @@ export function ProduitCta({
           disabled={loading}
           className={buttonClasses("primary", "mt-2 w-full")}
         >
-          {loading ? "..." : "Obtenir gratuitement"}
+          {loading ? "..." : (ctaLabel ?? "Obtenir gratuitement")}
         </button>
         {message && (
           <p className="mt-2 text-center text-sm font-semibold text-green-600 dark:text-green-400">
@@ -93,7 +95,7 @@ export function ProduitCta({
         onClick={trackClick}
         className={buttonClasses("primary", "mt-2 w-full")}
       >
-        Obtenir
+        {ctaLabel ?? "Obtenir"}
       </Link>
     );
   }
@@ -114,7 +116,7 @@ export function ProduitCta({
       onClick={trackClick}
       className={buttonClasses("primary", "mt-2 w-full")}
     >
-      Obtenir
+      {ctaLabel ?? "Obtenir"}
     </a>
   );
 }

@@ -19,6 +19,7 @@ export interface ProduitInput {
   freeType: "file" | "link";
   freeFileUrl: string | null;
   freeLinkUrl: string;
+  ctaLabel: string;
   likesEnabled: boolean;
   commentsEnabled: boolean;
   position: number;
@@ -82,6 +83,7 @@ function toRow(input: ProduitInput) {
     free_file_url: input.type === "gratuit" && input.freeType === "file" ? input.freeFileUrl : null,
     free_link_url:
       input.type === "gratuit" && input.freeType === "link" ? input.freeLinkUrl.trim() : null,
+    cta_label: input.ctaLabel.trim() || null,
     likes_enabled: input.likesEnabled,
     comments_enabled: input.commentsEnabled,
     position: input.position,
